@@ -1,7 +1,8 @@
 {
     "name": "Nootools.Editor",
+    "rootNamespace": "",
     "references": [
-        "Nootools"
+        "GUID:e25bd39c7564f1b4d829b9864896c8e5"
     ],
     "includePlatforms": [
         "Editor"
