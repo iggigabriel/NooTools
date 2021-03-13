@@ -1,0 +1,14 @@
+{
+  "name": "com.iggi.nootools",
+  "version": "1.0.0",
+  "displayName": "Nootools",
+  "description": "Various tools for game development in Unity",
+  "unity": "2020.3",
+  "keywords": [],
+  "author": {
+    "name": "Ivan Gabriel",
+    "email": "ivan.gabriel.juricic@gmail.com",
+    "url": "https://noopol.com/"
+  },
+  "samples": []
+}
