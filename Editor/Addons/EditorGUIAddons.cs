@@ -43,10 +43,10 @@ namespace Nootools.Editor
     /// <summary>
     /// Creates a filepath textfield with a browse button. Opens the open file panel.
     /// </summary>
-		public static string FileLabel(string name, float labelWidth, string path, string extension)
+		public static string FileLabel(string name, string path, string extension)
 		{
 			EditorGUILayout.BeginHorizontal();
-			GUILayout.Label(name, GUILayout.MaxWidth(labelWidth));
+			EditorGUILayout.PrefixLabel(name);
 			string filepath = EditorGUILayout.TextField(path);
 			if (GUILayout.Button("Browse"))
 			{
@@ -59,9 +59,10 @@ namespace Nootools.Editor
     /// <summary>
     /// Creates a folder path textfield with a browse button. Opens the save folder panel.
     /// </summary>
-		public static string FolderLabel(string name, float labelWidth, string path)
+		public static string FolderLabel(string name, string path)
 		{
 			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel(name);
 			string filepath = EditorGUILayout.TextField(name, path);
 			if (GUILayout.Button("Browse", GUILayout.MaxWidth(60)))
 			{
