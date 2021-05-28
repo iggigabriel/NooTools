@@ -37,7 +37,7 @@ namespace Nootools.Editor
                 .ToArray();
 
             editorDependacies = AssetDatabase
-                .FindAssets("t:AssemblyDefinitionAsset Nootools.Editor")
+                .FindAssets("t:AssemblyDefinitionAsset Nootools")
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Select(x => AssetDatabase.LoadAssetAtPath<AssemblyDefinitionAsset>(x))
                 .ToArray();
