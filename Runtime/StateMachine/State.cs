@@ -1,13 +1,17 @@
-namespace Nootools.StateMachine
+namespace Nootools
 {
     public abstract class State<T> where T : class
     {
-        public T Parent { get; internal set; }
+        public StateMachine<T> StateMachine { get; internal set; }
 
-        protected virtual void OnEnter() { }
+        public T Target => StateMachine?.Target;
 
-        protected virtual void OnExit() { }
+        public int TicksSinceStarted => StateMachine?.CurrentState == this ? StateMachine.TicksSinceLastStateChange : -1;
 
-        protected virtual void OnUpdate() { }
+        internal virtual void OnEnter() { }
+
+        internal virtual void OnExit() { }
+
+        internal virtual void OnUpdate() { }
     }
 }
