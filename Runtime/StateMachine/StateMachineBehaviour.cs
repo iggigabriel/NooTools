@@ -1,10 +1,12 @@
+using UnityEngine;
+
 namespace Nootools
 {
     /// <summary>
     /// Deterministic Finite State Machine
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class StateMachine<T> : IStateMachine<T> where T : class
+    public class StateMachineBehaviour<T> : MonoBehaviour, IStateMachine<T> where T : MonoBehaviour
     {
         public T Target { get; private set; }
 
@@ -27,12 +29,12 @@ namespace Nootools
         /// </summary>
         public int TicksSinceLastStateChange => TickCount - LastStateChangeTick;
 
-        public StateMachine(T target)
+        protected virtual void Awake()
         {
-            Target = target ?? throw new System.NullReferenceException("Target object of StateMachine cant be null.");
+            Target = GetComponent<T>();
         }
 
-        public void Update()
+        protected virtual void Update()
         {
             TickCount++;
 
@@ -41,7 +43,7 @@ namespace Nootools
 
         public void SetState(State<T> state)
         {
-            if (state.StateMachine != null && state.StateMachine != this)
+            if (state.StateMachine != null && state.StateMachine != (IStateMachine<T>)this)
             {
                 throw new System.Exception($"State ({state}) already belongs to another StateMachine.");
             }

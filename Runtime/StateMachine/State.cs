@@ -2,7 +2,7 @@ namespace Nootools
 {
     public abstract class State<T> where T : class
     {
-        public StateMachine<T> StateMachine { get; internal set; }
+        public IStateMachine<T> StateMachine { get; internal set; }
 
         public T Target => StateMachine?.Target;
 
