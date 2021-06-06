@@ -130,20 +130,42 @@ namespace Nootools.Editor
 			selected_index = GUILayout.Toolbar(selected_index, toolbar);
 			return (Enum) values.GetValue(selected_index);
 		}
-		
-		/// <summary>
-		/// Creates a button that can be toggled. Looks nice than GUI.toggle
-		/// </summary>
-		/// <returns>
-		/// Toggle state
-		/// </returns>
-		/// <param name='state'>
-		/// If set to <c>true</c> state.
-		/// </param>
-		/// <param name='label'>
-		/// If set to <c>true</c> label.
-		/// </param>
-		public static bool ToggleButton(bool state, string label)
+
+		public static bool EnumMenu<T>(out T clicked) where T : Enum
+		{
+			var enumType = typeof(T);
+			string[] toolbar = Enum.GetNames(enumType);
+			Array values = Enum.GetValues(enumType);
+
+			using var _ = new EditorGUILayout.HorizontalScope();
+			var isClicked = false;
+			clicked = default;
+
+			for (int i = 0; i < toolbar.Length; i++)
+            {
+				if (GUILayout.Button(toolbar[i]))
+                {
+					isClicked = true;
+					clicked = (T)values.GetValue(i);
+                }
+            }
+
+			return isClicked;
+		}
+
+        /// <summary>
+        /// Creates a button that can be toggled. Looks nice than GUI.toggle
+        /// </summary>
+        /// <returns>
+        /// Toggle state
+        /// </returns>
+        /// <param name='state'>
+        /// If set to <c>true</c> state.
+        /// </param>
+        /// <param name='label'>
+        /// If set to <c>true</c> label.
+        /// </param>
+        public static bool ToggleButton(bool state, string label)
 		{
 			BuildStyle();
 			

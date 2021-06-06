@@ -8,10 +8,10 @@ namespace Nootools
 
         public int TicksSinceStarted => StateMachine?.CurrentState == this ? StateMachine.TicksSinceLastStateChange : -1;
 
-        internal virtual void OnEnter() { }
+        internal protected virtual void OnEnter() { }
 
-        internal virtual void OnExit() { }
+        internal protected virtual void OnExit() { }
 
-        internal virtual void OnUpdate() { }
+        internal protected virtual void OnUpdate() { }
     }
 }
