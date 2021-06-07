@@ -4,9 +4,9 @@ namespace Nootools
     {
         T Target { get; }
 
-        State<T> PreviousState { get; }
+        IState<T> PreviousState { get; }
 
-        State<T> CurrentState { get; }
+        IState<T> CurrentState { get; }
 
         int TickCount { get; }
 
@@ -14,6 +14,6 @@ namespace Nootools
 
         int TicksSinceLastStateChange { get; }
 
-        void SetState(State<T> state);
+        void SetState(IState<T> state);
     }
 }

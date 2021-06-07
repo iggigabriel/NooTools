@@ -10,9 +10,9 @@ namespace Nootools
     {
         public T Target { get; private set; }
 
-        public State<T> PreviousState { get; private set; }
+        public IState<T> PreviousState { get; private set; }
 
-        public State<T> CurrentState { get; private set; }
+        public IState<T> CurrentState { get; private set; }
 
         /// <summary>
         /// Number of updates called since creation
@@ -41,20 +41,40 @@ namespace Nootools
             CurrentState?.OnUpdate();
         }
 
-        public void SetState(State<T> state)
+        public void SetState(IState<T> state)
         {
-            if (state.StateMachine != null && state.StateMachine != (IStateMachine<T>)this)
+            if (state != null && state.StateMachine != null && state.StateMachine != (IStateMachine<T>)this)
             {
                 throw new System.Exception($"State ({state}) already belongs to another StateMachine.");
             }
 
-            state.StateMachine = this;
+            if (state != null)
+            {
+                state.StateMachine = this;
+            }
 
             PreviousState = CurrentState;
             CurrentState = state;
 
             PreviousState?.OnExit();
             CurrentState?.OnEnter();
+        }
+
+        public void SetState<TState>(bool createIfDoesntExist = true) where TState : StateBehaviour<T>
+        {
+            if (Target == null)
+            {
+                throw new System.Exception($"StateMachine is not initialized.");
+            }
+
+            var newState = Target.GetComponent<TState>();
+
+            if (newState == null && createIfDoesntExist)
+            {
+                newState = Target.gameObject.AddComponent<TState>();
+            }
+
+            SetState(newState);
         }
     }
 }
