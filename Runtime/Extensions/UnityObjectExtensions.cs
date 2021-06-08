@@ -11,6 +11,7 @@ namespace Nootools
         public static void SaveInEditor(this Object o)
         {
             UnityEditor.EditorUtility.SetDirty(o);
+            UnityEditor.Undo.RecordObject(o, o.name);
         }
     }
 }
