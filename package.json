@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "displayName": "NooTools",
   "description": "Various tools for game development in Unity",
-  "unity": "6",
+  "unity": "6000.0",
   "keywords": [],
   "author": {
     "name": "Ivan Gabriel",
