@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Nootools.Collections
+namespace Noo.Tools
 {
     /// <summary>
     /// A copy of StablePriorityQueue which also has generic priority-type

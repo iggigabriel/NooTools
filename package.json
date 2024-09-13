@@ -1,9 +1,9 @@
 {
-  "name": "com.iggi.nootools",
+  "name": "com.noo.tools",
   "version": "1.0.0",
-  "displayName": "Nootools",
+  "displayName": "NooTools",
   "description": "Various tools for game development in Unity",
-  "unity": "2020.3",
+  "unity": "6",
   "keywords": [],
   "author": {
     "name": "Ivan Gabriel",

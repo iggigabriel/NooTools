@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nootools.Collections
+namespace Noo.Tools
 {
     public class PriorityQueueNode
     {

@@ -1,4 +1,4 @@
-﻿namespace Nootools.Collections
+﻿namespace Noo.Tools
 {
     public class GenericPriorityQueueNode<TPriority>
     {

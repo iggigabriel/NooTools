@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
-using UnityEngine;
 
-namespace Nootools.Editor
+namespace Noo.Tools.Editor
 {
     public static class PackageCreator
     {
@@ -14,14 +12,14 @@ namespace Nootools.Editor
 
     public class PackageCreatorWizard : ScriptableWizard
     {
-        public string rootNamespace = "Nootools";
+        public string rootNamespace = "";
 
         public string packageName;
 
         public AssemblyDefinitionAsset[] runtimeDependacies;
         public AssemblyDefinitionAsset[] editorDependacies;
 
-        [MenuItem("Assets/Create/Nootools/New Package")]
+        [MenuItem("Assets/Create/Noo.Tools/New Package", priority = -10000)]
         static void CreateWizard()
         {
             DisplayWizard<PackageCreatorWizard>("Create New Package", "Create").Init();

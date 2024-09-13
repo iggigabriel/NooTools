@@ -1,0 +1,19 @@
+{
+    "name": "Noo.Tools.Editor",
+    "rootNamespace": "Noo.Tools.Editor",
+    "references": [
+        "GUID:bffc7a5bd6bc9a344b2b576a5de949d3",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

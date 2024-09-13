@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using static Unity.Mathematics.math;
 using System.Runtime.CompilerServices;
 
-namespace Nootools.Collections
+namespace Noo.Tools
 {
     [Serializable]
     public struct BitSet8x8 : IEquatable<BitSet8x8>

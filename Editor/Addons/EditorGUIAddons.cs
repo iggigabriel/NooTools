@@ -3,7 +3,7 @@ using UnityEditor;
 using System;
 using System.Linq;
 
-namespace Nootools.Editor
+namespace Noo.Tools.Editor
 {
 	public class EditorGUIAddons
 	{

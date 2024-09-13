@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Unity.Mathematics;
-using static Unity.Mathematics.math;
 using System.Collections;
 
-namespace Nootools.Collections
+namespace Noo.Tools
 {
     public readonly struct ListSpan<T> : IEquatable<ListSpan<T>>, IEnumerable<T>
     {
@@ -22,7 +19,7 @@ namespace Nootools.Collections
 
         public override bool Equals(object obj)
         {
-            return obj is ListSpan<T> && Equals((ListSpan<T>)obj);
+            return obj is ListSpan<T> span && Equals(span);
         }
 
         public bool Equals(ListSpan<T> other)
@@ -40,11 +37,7 @@ namespace Nootools.Collections
 
         public override int GetHashCode()
         {
-            var hashCode = 244265576;
-            hashCode = hashCode * -1521134295 + EqualityComparer<IReadOnlyList<T>>.Default.GetHashCode(list);
-            hashCode = hashCode * -1521134295 + index.GetHashCode();
-            hashCode = hashCode * -1521134295 + count.GetHashCode();
-            return hashCode;
+            return HashCode.Combine(list, index, count);
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

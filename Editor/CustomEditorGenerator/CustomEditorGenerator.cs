@@ -1,16 +1,16 @@
-using UnityEditor;
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Reflection;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
 
-namespace Nootools.Editor
+namespace Noo.Tools.Editor
 {
-	public static class CustomEditorGenerator
+    public static class CustomEditorGenerator
     {
-		[MenuItem("Assets/Create/Nootools/Editor From Selected Script")]
+		[MenuItem("Assets/Create/Noo.Tools/Editor From Selected Script", priority = -10000)]
 		public static void GenerateCustomEditorFromSelectedScript()
 		{
 			if (!GenerateCustomEditorFromSelectedScript_Validator())
@@ -55,7 +55,7 @@ namespace Nootools.Editor
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem("Assets/Create/Nootools/Editor From Selected Script", true)]
+		[MenuItem("Assets/Create/Noo.Tools/Editor From Selected Script", true)]
 		public static bool GenerateCustomEditorFromSelectedScript_Validator()
 		{
 			if (Selection.objects != null &&
@@ -194,7 +194,7 @@ namespace Nootools.Editor
 		}
 
 
-		[MenuItem("Assets/Create/Nootools/Default Editor From Selected Script")]
+		[MenuItem("Assets/Create/Noo.Tools/Default Editor From Selected Script", priority = -10000)]
 		public static void GenerateDefaultEditorFromSelectedScript()
 		{
 			if (!GenerateDefaultEditorFromSelectedScript_Validator())
@@ -238,7 +238,7 @@ namespace Nootools.Editor
 			AssetDatabase.Refresh();
 		}
 
-		[MenuItem("Assets/Create/Nootools/Default Editor From Selected Script", true)]
+		[MenuItem("Assets/Create/Noo.Tools/Default Editor From Selected Script", true)]
 		public static bool GenerateDefaultEditorFromSelectedScript_Validator()
 		{
 			if (Selection.objects != null &&
