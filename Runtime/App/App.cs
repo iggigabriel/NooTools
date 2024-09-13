@@ -89,5 +89,16 @@ namespace Noo.Tools
             if (component == null) Initialize();
             component.StopCoroutine(coroutine);
         }
+
+        public static void RunNextFrame(Action action)
+        {
+            StartCoroutine(Delay(action));
+
+            static IEnumerator Delay(Action action)
+            {
+                yield return null;
+                action?.Invoke();
+            }
+        }
     }
 }

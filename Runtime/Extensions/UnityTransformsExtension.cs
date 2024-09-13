@@ -47,5 +47,19 @@ namespace Noo.Tools
             var max = math.max(a, math.max(b, math.max(c, d))).xy;
             return new Rect(min, max - min);
         }
+
+        public static void SortChildren<T>(this Transform transform, System.Comparison<T> comparer) where T : Component
+        {
+            using var _ = ListPool<T>.Get(out var children);
+
+            foreach (Transform t in transform) children.Add(t.GetComponent<T>());
+
+            children.Sort(comparer);
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                if (children[i]) children[i].transform.SetSiblingIndex(i);
+            }
+        }
     }
 }

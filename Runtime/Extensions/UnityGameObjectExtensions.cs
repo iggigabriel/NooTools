@@ -40,5 +40,16 @@ namespace Noo.Tools
 #pragma warning disable UNT0014 // Invalid type for call to GetComponent
         public static bool Is<T>(this GameObject gameObject, out T component) => gameObject.TryGetComponent(out component);
 #pragma warning restore UNT0014 // Invalid type for call to GetComponent
+
+        public static void DestroySafe(this GameObject target)
+        {
+            if (Application.isPlaying) Object.Destroy(target);
+            else if (target) Object.DestroyImmediate(target);
+        }
+
+        public static void DestroySafe<T>(this T target) where T : Component
+        {
+            if (target && target.gameObject) DestroySafe(target.gameObject);
+        }
     }
 }
