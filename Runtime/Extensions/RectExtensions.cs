@@ -1354,6 +1354,32 @@ namespace Noo.Tools
             return rect;
         }
 
-        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 NormalizedToPointUnclamped(this Rect rectangle, Vector2 normalizedRectCoordinates)
+        {
+            return new Vector2(Mathf.LerpUnclamped(rectangle.x, rectangle.xMax, normalizedRectCoordinates.x), Mathf.LerpUnclamped(rectangle.y, rectangle.yMax, normalizedRectCoordinates.y));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 PointToNormalizedUnclamped(this Rect rectangle, Vector2 point)
+        {
+            return new Vector2(InverseLerpUnclamped(rectangle.x, rectangle.xMax, point.x), InverseLerpUnclamped(rectangle.y, rectangle.yMax, point.y));
+        }
+
+        private static float InverseLerpUnclamped(float a, float b, float value)
+        {
+            return (a != b) ? (value - a) / (b - a) : 0f;
+        }
+
+        public static Vector2 ClampPoint(this Rect rectangle, Vector2 point)
+        {
+            if (point.x < rectangle.xMin) point.x = rectangle.xMin;
+            else if (point.x > rectangle.xMax) point.x = rectangle.xMax;
+
+            if (point.y < rectangle.yMin) point.y = rectangle.yMin;
+            else if (point.y > rectangle.yMax) point.y = rectangle.yMax;
+
+            return point;
+        }
     }
 }
