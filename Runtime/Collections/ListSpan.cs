@@ -29,10 +29,9 @@ namespace Noo.Tools
                    count == other.count;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public ListEnumeratorNonAlloc<T> GetEnumerator()
         {
-            if (list == null) yield break;
-            for (var i = 0; i < count; i++) yield return list[index + i];
+            return new ListEnumeratorNonAlloc<T>(list);
         }
 
         public override int GetHashCode()
@@ -41,6 +40,8 @@ namespace Noo.Tools
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
         public static bool operator ==(ListSpan<T> span1, ListSpan<T> span2)
         {

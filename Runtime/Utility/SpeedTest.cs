@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using UnityEngine.Profiling;
 
 namespace Noo.Tools
 {
@@ -17,6 +18,7 @@ namespace Noo.Tools
             this.name = name;
             this.startTime = startTime;
             this.log = log;
+            Profiler.BeginSample(name);
         }
 
         public static SpeedTest New(string name = "", bool log = true)
@@ -26,6 +28,7 @@ namespace Noo.Tools
 
         public void Dispose()
         {
+            Profiler.EndSample();
             if (log) UnityEngine.Debug.Log($"{name}: {sw.Elapsed.TotalMilliseconds - startTime:0.000}ms");
         }
     }
