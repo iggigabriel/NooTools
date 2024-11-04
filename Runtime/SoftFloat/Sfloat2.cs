@@ -192,6 +192,10 @@ namespace Noo.Tools
         public static Sfloat2 Min(Sfloat2 a, Sfloat2 b) { return new Sfloat2(SfMath.Min(a.RawX, b.RawX), SfMath.Min(a.RawY, b.RawY)); }
         public static Sfloat2 Max(Sfloat2 a, Sfloat2 b) { return new Sfloat2(SfMath.Max(a.RawX, b.RawX), SfMath.Max(a.RawY, b.RawY)); }
 
+        public static Sfloat2 Ceil(Sfloat2 a) { return FromRaw(SfMath.Ceil(a.x.Raw), SfMath.Ceil(a.y.Raw)); }
+        public static Sfloat2 Floor(Sfloat2 a) { return FromRaw(SfMath.Floor(a.x.Raw), SfMath.Floor(a.y.Raw)); }
+        public static Sfloat2 Round(Sfloat2 a) { return FromRaw(SfMath.Round(a.x.Raw), SfMath.Round(a.y.Raw)); }
+
         [MethodImpl(SfUtil.AggressiveInlining)]
         public readonly Sfloat2 Div2() { return new Sfloat2(RawX >> 1, RawY >> 1); }
 
