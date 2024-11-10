@@ -21,9 +21,12 @@ namespace Noo.Tools
         [MenuItem("Tools/Soft Float/Calculator")]
         static void Init()
         {
-            var window = GetWindow<SoftFloatEditorWindow>();
-            window.titleContent = new GUIContent("Soft Float Calculator");
-            window.Show();
+            GetWindow<SoftFloatEditorWindow>().Show();
+        }
+
+        private void OnEnable()
+        {
+            titleContent = new GUIContent("Soft Float Calculator");
         }
 
         static SoftFloatEditorWindow()

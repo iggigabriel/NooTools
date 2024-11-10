@@ -36,7 +36,7 @@ namespace Noo.Tools
         // Constants
         public static Sfloat NegOne { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.NegOne); } }
         public static Sfloat NegHalf { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.NegHalf); } }
-        public static Sfloat Zero { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Zero); } }
+        public static Sfloat Zero { [MethodImpl(SfUtil.AggressiveInlining)] get { return default; } }
         public static Sfloat Half { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Half); } }
         public static Sfloat One { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.One); } }
         public static Sfloat Two { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Two); } }
@@ -57,7 +57,7 @@ namespace Noo.Tools
         }
 
         // Construction
-        [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromRaw(int raw) { Sfloat v; v.Raw = raw; return v; }
+        [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromRaw(int raw) { return new Sfloat(raw); }
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromInt(int v) { return FromRaw(SfMath.FromInt(v)); }
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromFloat(float v) { return FromRaw(SfMath.FromFloat(v)); }
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromDouble(double v) { return FromRaw(SfMath.FromDouble(v)); }
