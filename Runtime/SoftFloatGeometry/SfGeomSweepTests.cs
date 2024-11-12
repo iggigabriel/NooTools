@@ -248,6 +248,29 @@ namespace Noo.Tools
         {
             var lineVector = velocity;
 
+            // Special case when velocities are 0
+            if (lineVector.RawX == 0 || lineVector.RawY == 0)
+            {
+                if (rect.Contains(point)) return true;
+                if (lineVector.IsZeroLength()) return false;
+
+                var pointDst = point + lineVector;
+
+                if (lineVector.RawX == 0)
+                {
+                    if (lineVector.RawY > 0 && point.y <= rect.min.y && pointDst.y >= rect.min.y) return true;
+                    else if (lineVector.RawY < 0 && point.y >= rect.Max.y && pointDst.y <= rect.Max.y) return true;
+                    else return false;
+                }
+
+                if (lineVector.RawY == 0)
+                {
+                    if (lineVector.RawX > 0 && point.x <= rect.min.x && pointDst.x >= rect.min.x) return true;
+                    else if (lineVector.RawX < 0 && point.x >= rect.Max.x && pointDst.x <= rect.Max.x) return true;
+                    else return false;
+                }
+            }
+
             var scale = Sfloat2.RcpFast(lineVector);
             var sign = new Sfloat2(Sfloat.FromInt(Sfloat.Sign(scale.x)), Sfloat.FromInt(Sfloat.Sign(scale.y)));
 
@@ -271,7 +294,8 @@ namespace Noo.Tools
         {
             var lineVector = velocity;
 
-            if (lineVector.IsZeroLength())
+            // Special case when velocities are 0
+            if (lineVector.RawX == 0 || lineVector.RawY == 0)
             {
                 if (rect.Contains(point))
                 {
@@ -279,14 +303,48 @@ namespace Noo.Tools
                     hit = new SfSweepTestHit(Sfloat.Zero, point, point, Sfloat2.Right);
                     return true;
                 }
-                else
+
+                if (lineVector.IsZeroLength()) // Zero velocity and outside of rect
                 {
                     hit = default;
                     return false;
                 }
+
+                var pointDst = point + lineVector;
+
+                if (lineVector.RawX == 0 && point.x >= rect.min.x && point.x <= rect.Max.x)
+                {
+                    if (lineVector.RawY > 0 && point.y <= rect.min.y && pointDst.y >= rect.min.y)
+                    {
+                        hit = new SfSweepTestHit(Sfloat.LerpInverse(point.y, pointDst.y, rect.min.y), new Sfloat2(point.x, rect.min.y), new Sfloat2(point.x, rect.min.y), Sfloat2.Down);
+                        return true;
+                    }
+                    else if (lineVector.RawY < 0 && point.y >= rect.Max.y && pointDst.y <= rect.Max.y)
+                    {
+                        hit = new SfSweepTestHit(Sfloat.One - Sfloat.LerpInverse(pointDst.y, point.y, rect.Max.y), new Sfloat2(point.x, rect.Max.y), new Sfloat2(point.x, rect.Max.y), Sfloat2.Up);
+                        return true;
+                    }
+                }
+
+                if (lineVector.RawY == 0 && point.y >= rect.min.y && point.y <= rect.Max.y)
+                {
+                    if (lineVector.RawX > 0 && point.x <= rect.min.x && pointDst.x >= rect.min.x)
+                    {
+                        hit = new SfSweepTestHit(Sfloat.LerpInverse(point.x, pointDst.x, rect.min.x), new Sfloat2(rect.min.x, point.y), new Sfloat2(rect.min.x, point.y), Sfloat2.Left);
+                        return true;
+                    }
+                    else if (lineVector.RawX < 0 && point.x >= rect.Max.x && pointDst.x <= rect.Max.x)
+                    {
+                        hit = new SfSweepTestHit(Sfloat.One - Sfloat.LerpInverse(pointDst.x, point.x, rect.Max.x), new Sfloat2(rect.Max.x, point.y), new Sfloat2(rect.Max.x, point.y), Sfloat2.Right);
+                        return true;
+                    }
+                }
+
+                hit = default;
+                return false;
             }
 
-            var scale = Sfloat2.One / lineVector;
+            var scale = Sfloat2.RcpFast(lineVector);
             var sign = new Sfloat2(Sfloat.FromInt(Sfloat.Sign(scale.x)), Sfloat.FromInt(Sfloat.Sign(scale.y)));
 
             var center = rect.Center;
