@@ -262,6 +262,23 @@ namespace Noo.Tools
             }
         }
 
+        public static bool Overlaps(SfRect rect, Sfloat2 point, out Sfloat2 delta)
+        {
+            if (!rect.Contains(point))
+            {
+                delta = default;
+                return false;
+            }
+            else
+            {
+                var d1 = Sfloat2.Abs(point - rect.Max);
+                var d2 = Sfloat2.Abs(point - rect.min);
+
+                delta = new Sfloat2(d1.x < d2.x ? d1.x : -d2.x, d1.y < d2.y ? d1.y : -d2.y);
+                return true;
+            }
+        }
+
         public static Sfloat2 NearestPointOnLine(Sfloat2 origin, SfLine line, out Sfloat t)
         {
             var lineVector = line.Vector;

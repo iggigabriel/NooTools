@@ -297,10 +297,13 @@ namespace Noo.Tools
             // Special case when velocities are 0
             if (lineVector.RawX == 0 || lineVector.RawY == 0)
             {
-                if (rect.Contains(point))
+                if (Overlaps(rect, point, out var delta))
                 {
-                    // Todo better normal towards the edge of rect
-                    hit = new SfSweepTestHit(Sfloat.Zero, point, point, Sfloat2.Right);
+                    var overlapNormal = Sfloat.Abs(delta.x) < Sfloat.Abs(delta.y) ? 
+                        (delta.RawX < 0 ? Sfloat2.Left : Sfloat2.Right) :
+                        (delta.RawY < 0 ? Sfloat2.Down : Sfloat2.Up);
+
+                    hit = new SfSweepTestHit(Sfloat.Zero, point, point, overlapNormal);
                     return true;
                 }
 
