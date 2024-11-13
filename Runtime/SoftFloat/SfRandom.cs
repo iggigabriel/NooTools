@@ -54,6 +54,11 @@ namespace Noo.Tools
             return Range01() * max;
         }
 
+        public Sfloat2 OnUnitCircle()
+        {
+            return SfGeom.AngleToVector(Range(SfGeom.Deg360));
+        }
+
         /// <summary>Sfloat value in [-<paramref name="range"/> to <paramref name="range"/>]</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         public Sfloat Spread(Sfloat range) => Range(-range, range);
@@ -88,6 +93,12 @@ namespace Noo.Tools
         public bool NextBool(Sfloat chance)
         {
             return Range01().Raw < chance.Raw;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Sfloat NextSign()
+        {
+            return Range01().Raw < SfMath.Half ? Sfloat.One : Sfloat.NegOne;
         }
 
         public override readonly string ToString()

@@ -26,7 +26,7 @@ namespace Noo.Tools
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TEnum Set<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
+        public static TEnum SetFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
         {
             var value = UnsafeUtility.EnumToInt(enumValue);
             var flagValue = UnsafeUtility.EnumToInt(flag);
@@ -35,12 +35,18 @@ namespace Noo.Tools
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TEnum Unset<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
+        public static TEnum UnsetFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
         {
             var value = UnsafeUtility.EnumToInt(enumValue);
             var flagValue = UnsafeUtility.EnumToInt(flag);
             value &= ~flagValue;
             return UnsafeUtility.As<int, TEnum>(ref value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TEnum SetFlag<TEnum>(this TEnum enumValue, TEnum flag, bool isSet) where TEnum : unmanaged, Enum
+        {
+            return isSet ? enumValue.SetFlag(flag) : enumValue.UnsetFlag(flag);
         }
     }
 }
