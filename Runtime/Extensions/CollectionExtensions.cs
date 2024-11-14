@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Noo.Tools
 {
@@ -29,6 +28,17 @@ namespace Noo.Tools
         {
             var index = list.IndexOfValue(value);
             if (index != -1) list.RemoveAt(index);
+        }
+
+        public static T[,] ResizeAndCopy<T>(this T[,] original, int columns, int rows)
+        {
+            var newArray = new T[columns, rows];
+            int minRows = Math.Min(columns, original.GetLength(0));
+            int minCols = Math.Min(rows, original.GetLength(1));
+            for (int i = 0; i < minRows; i++)
+                for (int j = 0; j < minCols; j++)
+                    newArray[i, j] = original[i, j];
+            return newArray;
         }
     }
 }
