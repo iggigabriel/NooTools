@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Noo.Tools
 {
-    public static class StringExtensions 
+    public static class StringExtensions
     {
         public static string ToFirstLower(this string str)
         {

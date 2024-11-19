@@ -62,5 +62,11 @@ namespace Noo.Tools
                 if (children[i]) children[i].transform.SetSiblingIndex(i);
             }
         }
+
+        public static string GetObjectPath(this Transform transform, Transform relativeTo = null)
+        {
+            //todo fix this
+            return transform.name;
+        }
     }
 }
