@@ -573,18 +573,38 @@ namespace Noo.Tools
                             Line($"return new ReadOnlySpan<{archType}>(array{archetype.typeName}, 0, count{archetype.typeName});");
                         }
 
+                        Line($"List<{archType}> instancePool{archetype.typeName} = new({archetype.initialDataCapacity});");
+                        Space();
+
                         if (!archetype.needsUnityGameObjectAccess)
                         {
                             using (Section($"public {archType} Create{archetype.typeName}()"))
                             {
-                                Line($"var dataEntity = new {archType}();");
+                                Line($"{archType} dataEntity;");
+                                Space();
+
+                                Line($"var poolIndex = instancePool{archetype.typeName}.Count - 1;");
+                                Space();
+
+                                using (Section($"if (poolIndex >= 0)"))
+                                {
+                                    Line($"dataEntity = instancePool{archetype.typeName}[poolIndex];");
+                                    Line($"instancePool{archetype.typeName}.RemoveAt(poolIndex);");
+                                }
+                                using (Section($"else"))
+                                {
+                                    Line($"dataEntity = new {archType}();");
+                                }
+
+                                Line($"dataEntity.entityManager = this;");
                                 Line($"Register{archetype.typeName}(dataEntity);");
                                 Line($"return dataEntity;");
                             }
 
-                            using (Section($"public void Destroy{archetype.typeName}({archType} entity)"))
+                            using (Section($"public void Destroy{archetype.typeName}AndReturnToPool({archType} entity)"))
                             {
                                 Line($"Unregister{archetype.typeName}(entity);");
+                                Line($"if (entity != null) instancePool{archetype.typeName}.Add(entity);");
                             }
                         }
 
@@ -902,9 +922,9 @@ namespace Noo.Tools
 
                         //Space();
 
-                        using (Section($"public void Destroy()"))
+                        using (Section($"public void DestroyAndReturnToPool()"))
                         {
-                            Line($"if (IsCreated) entityManager.Destroy{dataEntity.typeName}(this);");
+                            Line($"if (IsCreated) entityManager.Destroy{dataEntity.typeName}AndReturnToPool(this);");
                         }
                     }
                 }
