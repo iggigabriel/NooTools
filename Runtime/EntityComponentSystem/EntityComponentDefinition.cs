@@ -23,6 +23,8 @@ namespace Noo.Tools
             public string name;
             [TabGroup("General")]
             public string defaultValue;
+            [TabGroup("General"), Tooltip("You would be able to read first derivative of this property automatically. Type must support basic arithmetic operators.")]
+            public bool deltable;
 
             [TabGroup("Metadata")]
             [TextArea]

@@ -19,6 +19,40 @@ namespace Noo.Tools
 
         public void Generate()
         {
+            using (WriteFile($"{script.typePrefix}EntityDeltaJobs.{fileExtension}"))
+            using (FileHeader())
+            {
+                var deltableTypes = script.ActiveArchetypes
+                    .SelectMany(x => x.componentDefinitions)
+                    .Where(x => x.deltable)
+                    .Select(x => x.TypeName)
+                    .Distinct();
+
+                foreach (var deltableType in deltableTypes)
+                {
+                    Line($"[Unity.Burst.BurstCompile]");
+                    using (Section($"internal struct JobCalculate{deltableType}ComponentDelta : IJobParallelFor"))
+                    {
+                        Line($"[Unity.Collections.ReadOnly] public NativeArray<{deltableType}> previous;");
+                        Line($"[Unity.Collections.ReadOnly] public NativeArray<{deltableType}> current;");
+                        Line($"[Unity.Collections.WriteOnly] public NativeArray<{deltableType}> delta;");
+                        Line("");
+
+                        using (Section($"public JobCalculate{deltableType}ComponentDelta(NativeArray<{deltableType}> previous, NativeArray<{deltableType}> current, NativeArray<{deltableType}> delta)"))
+                        {
+                            Line($"this.previous = previous;");
+                            Line($"this.current = current;");
+                            Line($"this.delta = delta;");
+                        }
+
+                        using (Section($"public void Execute(int index)"))
+                        {
+                            Line($"delta[index] = current[index] - previous[index];");
+                        }
+                    }
+                }
+            }
+
             using (WriteFile($"{script.typePrefix}EntityComponents.{fileExtension}"))
             using (FileHeader())
             {
@@ -79,6 +113,38 @@ namespace Noo.Tools
                         using (Section($"public static bool operator !=({component.typeName} left, {component.typeName} right)"))
                         {
                             Line($"return !left.Equals(right);");
+                        }
+
+                        InlineMethod();
+                        using (Section($"public static {component.typeName} operator +({component.typeName} left, {component.typeName} right)"))
+                        {
+                            Line($"var sum = default({component.typeName});");
+
+                            foreach (var variable in component.variables)
+                            {
+                                if (variable.deltable)
+                                {
+                                    Line($"sum.{variable.name} = left.{variable.name} + right.{variable.name};");
+                                }
+                            }
+
+                            Line($"return sum;");
+                        }
+
+                        InlineMethod();
+                        using (Section($"public static {component.typeName} operator -({component.typeName} left, {component.typeName} right)"))
+                        {
+                            Line($"var delta = default({component.typeName});");
+
+                            foreach (var variable in component.variables)
+                            {
+                                if (variable.deltable)
+                                {
+                                    Line($"delta.{variable.name} = left.{variable.name} - right.{variable.name};");
+                                }
+                            }
+
+                            Line($"return delta;");
                         }
 
                         InlineMethod();
@@ -204,6 +270,13 @@ namespace Noo.Tools
                         foreach (var component in archetype.componentDefinitions)
                         {
                             Line($"internal {component.TypeName}[] component{archetype.typeName}{component.name};");
+
+                            if (!component.isStatic) Line($"internal {component.TypeName}[] component{archetype.typeName}{component.name}_prev;");
+
+                            if (!component.isStatic && component.deltable)
+                            {
+                                Line($"internal {component.TypeName}[] component{archetype.typeName}{component.name}_delta;");
+                            }
                         }
 
                         foreach (var buffer in archetype.componentBuffers)
@@ -244,6 +317,8 @@ namespace Noo.Tools
                             foreach (var component in archetype.componentDefinitions)
                             {
                                 Line($"component{archetype.typeName}{component.name} = new {component.TypeName}[{archetype.initialDataCapacity}];");
+                                if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev = new {component.TypeName}[{archetype.initialDataCapacity}];");
+                                if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_delta = new {component.TypeName}[{archetype.initialDataCapacity}];");
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
@@ -264,7 +339,7 @@ namespace Noo.Tools
                     {
                         Line($"Tick++;");
                         Line($"Time += deltaTime;");
-
+                        Line($"UpdatePreviousState();");
                         Line($"structuralChangesLocked = true;");
                         Line($"activeSystems.Clear();");
                         using (Section("for (int i = 0; i < systems.Count; i++)"))
@@ -311,6 +386,7 @@ namespace Noo.Tools
                             }
                             Line("CompleteJobs();");
                         }
+                        Line($"UpdateDeltaState();");
                         Line($"structuralChangesLocked = false;");
                     }
 
@@ -364,6 +440,71 @@ namespace Noo.Tools
                         }
                         Line($"structuralChangesLocked = false;");
                         Line("UpdateState = EntityManagerUpdateState.Idle;");
+                    }
+
+                    using (Section($"private void UpdatePreviousState()"))
+                    {
+                        using (ProfileSample("EntityManager UpdatePreviousState"))
+                        {
+                            foreach (var archetype in script.ActiveArchetypes)
+                            {
+                                foreach (var component in archetype.componentDefinitions)
+                                {
+                                    if (!component.isStatic) Line($"Array.Copy(component{archetype.typeName}{component.name}, component{archetype.typeName}{component.name}_prev, array{archetype.typeName}.Length);");
+                                }
+                            }
+                        }
+                    }
+
+                    using (Section($"private void UpdateDeltaState()"))
+                    {
+                        using (ProfileSample("EntityManager UpdateDeltaState"))
+                        {
+                            foreach (var archetype in script.ActiveArchetypes)
+                            {
+                                foreach (var component in archetype.componentDefinitions.Where(x => x.deltable))
+                                {
+                                    var dataName = $"component{archetype.typeName}{component.name}";
+
+                                    Line($"var na_{dataName} = new NativeArray<{component.TypeName}>({dataName}, Allocator.TempJob);");
+                                    Line($"var na_{dataName}_prev = new NativeArray<{component.TypeName}>({dataName}_prev, Allocator.TempJob);");
+                                    Line($"var na_{dataName}_delta = new NativeArray<{component.TypeName}>({dataName}.Length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);");
+                                    Line($"");
+                                    Line($"var job_{dataName} = new JobCalculate{component.TypeName}ComponentDelta(na_{dataName}_prev, na_{dataName}, na_{dataName}_delta);");
+                                    Line($"this.QueueJobParallelFor(ref job_{dataName}, {archetype.typeName}Count, 32);");
+                                    Line($"");
+                                }
+                            }
+
+                            Line($"CompleteJobs();");
+                            Line($"");
+
+                            foreach (var archetype in script.ActiveArchetypes)
+                            {
+                                foreach (var component in archetype.componentDefinitions.Where(x => x.deltable))
+                                {
+                                    var dataName = $"component{archetype.typeName}{component.name}";
+                                    Line($"NativeArray<{component.TypeName}>.Copy(na_{dataName}_delta, {dataName}_delta);");
+                                }
+                            }
+
+                            Line($"");
+
+                            foreach (var archetype in script.ActiveArchetypes)
+                            {
+                                foreach (var component in archetype.componentDefinitions.Where(x => x.deltable))
+                                {
+                                    var dataName = $"component{archetype.typeName}{component.name}";
+                                    Line($"this.QueueDispose(na_{dataName});");
+                                    Line($"this.QueueDispose(na_{dataName}_prev);");
+                                    Line($"this.QueueDispose(na_{dataName}_delta);");
+                                    Line($"");
+                                }
+                            }
+
+                            Line($"CompleteJobs();");
+                            Line($"");
+                        }
                     }
 
                     Line($"public T GetSystem<T>() where T : {script.typePrefix}EntitySystem => (systemsByType.TryGetValue(typeof(T), out var system)) ? system as T : default;");
@@ -458,6 +599,9 @@ namespace Noo.Tools
                                 foreach (var component in archetype.componentDefinitions)
                                 {
                                     Line($"Array.Resize(ref component{archetype.typeName}{component.name}, nextCapacity);");
+
+                                    if (!component.isStatic) Line($"Array.Resize(ref component{archetype.typeName}{component.name}_prev, nextCapacity);");
+                                    if (!component.isStatic && component.deltable) Line($"Array.Resize(ref component{archetype.typeName}{component.name}_delta, nextCapacity);");
                                 }
 
                                 foreach (var buffer in archetype.componentBuffers)
@@ -481,6 +625,8 @@ namespace Noo.Tools
                             foreach (var component in archetype.componentDefinitions)
                             {
                                 Line($"component{archetype.typeName}{component.name}[index] = entity.initial{component.name};");
+                                if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = entity.initial{component.name};");
+                                if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
@@ -509,6 +655,8 @@ namespace Noo.Tools
                             foreach (var component in archetype.componentDefinitions)
                             {
                                 Line($"component{archetype.typeName}{component.name}[index] = component{archetype.typeName}{component.name}[count{archetype.typeName}];");
+                                if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = component{archetype.typeName}{component.name}_prev[count{archetype.typeName}];");
+                                if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_delta[index] = component{archetype.typeName}{component.name}_delta[count{archetype.typeName}];");
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
@@ -538,6 +686,26 @@ namespace Noo.Tools
                                 Line($"var data = new NativeArray<{component.TypeName}>(count{archetype.typeName}, allocator, NativeArrayOptions.UninitializedMemory);");
                                 Line($"NativeArray<{component.TypeName}>.Copy(component{archetype.typeName}{component.name}, 0, data, 0, count{archetype.typeName});");
                                 Line($"return data;");
+                            }
+
+                            if (!component.isStatic)
+                            {
+                                using (Section($"public NativeArray<{component.TypeName}> Get{archetype.typeName}{component.name}ComponentsPrevious(Allocator allocator = Allocator.TempJob)"))
+                                {
+                                    Line($"var data = new NativeArray<{component.TypeName}>(count{archetype.typeName}, allocator, NativeArrayOptions.UninitializedMemory);");
+                                    Line($"NativeArray<{component.TypeName}>.Copy(component{archetype.typeName}{component.name}_prev, 0, data, 0, count{archetype.typeName});");
+                                    Line($"return data;");
+                                }
+
+                                if (component.deltable)
+                                {
+                                    using (Section($"public NativeArray<{component.TypeName}> Get{archetype.typeName}{component.name}ComponentsDeltas(Allocator allocator = Allocator.TempJob)"))
+                                    {
+                                        Line($"var data = new NativeArray<{component.TypeName}>(count{archetype.typeName}, allocator, NativeArrayOptions.UninitializedMemory);");
+                                        Line($"NativeArray<{component.TypeName}>.Copy(component{archetype.typeName}{component.name}_delta, 0, data, 0, count{archetype.typeName});");
+                                        Line($"return data;");
+                                    }
+                                }
                             }
 
                             using (Section($"public void Update{archetype.typeName}{component.name}Components(NativeArray<{component.TypeName}> data)"))
@@ -694,6 +862,8 @@ namespace Noo.Tools
                             {
                                 Summary(component.description);
                                 Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{archetype.typeName}{component.name}[entityRef];");
+                                if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{archetype.typeName}{component.name}_prev[entityRef];");
+                                if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{archetype.typeName}{component.name}_delta[entityRef];");
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
@@ -716,6 +886,18 @@ namespace Noo.Tools
                                 Line($"internal ref {component.TypeName} {component.name}EditorSafe => ref entityRef == -1 ? ref initial{component.name} : ref {component.name};");
                                 Line($"private string Inspector{component.name}DataTitle => Inspector{component.name}DataEnabled ? \"{component.name}\" : $\"{component.name} (Controlled by {{GetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>().GetType().GetNameNonAlloc()}})\";");
                                 Line($"private bool Inspector{component.name}DataEnabled => entityRef != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>(out var _);");
+
+                                if (!component.isStatic)
+                                {
+                                    Line($"[FoldoutGroup(\"Previous\"), Title(\"{component.name}\"), HideLabel, ShowInInspector, PropertyOrder(100), HideInEditorMode]");
+                                    Line($"private {component.TypeName} Inspector{component.name}PreviousDrawer => entityRef == -1 ? default : entityManager.component{archetype.typeName}{component.name}_prev[entityRef];");
+
+                                    if (component.deltable)
+                                    {
+                                        Line($"[FoldoutGroup(\"Deltas\"), Title(\"{component.name}\"), HideLabel, ShowInInspector, PropertyOrder(100), HideInEditorMode]");
+                                        Line($"private {component.TypeName} Inspector{component.name}DeltaDrawer => entityRef == -1 ? default : entityManager.component{archetype.typeName}{component.name}_delta[entityRef];");
+                                    }
+                                }
                             }
                             LineIf(archetype.componentDefinitions.Where(x => !x.hideInInspector && !x.hideLabel).Any(), $"[Title(\"Other\")]");
                             foreach (var component in archetype.componentDefinitions.Where(x => !x.hideInInspector && !x.hideLabel))

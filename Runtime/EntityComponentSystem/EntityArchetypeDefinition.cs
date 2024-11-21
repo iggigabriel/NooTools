@@ -25,6 +25,13 @@ namespace Noo.Tools
 
             public string name;
 
+            [TableColumnWidth(60, false)]
+            [DisableIf(nameof(isStatic))]
+            public bool deltable;
+
+            [TableColumnWidth(60, false), Tooltip("If its static it wont keep track of previous states")]
+            public bool isStatic;
+
             [HideInTables]
             public string description;
 
@@ -79,6 +86,8 @@ namespace Noo.Tools
         public string typeName;
         public int initialDataCapacity = 32;
         public bool needsTransformAccess = true;
+        [DisableIf(nameof(needsTransformAccess))]
+        public bool needsUnityGameObjectAccess = true;
         public bool deparentTransformOnRegister = true;
         public string classAttributes;
 
@@ -94,6 +103,11 @@ namespace Noo.Tools
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        private void OnValidate()
+        {
+            needsUnityGameObjectAccess = needsUnityGameObjectAccess || needsTransformAccess;
         }
 
         [Button(ButtonSizes.Large), GUIColor("#ff9999"), Title("Actions")]
