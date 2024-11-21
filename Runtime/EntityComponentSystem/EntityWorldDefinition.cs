@@ -28,6 +28,7 @@ namespace Noo.Tools
         {
             public string classAttributes;
             public string baseEntityClass = "MonoBehaviour";
+            public string baseDataEntityClass = "System.Object";
             public bool markUpdateAsOverride = false;
             public bool markOnEnableAsOverride = false;
             public bool markOnDisableAsOverride = false;
@@ -117,6 +118,9 @@ namespace Noo.Tools
             AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(this))
             .Where(x => x is EntityArchetypeDefinition)
             .Select(x => x as EntityArchetypeDefinition);
+
+        public IEnumerable<EntityArchetypeDefinition> ActiveEntities => ActiveArchetypes.Where(x => x.needsUnityGameObjectAccess);
+        public IEnumerable<EntityArchetypeDefinition> ActiveDataEntities => ActiveArchetypes.Where(x => !x.needsUnityGameObjectAccess);
 
         public IEnumerable<EntityComponentDefinition> ActiveComponents =>
             AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(this))

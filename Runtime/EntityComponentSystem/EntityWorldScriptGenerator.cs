@@ -100,7 +100,7 @@ namespace Noo.Tools
                         InlineMethod();
                         using (Section($"public readonly bool Equals({component.typeName} other{component.name})"))
                         {
-                            Line($"return ({string.Join($" && ", variableParameters.Select(x => $"{x} == other{component.name}.{x}"))});");
+                            Line($"return ({string.Join($" && ", variableParameters.Select(x => $"{x}.Equals(other{component.name}.{x})"))});");
                         }
 
                         InlineMethod();
@@ -189,7 +189,7 @@ namespace Noo.Tools
                     {
                         Line("[Title(\"Entities\")]");
                         Pragma("pragma warning disable IDE0051 // Remove unused private members");
-                        foreach (var archeType in script.ActiveArchetypes)
+                        foreach (var archeType in script.ActiveEntities)
                         {
                             Line($"[ShowInInspector, HideInPlayMode, DisplayAsString]");
                             Line($"private int Baked{archeType.typeName}Entities {{ get => GetComponentsInChildren<{script.typePrefix}{archeType.typeName}>(true).Length; set {{ }} }}");
@@ -566,12 +566,29 @@ namespace Noo.Tools
 
                     foreach (var archetype in script.ActiveArchetypes)
                     {
-                        using (Section($"public ReadOnlySpan<{script.typePrefix}{archetype.typeName}> Get{archetype.typeName}s()"))
+                        var archType = $"{script.typePrefix}{archetype.typeName}";
+
+                        using (Section($"public ReadOnlySpan<{archType}> Get{archetype.typeName}s()"))
                         {
-                            Line($"return new ReadOnlySpan<{script.typePrefix}{archetype.typeName}>(array{archetype.typeName}, 0, count{archetype.typeName});");
+                            Line($"return new ReadOnlySpan<{archType}>(array{archetype.typeName}, 0, count{archetype.typeName});");
                         }
 
-                        using (Section($"internal void Register{archetype.typeName}({script.typePrefix}{archetype.typeName} entity)"))
+                        if (!archetype.needsUnityGameObjectAccess)
+                        {
+                            using (Section($"public {archType} Create{archetype.typeName}()"))
+                            {
+                                Line($"var dataEntity = new {archType}();");
+                                Line($"Register{archetype.typeName}(dataEntity);");
+                                Line($"return dataEntity;");
+                            }
+
+                            using (Section($"public void Destroy{archetype.typeName}({archType} entity)"))
+                            {
+                                Line($"Unregister{archetype.typeName}(entity);");
+                            }
+                        }
+
+                        using (Section($"internal void Register{archetype.typeName}({archType} entity)"))
                         {
                             Line($"if (structuralChangesLocked) throw new Exception(\"Not allowed to add entities during systems update.\");");
 
@@ -622,11 +639,23 @@ namespace Noo.Tools
                                 Line($"transformAccessArray{archetype.typeName}.Add(entity.transform);");
                             }
 
-                            foreach (var component in archetype.componentDefinitions)
+                            if (archetype.needsUnityGameObjectAccess)
                             {
-                                Line($"component{archetype.typeName}{component.name}[index] = entity.initial{component.name};");
-                                if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = entity.initial{component.name};");
-                                if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                foreach (var component in archetype.componentDefinitions)
+                                {
+                                    Line($"component{archetype.typeName}{component.name}[index] = entity.initial{component.name};");
+                                    if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = entity.initial{component.name};");
+                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                }
+                            }
+                            else
+                            {
+                                foreach (var component in archetype.componentDefinitions)
+                                {
+                                    Line($"component{archetype.typeName}{component.name}[index] = default;");
+                                    if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                }
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
@@ -749,7 +778,7 @@ namespace Noo.Tools
                         Line($"if (entitiesScene.isLoaded) SceneManager.UnloadSceneAsync(entitiesScene);");
                         Space();
 
-                        foreach (var archetype in script.ActiveArchetypes)
+                        foreach (var archetype in script.ActiveEntities)
                         {
                             if (archetype.needsTransformAccess)
                             {
@@ -826,9 +855,62 @@ namespace Noo.Tools
                         Line($"entityManager = GetComponentInParent<{script.typePrefix}EntityManager>();");
                     }
                 }
+
+                Space();
+
+                Line($"[Serializable]");
+                using (Section($"public abstract partial class {script.typePrefix}DataEntity : {script.entitySettings.baseDataEntityClass}"))
+                {
+                    Line($"[SerializeField, PropertyOrder(-200)]");
+                    Line($"internal {script.typePrefix}EntityManager entityManager;");
+                    Line($"internal int entityRef = -1;");
+                    Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199), DisplayAsString]");
+                    Line($"public int UniqueId {{ get; internal set; }} = -1;");
+                    Space();
+                    Line($"public bool IsCreated => entityRef != -1;");
+                }
             }
 
-            foreach (var archetype in script.ActiveArchetypes)
+            foreach (var dataEntity in script.ActiveDataEntities)
+            {
+                var archType = $"{script.typePrefix}{dataEntity.typeName}";
+
+                using (WriteFile($"{archType}.{fileExtension}"))
+                using (FileHeader())
+                {
+                    LineIf(!string.IsNullOrWhiteSpace(dataEntity.classAttributes), dataEntity.classAttributes);
+                    using (Section($"public partial class {archType} : {script.typePrefix}DataEntity"))
+                    {
+                        Line($"internal {archType}() {{ }}");
+
+                        Space();
+
+                        foreach (var component in dataEntity.componentDefinitions)
+                        {
+                            Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{dataEntity.typeName}{component.name}[entityRef];");
+                            if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{dataEntity.typeName}{component.name}_prev[entityRef];");
+                            if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{dataEntity.typeName}{component.name}_delta[entityRef];");
+                        }
+
+                        Space();
+
+                        //foreach (var buffer in dataEntity.componentBuffers)
+                        //{
+                        //    Line($"public ref {buffer.TypeName} ");
+                        //    Line($"internal {buffer.TypeName}[] initial{buffer.name}Buffer = new {buffer.TypeName}[0];");
+                        //}
+
+                        //Space();
+
+                        using (Section($"public void Destroy()"))
+                        {
+                            Line($"if (IsCreated) entityManager.Destroy{dataEntity.typeName}(this);");
+                        }
+                    }
+                }
+            }
+
+            foreach (var archetype in script.ActiveEntities)
             {
                 using (WriteFile($"{script.typePrefix}{archetype.typeName}.{fileExtension}"))
                 using (FileHeader())
