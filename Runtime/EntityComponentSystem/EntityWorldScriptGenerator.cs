@@ -888,6 +888,7 @@ namespace Noo.Tools
                     Line($"public int UniqueId {{ get; internal set; }} = -1;");
                     Space();
                     Line($"public bool IsCreated => entityRef != -1;");
+                    Line($"public int DataIndex => entityRef;");
                 }
             }
 
@@ -922,7 +923,7 @@ namespace Noo.Tools
 
                         //Space();
 
-                        using (Section($"public void DestroyAndReturnToPool()"))
+                        using (Section($"public virtual void DestroyAndReturnToPool()"))
                         {
                             Line($"if (IsCreated) entityManager.Destroy{dataEntity.typeName}AndReturnToPool(this);");
                         }
