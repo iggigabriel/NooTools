@@ -24,6 +24,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 
 namespace Noo.Tools
 {
@@ -106,6 +107,8 @@ namespace Noo.Tools
         public static Sfloat3 FromInt(int x, int y, int z) { return new Sfloat3(Sfloat.FromInt(x), Sfloat.FromInt(y), Sfloat.FromInt(z)); }
         public static Sfloat3 FromFloat(float x, float y, float z) { return new Sfloat3(Sfloat.FromFloat(x), Sfloat.FromFloat(y), Sfloat.FromFloat(z)); }
         public static Sfloat3 FromDouble(double x, double y, double z) { return new Sfloat3(Sfloat.FromDouble(x), Sfloat.FromDouble(y), Sfloat.FromDouble(z)); }
+        public static Sfloat3 FromVector3(UnityEngine.Vector3 vector) { return new Sfloat3(Sfloat.FromFloat(vector.x), Sfloat.FromFloat(vector.y), Sfloat.FromFloat(vector.z)); }
+        public static Sfloat3 FromFloat3(float3 vector) { return new Sfloat3(Sfloat.FromFloat(vector.x), Sfloat.FromFloat(vector.y), Sfloat.FromFloat(vector.z)); }
 
         public static Sfloat3 operator -(Sfloat3 a) { return new Sfloat3(-a.RawX, -a.RawY, -a.RawZ); }
         public static Sfloat3 operator +(Sfloat3 a, Sfloat3 b) { return new Sfloat3(a.RawX + b.RawX, a.RawY + b.RawY, a.RawZ + b.RawZ); }

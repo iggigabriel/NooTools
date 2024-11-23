@@ -189,11 +189,23 @@ namespace Noo.Tools
                     {
                         Line("[Title(\"Entities\")]");
                         Pragma("pragma warning disable IDE0051 // Remove unused private members");
-                        foreach (var archeType in script.ActiveEntities)
+
+                        foreach (var archetype in script.ActiveEntities)
                         {
                             Line($"[ShowInInspector, HideInPlayMode, DisplayAsString]");
-                            Line($"private int Baked{archeType.typeName}Entities {{ get => GetComponentsInChildren<{script.typePrefix}{archeType.typeName}>(true).Length; set {{ }} }}");
+                            Line($"private int Baked{archetype.typeName}Entities {{ get => GetComponentsInChildren<{script.typePrefix}{archetype.typeName}>(true).Length; set {{ }} }}");
                         }
+
+                        LineIf(script.ActiveDataEntities.Any(), "[Title(\"DataEntities\")]");
+
+                        foreach (var archetype in script.ActiveDataEntities)
+                        {
+                            var archType = $"{script.typePrefix}{archetype.typeName}";
+
+                            Line($"[ShowInInspector, HideInEditorMode, ListDrawerSettings(IsReadOnly = true), LabelText(\"{archetype.typeName}\"), PropertyOrder(1)]");
+                            Line($"private {archType}[] EditorSafeList{archetype.typeName} => array{archetype.typeName};");
+                        }
+
                         Space();
 
                         Line($"[Button(DirtyOnClick = true, Icon = SdfIconType.ArrowRepeat, Name = \"Refresh\"), HideInPlayMode]");
@@ -578,7 +590,7 @@ namespace Noo.Tools
 
                         if (!archetype.needsUnityGameObjectAccess)
                         {
-                            using (Section($"public {archType} Create{archetype.typeName}()"))
+                            using (Section($"public {archType} GetNew{archetype.typeName}FromPool()"))
                             {
                                 Line($"{archType} dataEntity;");
                                 Space();
@@ -597,14 +609,14 @@ namespace Noo.Tools
                                 }
 
                                 Line($"dataEntity.entityManager = this;");
-                                Line($"Register{archetype.typeName}(dataEntity);");
                                 Line($"return dataEntity;");
                             }
 
-                            using (Section($"public void Destroy{archetype.typeName}AndReturnToPool({archType} entity)"))
+                            using (Section($"public void Release{archetype.typeName}ToPool({archType} entity)"))
                             {
-                                Line($"Unregister{archetype.typeName}(entity);");
-                                Line($"if (entity != null) instancePool{archetype.typeName}.Add(entity);");
+                                Line($"if (entity == null) return;");
+                                Line($"if (entity.IsCreated) throw new Exception(\"{archetype.typeName} is still alive. Unregister it first before releasing to pool.\");");
+                                Line($"instancePool{archetype.typeName}.Add(entity);");
                             }
                         }
 
@@ -923,9 +935,23 @@ namespace Noo.Tools
 
                         //Space();
 
+                        using (Conditional("UNITY_EDITOR"))
+                        {
+                            Pragma("pragma warning disable IDE0051 // Remove unused private members");
+                            foreach (var component in dataEntity.componentDefinitions)
+                            {
+                                Line($"[ShowInInspector, ShowIf(nameof(IsCreated)), LabelText(\"{component.name}\")]");
+                                Line($"{component.TypeName} {component.name}EditorSafe => IsCreated ? {component.name} : default;");
+                            }
+                            Pragma("pragma warning restore IDE0051 // Remove unused private members");
+                        }
+
+                        Space();
+
                         using (Section($"public virtual void DestroyAndReturnToPool()"))
                         {
-                            Line($"if (IsCreated) entityManager.Destroy{dataEntity.typeName}AndReturnToPool(this);");
+                            Line($"if (IsCreated) entityManager.Unregister{dataEntity.typeName}(this);");
+                            Line($"entityManager.Release{dataEntity.typeName}ToPool(this);");
                         }
                     }
                 }
