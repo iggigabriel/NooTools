@@ -252,7 +252,7 @@ namespace Noo.Tools
             return vector - (Dot(vector, normal) << 1) * normal;
         }
 
-        public readonly Sfloat3 To3D(Sfloat z = default) => new(RawX, RawY, z.Raw);
+        public readonly Sfloat3 ToSfloat3(Sfloat z = default) => new(RawX, RawY, z.Raw);
 
         [MethodImpl(SfUtil.AggressiveInlining)]
         public readonly bool IsZeroLength()

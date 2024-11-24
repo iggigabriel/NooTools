@@ -60,11 +60,11 @@ namespace Noo.Tools
         }
 
         /// <summary>Sfloat value in [-<paramref name="range"/> to <paramref name="range"/>]</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Sfloat Spread(Sfloat range) => Range(-range, range);
 
         /// <summary>Sfloat value in [-<paramref name="range"/> to <paramref name="range"/>] from <paramref name="origin"/></summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Sfloat Spread(Sfloat origin, Sfloat range) => Range(origin - range, origin + range);
 
         /// <summary>Sfloat value in range [min(inclusive)-max(exclusive)]</summary>
