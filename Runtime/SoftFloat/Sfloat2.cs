@@ -195,6 +195,7 @@ namespace Noo.Tools
         public static Sfloat2 Ceil(Sfloat2 a) { return FromRaw(SfMath.Ceil(a.x.Raw), SfMath.Ceil(a.y.Raw)); }
         public static Sfloat2 Floor(Sfloat2 a) { return FromRaw(SfMath.Floor(a.x.Raw), SfMath.Floor(a.y.Raw)); }
         public static Sfloat2 Round(Sfloat2 a) { return FromRaw(SfMath.Round(a.x.Raw), SfMath.Round(a.y.Raw)); }
+        public static Sfloat2 Fract(Sfloat2 a) { return FromRaw(SfMath.Fract(a.x.Raw), SfMath.Fract(a.y.Raw)); }
 
         [MethodImpl(SfUtil.AggressiveInlining)]
         public readonly Sfloat2 Div2() { return new Sfloat2(RawX >> 1, RawY >> 1); }
