@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Video;
 
 namespace Noo.Tools
 {
@@ -83,21 +82,6 @@ namespace Noo.Tools
             return new Vector3(value.x, height, value.y);
         }
 
-        public static Vector2 ToVector2XY(this Vector3 value)
-        {
-            return (Vector2)value;
-        }
-
-        public static Vector2 ToVector2XZ(this Vector3 value)
-        {
-            return new Vector2(value.x, value.z);
-        }
-
-        public static Vector3 WithX(this Vector3 value, float x) => new(x, value.y, value.z);
-        public static Vector3 WithY(this Vector3 value, float y) => new(value.x, y, value.z);
-        public static Vector3 WithZ(this Vector3 value, float z) => new(value.x, value.y, z);
-
-
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Vector2Int Rotate90(this Vector2Int vector) => new(vector.y, -vector.x);
 
@@ -129,5 +113,36 @@ namespace Noo.Tools
 
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Vector2Int AsYX(this Vector2Int vector) => new(vector.y, vector.x);
+    }
+
+    public static class Vector3Extensions
+    {
+        public static Vector2 ToVector2XY(this Vector3 value)
+        {
+            return (Vector2)value;
+        }
+
+        public static Vector2 ToVector2XZ(this Vector3 value)
+        {
+            return new Vector2(value.x, value.z);
+        }
+
+        public static Vector3 WithX(this Vector3 value, float x) => new(x, value.y, value.z);
+        public static Vector3 WithY(this Vector3 value, float y) => new(value.x, y, value.z);
+        public static Vector3 WithZ(this Vector3 value, float z) => new(value.x, value.y, z);
+
+        public static float2 ToVector2XY(this float3 value)
+        {
+            return value.xy;
+        }
+
+        public static float2 ToVector2XZ(this float3 value)
+        {
+            return new float2(value.x, value.z);
+        }
+
+        public static float3 WithX(this float3 value, float x) => new(x, value.y, value.z);
+        public static float3 WithY(this float3 value, float y) => new(value.x, y, value.z);
+        public static float3 WithZ(this float3 value, float z) => new(value.x, value.y, z);
     }
 }
