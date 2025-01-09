@@ -25,8 +25,20 @@ namespace Noo.Tools
             return (a & b) == b;
         }
 
+        /// <summary>
+        /// Works only for INT type enums
+        /// </summary>
+        /// <returns>(this & flag) != 0</returns>
+        public static bool HasAnyFlagNonAlloc<TEnum>(this TEnum value, TEnum flag) where TEnum : unmanaged, Enum
+        {
+            var a = UnsafeUtility.EnumToInt(value);
+            var b = UnsafeUtility.EnumToInt(flag);
+
+            return (a & b) != 0;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TEnum SetFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
+        public static TEnum WithFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
         {
             var value = UnsafeUtility.EnumToInt(enumValue);
             var flagValue = UnsafeUtility.EnumToInt(flag);
@@ -35,7 +47,7 @@ namespace Noo.Tools
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TEnum UnsetFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
+        public static TEnum WithoutFlag<TEnum>(this TEnum enumValue, TEnum flag) where TEnum : unmanaged, Enum
         {
             var value = UnsafeUtility.EnumToInt(enumValue);
             var flagValue = UnsafeUtility.EnumToInt(flag);
@@ -44,9 +56,9 @@ namespace Noo.Tools
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TEnum SetFlag<TEnum>(this TEnum enumValue, TEnum flag, bool isSet) where TEnum : unmanaged, Enum
+        public static TEnum WithFlag<TEnum>(this TEnum enumValue, TEnum flag, bool isSet) where TEnum : unmanaged, Enum
         {
-            return isSet ? enumValue.SetFlag(flag) : enumValue.UnsetFlag(flag);
+            return isSet ? enumValue.WithFlag(flag) : enumValue.WithoutFlag(flag);
         }
     }
 }
