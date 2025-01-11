@@ -14,7 +14,7 @@ namespace Noo.Tools
 
             var rawProperty = property.FindPropertyRelative("Raw");
 
-            var rawValue = SfMath.ToFloat(rawProperty.intValue);
+            var rawValue = ToRoundedValue(rawProperty.intValue);
 
             EditorGUI.BeginChangeCheck();
 
@@ -24,6 +24,8 @@ namespace Noo.Tools
 
             EditorGUI.EndProperty();
         }
+
+        internal static float ToRoundedValue(int rawValue) => Mathf.Round(SfMath.ToFloat(rawValue) * 10000f) / 10000f;
     }
 
     [CustomPropertyDrawer(typeof(Sdouble))]
@@ -35,7 +37,7 @@ namespace Noo.Tools
 
             var rawProperty = property.FindPropertyRelative("Raw");
 
-            var rawValue = SdMath.ToDouble(rawProperty.longValue);
+            var rawValue = ToRoundedValue(rawProperty.longValue);
 
             EditorGUI.BeginChangeCheck();
 
@@ -45,6 +47,8 @@ namespace Noo.Tools
 
             EditorGUI.EndProperty();
         }
+
+        internal static double ToRoundedValue(long rawValue) => System.Math.Round(SdMath.ToDouble(rawValue) * 100000.0) / 100000.0;
     }
 
     internal abstract class VecPropertyDrawer : PropertyDrawer
@@ -96,8 +100,8 @@ namespace Noo.Tools
     internal class Sf2PropertyDrawer : SfVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
+            new("X"),
+            new("Y"),
         };
 
         static readonly float[] values = new float[2];
@@ -110,9 +114,9 @@ namespace Noo.Tools
     internal class Sf3PropertyDrawer : SfVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
-            new GUIContent("Z"),
+            new("X"),
+            new("Y"),
+            new("Z"),
         };
 
         static readonly float[] values = new float[3];
@@ -125,10 +129,10 @@ namespace Noo.Tools
     internal class Sf4PropertyDrawer : SfVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
-            new GUIContent("Z"),
-            new GUIContent("W"),
+            new("X"),
+            new("Y"),
+            new("Z"),
+            new("W"),
         };
 
         static readonly float[] values = new float[4];
@@ -142,8 +146,8 @@ namespace Noo.Tools
     internal class Sd2PropertyDrawer : SdVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
+            new("X"),
+            new("Y"),
         };
 
         static readonly float[] values = new float[2];
@@ -156,9 +160,9 @@ namespace Noo.Tools
     internal class Sd3PropertyDrawer : SdVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
-            new GUIContent("Z"),
+            new("X"),
+            new("Y"),
+            new("Z"),
         };
 
         static readonly float[] values = new float[3];
@@ -171,10 +175,10 @@ namespace Noo.Tools
     internal class Sd4PropertyDrawer : SdVecPropertyDrawer
     {
         static readonly GUIContent[] labels = new GUIContent[] {
-            new GUIContent("X"),
-            new GUIContent("Y"),
-            new GUIContent("Z"),
-            new GUIContent("W"),
+            new("X"),
+            new("Y"),
+            new("Z"),
+            new("W"),
         };
 
         static readonly float[] values = new float[4];

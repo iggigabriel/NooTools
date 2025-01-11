@@ -529,7 +529,7 @@ namespace Noo.Tools
                     Line($"[Conditional(\"UNITY_EDITOR\")]");
                     using (Section("public void AssertState(EntityManagerUpdateState state)"))
                     {
-                        Line($"if (UpdateState != state) throw new Exception(\"Expecting Entity Manager to be in {{state}} state, but its not.\");");
+                        Line($"if (UpdateState != state) throw new Exception($\"Expecting Entity Manager to be in {{state}} state, but its not.\");");
                     }
 
                     using (Section("public void CompleteJobs()"))
@@ -696,6 +696,9 @@ namespace Noo.Tools
                             }
 
                             Space();
+
+                            Line($"if (entity is I{archetype.typeName}CreatedHandler createdHandler) createdHandler.On{archetype.typeName}Created();");
+                            Space();
                             Line($"On{archetype.typeName}Added?.Invoke(entity);");
                         }
 
@@ -705,6 +708,8 @@ namespace Noo.Tools
                             Line($"if (entity.entityRef == -1) return;");
                             Space();
                             Line($"On{archetype.typeName}BeforeRemove?.Invoke(entity);");
+                            Space();
+                            Line($"if (entity is I{archetype.typeName}DestroyedHandler destroyedHandler) destroyedHandler.On{archetype.typeName}Destroyed();");
                             Space();
                             Line($"count{archetype.typeName}--;");
                             Space();
@@ -954,6 +959,16 @@ namespace Noo.Tools
                             Line($"entityManager.Release{dataEntity.typeName}ToPool(this);");
                         }
                     }
+
+                    using (Section($"public interface I{archType}CreatedHandler"))
+                    {
+                        Line($"void On{archType}Created();");
+                    }
+
+                    using (Section($"public interface I{archType}DestroyedHandler"))
+                    {
+                        Line($"void On{archType}Destroyed();");
+                    }
                 }
             }
 
@@ -1162,6 +1177,16 @@ namespace Noo.Tools
                         {
                             Line($"ReadOnlySpan<{buffer.TypeName}> Get{archetype.typeName}{buffer.name}();");
                         }
+                    }
+
+                    using (Section($"public interface I{archetype.typeName}CreatedHandler"))
+                    {
+                        Line($"void On{archetype.typeName}Created();");
+                    }
+
+                    using (Section($"public interface I{archetype.typeName}DestroyedHandler"))
+                    {
+                        Line($"void On{archetype.typeName}Destroyed();");
                     }
                 }
             }

@@ -56,6 +56,8 @@ namespace Noo.Tools
             Raw = raw;
         }
 
+        [MethodImpl(SfUtil.AggressiveInlining)] public readonly bool IsZero() => Raw == 0;
+
         // Construction
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromRaw(int raw) { return new Sfloat(raw); }
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromInt(int v) { return FromRaw(SfMath.FromInt(v)); }

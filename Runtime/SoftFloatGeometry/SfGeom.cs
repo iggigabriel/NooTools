@@ -79,7 +79,7 @@ namespace Noo.Tools
         }
 
         // https://gist.github.com/shaunlebron/8832585
-        /// <summary>Angle in degrees</summary>
+        /// <summary>Angle in degrees (returns -180 to +180 degrees)</summary>
         public static Sfloat DeltaAngle(Sfloat a, Sfloat b)
         {
             var diff = NormalizeAngle(b - a);
