@@ -585,11 +585,13 @@ namespace Noo.Tools
                             Line($"return new ReadOnlySpan<{archType}>(array{archetype.typeName}, 0, count{archetype.typeName});");
                         }
 
-                        Line($"List<{archType}> instancePool{archetype.typeName} = new({archetype.initialDataCapacity});");
                         Space();
 
                         if (!archetype.needsUnityGameObjectAccess)
                         {
+                            Line($"private readonly List<{archType}> instancePool{archetype.typeName} = new({archetype.initialDataCapacity});");
+                            Space();
+
                             using (Section($"public {archType} GetNew{archetype.typeName}FromPool()"))
                             {
                                 Line($"{archType} dataEntity;");

@@ -86,13 +86,13 @@ namespace Noo.Tools
 
     internal abstract class SfVecPropertyDrawer : VecPropertyDrawer
     {
-        protected override float FromRaw(SerializedProperty property) => SfMath.ToFloat(property.intValue);
+        protected override float FromRaw(SerializedProperty property) => SfPropertyDrawer.ToRoundedValue(property.intValue);
         protected override void ToRaw(SerializedProperty property, float value) => property.intValue = SfMath.FromFloat(value);
     }
 
     internal abstract class SdVecPropertyDrawer : VecPropertyDrawer
     {
-        protected override float FromRaw(SerializedProperty property) => SdMath.ToFloat(property.longValue);
+        protected override float FromRaw(SerializedProperty property) => (float)SdPropertyDrawer.ToRoundedValue(property.longValue);
         protected override void ToRaw(SerializedProperty property, float value) => property.longValue = SdMath.FromFloat(value);
     }
 

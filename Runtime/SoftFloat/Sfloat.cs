@@ -40,6 +40,7 @@ namespace Noo.Tools
         public static Sfloat Half { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Half); } }
         public static Sfloat One { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.One); } }
         public static Sfloat Two { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Two); } }
+        public static Sfloat TwoThirds { [MethodImpl(SfUtil.AggressiveInlining)] get { return new Sfloat(0xAAAA); } }
         public static Sfloat Pi { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Pi); } }
         public static Sfloat Pi2 { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.Pi2); } }
         public static Sfloat PiHalf { [MethodImpl(SfUtil.AggressiveInlining)] get { return FromRaw(SfMath.PiHalf); } }

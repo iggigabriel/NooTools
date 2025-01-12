@@ -134,6 +134,9 @@ namespace Noo.Tools
             return otherMax.x > min.x && other.min.x < max.x && otherMax.y > min.y && other.min.y < max.y;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly bool Overlaps(SfCircle circle) => SfGeom.Overlaps(circle, this);
+
         public override readonly string ToString()
         {
             return $"Rect(min: {min.ToString("0.000")}, size: {size.ToString("0.000")}";

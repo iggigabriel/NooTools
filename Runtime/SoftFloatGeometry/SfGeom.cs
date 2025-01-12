@@ -279,6 +279,65 @@ namespace Noo.Tools
             }
         }
 
+        public static bool Overlaps(SfCircle circle, SfRect rect)
+        {
+            var rectCenter = rect.Center;
+            var rectHalfSize = rect.size >> 1;
+
+            var diff = circle.origin - rectCenter;
+            var diffAbs = Sfloat2.Abs(diff);
+
+            if (diffAbs.x > (rectHalfSize.x + circle.radius)) return false;
+            if (diffAbs.y > (rectHalfSize.y + circle.radius)) return false;
+
+            if (diffAbs.x <= rectHalfSize.x) return true;
+            if (diffAbs.y <= rectHalfSize.y) return true;
+
+            var distanceSqr = (diffAbs.x - rectHalfSize.x) * (diffAbs.x - rectHalfSize.x) + (diffAbs.y - rectHalfSize.y) * (diffAbs.y - rectHalfSize.y);
+
+            return distanceSqr <= (circle.radius * circle.radius);
+        }
+
+        public static Sfloat2 NearestPointOnRect(Sfloat2 origin, SfRect rect)
+        {
+            var rectMin = rect.min;
+            var rectMax = rect.Max;
+
+            if (origin.x < rectMin.x)
+            {
+                if (origin.y < rectMin.y) return rectMin;
+                else if (origin.y > rectMax.y) return new Sfloat2(rectMin.x, rectMax.y);
+                else return new Sfloat2(rectMin.x, origin.y);
+            }
+            else if (origin.x > rectMax.x)
+            {
+                if (origin.y < rectMin.y) return new Sfloat2(rectMax.x, rectMin.y);
+                else if (origin.y > rectMax.y) return rectMax;
+                else return new Sfloat2(rectMax.x, origin.y);
+            }
+            else
+            {
+                if (origin.y < rectMin.y) return new Sfloat2(origin.x, rectMin.y);
+                else if (origin.y > rectMax.y) return new Sfloat2(origin.x, rectMax.y);
+                else
+                {
+                    var diff = origin - rect.Center;
+                    var diffAbs = (rect.size >> 1) - Sfloat2.Abs(diff);
+
+                    if (diffAbs.x < diffAbs.y)
+                    {
+                        if (diff.x.Raw < 0) return new Sfloat2(rectMin.x, origin.y);
+                        else return new Sfloat2(rectMax.x, origin.y);
+                    }
+                    else
+                    {
+                        if (diff.y.Raw < 0) return new Sfloat2(origin.x, rectMin.y);
+                        else return new Sfloat2(origin.x, rectMax.y);
+                    }
+                }
+            }
+        }
+
         public static Sfloat2 NearestPointOnLine(Sfloat2 origin, SfLine line, out Sfloat t)
         {
             var lineVector = line.Vector;

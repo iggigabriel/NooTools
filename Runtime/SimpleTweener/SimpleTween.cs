@@ -12,7 +12,6 @@ namespace Noo.Tools.SimpleTweener
         {
             None,
             Repeat,
-            PingPong,
         }
 
         [SerializeField]
