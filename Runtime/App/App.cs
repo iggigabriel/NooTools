@@ -35,6 +35,17 @@ namespace Noo.Tools
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
             component = gameObject.AddComponent<AppComponent>();
+
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR_WIN // Temporary fix for Unity 6.0 Alt-f4 bug
+            static bool FirstQuit() 
+            {
+                Application.wantsToQuit -= FirstQuit;
+                static void Quit() { Application.Quit(); OnUpdate -= Quit; }
+                OnUpdate += Quit;
+                return false;
+            }
+            Application.wantsToQuit += FirstQuit;
+#endif
         }
 
         public class AppComponent : MonoBehaviour
@@ -66,7 +77,7 @@ namespace Noo.Tools
             }
         }
 
-        #endregion
+#endregion
 
         #region Public Events
 
