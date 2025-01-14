@@ -249,7 +249,7 @@ namespace Noo.Tools
                     Pragma("pragma warning restore IDE0051 // Remove unused private members");
                     Space();
 
-                    Line($"Scene entitiesScene;");
+                    Line($"Dictionary<Type, Scene> entitiesScenes = new();");
                     Line($"bool initialized;");
                     Line($"bool structuralChangesLocked;");
                     Line($"private JobHandle jobHandle;");
@@ -315,7 +315,16 @@ namespace Noo.Tools
 
                         Line($"initialized = true;");
 
-                        Line($"entitiesScene = SceneManager.CreateScene($\"{script.typePrefix}World [{{GetInstanceID():X}}]\");");
+                        foreach (var archetype in script.ActiveArchetypes)
+                        {
+                            if (archetype.needsUnityGameObjectAccess)
+                            {
+                                var archType = $"{script.typePrefix}{archetype.typeName}";
+                                Line($"entitiesScenes[typeof({archType})] = SceneManager.CreateScene($\"{script.name} - {archType}s [{{GetInstanceID():X}}]\");");
+                            }
+                        }
+
+                        Space();
 
                         foreach (var archetype in script.ActiveArchetypes)
                         {
@@ -572,7 +581,7 @@ namespace Noo.Tools
                         Line($"if (initSubentities) InitSubentities(entity);");
                         Line($"else entity.entityManager = this;");
 
-                        Line($"SceneManager.MoveGameObjectToScene(entity.gameObject, entitiesScene);");
+                        Line($"SceneManager.MoveGameObjectToScene(entity.gameObject, entitiesScenes[typeof(T)]);");
                         Line($"return entity;");
                     }
 
@@ -634,7 +643,7 @@ namespace Noo.Tools
                             if (archetype.deparentTransformOnRegister)
                             {
                                 Line($"entity.transform.SetParent(null, false);");
-                                Line($"SceneManager.MoveGameObjectToScene(entity.gameObject, entitiesScene);");
+                                Line($"SceneManager.MoveGameObjectToScene(entity.gameObject, entitiesScenes[typeof({archType})]);");
                                 Space();
                             }
 
@@ -814,7 +823,12 @@ namespace Noo.Tools
                     using (Section($"protected {Choose(script.managerSettings.markOnDisableAsOverride, "override ")}void OnDestroy()"))
                     {
                         LineIf(script.managerSettings.markOnDisableAsOverride, "base.OnDestroy();");
-                        Line($"if (entitiesScene.isLoaded) SceneManager.UnloadSceneAsync(entitiesScene);");
+
+                        using (Section("foreach(var scene in entitiesScenes.Values)"))
+                        {
+                            Line($"if (scene.isLoaded) SceneManager.UnloadSceneAsync(scene);");
+                        }
+
                         Space();
 
                         foreach (var archetype in script.ActiveEntities)
