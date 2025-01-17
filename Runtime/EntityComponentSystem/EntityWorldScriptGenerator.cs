@@ -182,6 +182,15 @@ namespace Noo.Tools
                         Line("Idle, BeforeTick, Tick, AfterTick, BeforeDraw, Draw, AfterDraw");
                     }
 
+                    Space();
+
+                    using (Region("Static Variables"))
+                    {
+                        Line($"public static readonly Sfloat TicksPerSecond = new(0x{SfMath.Rcp(script.tickDeltaTime.Raw):X}); // {Sfloat.Rcp(script.tickDeltaTime)}");
+                        Line($"public static readonly Sfloat TickDeltaTime = new(0x{script.tickDeltaTime.Raw:X}); // {script.tickDeltaTime.Float.RoundToNearest(0.001f)}");
+                        Line($"public static readonly float TickDeltaTimeAsFloat = {script.tickDeltaTime.Float.RoundToNearest(0.001f)}f;");
+                    }
+
                     Line($"public EntityManagerUpdateState UpdateState {{ get; private set; }}");
 
                     using (CommentBlock("Inspector"))
@@ -356,10 +365,11 @@ namespace Noo.Tools
                         Line($"systemsByType = systems.ToDictionary(x => x.GetType());");
                     }
 
-                    using (Section($"public void OnTick(Sfloat deltaTime)"))
+                    using (Section($"public void OnTick()"))
                     {
+                        Line($"var deltaTime = new Sfloat({script.tickDeltaTime.Raw});");
                         Line($"Tick++;");
-                        Line($"Time += deltaTime;");
+                        Line($"Time = Tick * deltaTime;");
                         Line($"UpdatePreviousState();");
                         Line($"structuralChangesLocked = true;");
                         Line($"activeSystems.Clear();");
@@ -688,7 +698,7 @@ namespace Noo.Tools
                                 {
                                     Line($"component{archetype.typeName}{component.name}[index] = entity.initial{component.name};");
                                     if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = entity.initial{component.name};");
-                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_delta[index] = default;");
                                 }
                             }
                             else
@@ -697,7 +707,7 @@ namespace Noo.Tools
                                 {
                                     Line($"component{archetype.typeName}{component.name}[index] = default;");
                                     if (!component.isStatic) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
-                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_prev[index] = default;");
+                                    if (!component.isStatic && component.deltable) Line($"component{archetype.typeName}{component.name}_delta[index] = default;");
                                 }
                             }
 

@@ -65,11 +65,14 @@ namespace Noo.Tools
             {
                 this.generator = generator;
                 this.region = region;
+                generator.Space(); 
                 generator.Pragma($"region {region}");
+                generator.Space();
             }
 
             public void Dispose()
             {
+                generator.Space();
                 generator.Pragma($"endregion // {region}");
                 generator.Space();
             }

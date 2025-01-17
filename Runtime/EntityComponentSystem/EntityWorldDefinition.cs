@@ -69,6 +69,9 @@ namespace Noo.Tools
         [PropertySpace]
         public string[] extraUsings;
 
+        [Title("Simulation")]
+        public Sfloat tickDeltaTime;
+
         [Title("Entity Manager"), HideLabel]
         public EntityManagerSettings managerSettings;
 
