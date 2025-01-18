@@ -16,6 +16,22 @@ namespace Noo.Tools
 
         /// <summary>Returns true if array was reallocated</summary>
         [BurstDiscard]
+        public static bool EnsureCapacity<TKey>(ref NativeList<TKey> data, int capacity, Allocator allocator = Allocator.Persistent) where TKey : unmanaged, IEquatable<TKey>
+        {
+            if (!data.IsCreated || data.Capacity < capacity)
+            {
+                data.Dispose();
+                data = new NativeList<TKey>(capacity, allocator);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Returns true if array was reallocated</summary>
+        [BurstDiscard]
         public static bool EnsureCapacity<TKey>(ref NativeParallelHashSet<TKey> data, int capacity, Allocator allocator = Allocator.Persistent) where TKey : unmanaged, IEquatable<TKey>
         {
             if (!data.IsCreated || data.Capacity < capacity)
