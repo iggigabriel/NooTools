@@ -175,7 +175,7 @@ namespace Noo.Tools
             {
                 LineIf(!string.IsNullOrWhiteSpace(script.managerSettings.classAttributes), script.managerSettings.classAttributes);
                 Line($"[HideMonoScript, AddComponentMenu(\"{script.name}/{script.typePrefix}EntityManager\"), DefaultExecutionOrder({script.managerSettings.scriptExecutionOrder})]");
-                using (Section($"public partial class {script.typePrefix}EntityManager : {script.managerSettings.baseManagerClass}"))
+                using (Section($"public sealed partial class {script.typePrefix}EntityManager : {script.managerSettings.baseManagerClass}"))
                 {
                     using (Section($"public enum EntityManagerUpdateState"))
                     {
@@ -218,7 +218,7 @@ namespace Noo.Tools
                         Space();
 
                         Line($"[Button(DirtyOnClick = true, Icon = SdfIconType.ArrowRepeat, Name = \"Refresh\"), HideInPlayMode]");
-                        using (Section($"protected {Choose(script.managerSettings.markOnValidateAsOverride, "override ")}void OnValidate()"))
+                        using (Section($"{Choose(script.managerSettings.markOnValidateAsOverride, "protected override ", "private ")}void OnValidate()"))
                         {
                             LineIf(script.managerSettings.markOnValidateAsOverride, "base.OnValidate();");
                             using (Section($"foreach (var entity in GetComponentsInChildren<{script.typePrefix}Entity>(true).Where(x => x.entityManager != this))"))
@@ -312,7 +312,7 @@ namespace Noo.Tools
                         Space();
                     }
 
-                    using (Section($"protected {Choose(script.managerSettings.markAwakeAsOverride, "override ")}void Awake()"))
+                    using (Section($"{Choose(script.managerSettings.markAwakeAsOverride, "protected override ", "private ")}void Awake()"))
                     {
                         LineIf(script.managerSettings.markAwakeAsOverride, "base.Awake();");
                         Line($"Initialize();");
@@ -830,7 +830,7 @@ namespace Noo.Tools
                         }
                     }
 
-                    using (Section($"protected {Choose(script.managerSettings.markOnDisableAsOverride, "override ")}void OnDestroy()"))
+                    using (Section($"{Choose(script.managerSettings.markOnDisableAsOverride, "protected override ", "private ")}void OnDestroy()"))
                     {
                         LineIf(script.managerSettings.markOnDisableAsOverride, "base.OnDestroy();");
 
