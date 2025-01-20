@@ -10,7 +10,7 @@ namespace Noo.Tools
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
+            label = EditorGUI.BeginProperty(position, label, property);
 
             var rawProperty = property.FindPropertyRelative("Raw");
 
@@ -33,7 +33,7 @@ namespace Noo.Tools
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
+            label = EditorGUI.BeginProperty(position, label, property);
 
             var rawProperty = property.FindPropertyRelative("Raw");
 
@@ -59,9 +59,14 @@ namespace Noo.Tools
         protected abstract float FromRaw(SerializedProperty property);
         protected abstract void ToRaw(SerializedProperty property, float value);
 
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUIUtility.wideMode ? 18f : 40f;
+        }
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginProperty(position, label, property);
+            label = EditorGUI.BeginProperty(position, label, property);
 
             for (int i = 0; i < Labels.Length; i++)
             {

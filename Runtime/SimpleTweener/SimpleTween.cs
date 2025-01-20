@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Noo.Tools.SimpleTweener
 {
@@ -17,8 +18,8 @@ namespace Noo.Tools.SimpleTweener
         [SerializeField]
         RepeatBehaviour repeat;
 
-        [SerializeReference]
-        public List<SimpleTweenAnimation> animations = new();
+        [SerializeReference, ListDrawerSettings(ShowFoldout = false)]
+        public List<SimpleTweenAnimation> sequence = new();
 
         [NonSerialized]
         GameObject target;
@@ -41,7 +42,7 @@ namespace Noo.Tools.SimpleTweener
 
             if (target)
             {
-                foreach (var animation in animations)
+                foreach (var animation in sequence)
                 {
                     animation?.Init(target);
                 }
@@ -54,7 +55,7 @@ namespace Noo.Tools.SimpleTweener
         {
             if (target)
             {
-                foreach (var animation in animations)
+                foreach (var animation in sequence)
                 {
                     animation?.Reset(target);
                 }
@@ -68,9 +69,9 @@ namespace Noo.Tools.SimpleTweener
         public void Update(float deltaTime)
         {
             if (!target) return;
-            if (currentAnimationIndex >= animations.Count) return;
+            if (currentAnimationIndex >= sequence.Count) return;
 
-            var animation = animations[currentAnimationIndex];
+            var animation = sequence[currentAnimationIndex];
 
             if (animation == null)
             {
@@ -82,9 +83,9 @@ namespace Noo.Tools.SimpleTweener
             {
                 time += deltaTime;
 
-                if (time >= animation.duration)
+                if (time >= animation.TotalDuration)
                 {
-                    time -= animation.duration;
+                    time -= animation.TotalDuration;
                     PlayNext();
                     Update(time);
                 }
@@ -97,11 +98,11 @@ namespace Noo.Tools.SimpleTweener
 
         private void PlayNext()
         {
-            if (animations.Count == 0) return;
+            if (sequence.Count == 0) return;
 
             currentAnimationIndex++;
 
-            if (currentAnimationIndex >= animations.Count)
+            if (currentAnimationIndex >= sequence.Count)
             {
                 if (repeat == RepeatBehaviour.None)
                 {
@@ -114,8 +115,8 @@ namespace Noo.Tools.SimpleTweener
                 }
             }
 
-            animations[currentAnimationIndex]?.Start(target);
-            animations[currentAnimationIndex]?.Update(target, 0f);
+            sequence[currentAnimationIndex]?.Start(target);
+            sequence[currentAnimationIndex]?.Update(target, 0f);
         }
     }
 
@@ -136,6 +137,8 @@ namespace Noo.Tools.SimpleTweener
 
         [NonSerialized]
         protected float normalizedTime;
+
+        public float TotalDuration => delay + duration;
 
         public virtual void Init(GameObject target)
         {
@@ -162,19 +165,21 @@ namespace Noo.Tools.SimpleTweener
 
             if (easing.easingType == SimpleTweenAnimationEasing.Type.SecondOrderDynamics)
             {
-                if (deltaTime > 0f) easing.sodCurve.Update(deltaTime);
+                if (deltaTime > 0f && currentTime > delay) easing.sodCurve.Update(deltaTime);
             }
 
-            if (duration == 0)
+            if (TotalDuration <= 0f)
             {
                 normalizedTime = 1f;
             }
             else
             {
+                var t = Mathf.Clamp01((currentTime - delay) / duration);
+
                 normalizedTime = easing.easingType switch
                 {
-                    SimpleTweenAnimationEasing.Type.Easing => Easing.Evaluate(easing.easingStyle, Mathf.Clamp01(currentTime / duration)),
-                    SimpleTweenAnimationEasing.Type.AnimationCurve => easing.animationCurve.Evaluate(Mathf.Clamp01(currentTime / duration)),
+                    SimpleTweenAnimationEasing.Type.Easing => Easing.Evaluate(easing.easingStyle, t),
+                    SimpleTweenAnimationEasing.Type.AnimationCurve => easing.animationCurve.Evaluate(t),
                     SimpleTweenAnimationEasing.Type.SecondOrderDynamics => easing.sodCurve.Value,
                     _ => 1f,
                 };
@@ -184,12 +189,12 @@ namespace Noo.Tools.SimpleTweener
 
     public abstract class SimpleTweenAnimation<T> : SimpleTweenAnimation
     {
-        public SimpleTweenAnimationTargetType from;
+        public SimpleTweenAnimationTargetType from = SimpleTweenAnimationTargetType.Fixed;
 
         [ShowIf("@from == SimpleTweenAnimationTargetType.Fixed"), LabelText(" ")]
         public T fixedFromValue;
 
-        public SimpleTweenAnimationTargetType to;
+        public SimpleTweenAnimationTargetType to = SimpleTweenAnimationTargetType.Fixed;
 
         [ShowIf("@to == SimpleTweenAnimationTargetType.Fixed"), LabelText(" ")]
         public T fixedToValue;
