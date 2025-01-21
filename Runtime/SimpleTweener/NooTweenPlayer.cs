@@ -1,9 +1,7 @@
-using PlasticPipe.PlasticProtocol.Messages;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
-using static Noo.Tools.NooTween.NooTween;
 
 namespace Noo.Tools.NooTween
 {
@@ -110,11 +108,11 @@ namespace Noo.Tools.NooTween
 
             if (CurrentTrackIndex >= Tween.sequence.Count)
             {
-                if (Tween.repeat == RepeatBehaviour.None)
+                if (Tween.repeat == NooTween.RepeatBehaviour.None)
                 {
                     return;
                 }
-                else if (Tween.repeat == RepeatBehaviour.Repeat)
+                else if (Tween.repeat == NooTween.RepeatBehaviour.Repeat)
                 {
                     CurrentTrackIndex = 0;
                     CurrentLoop++;

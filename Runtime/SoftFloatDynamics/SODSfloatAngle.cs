@@ -19,7 +19,7 @@ namespace Noo.Tools
             get => state.value;
             set
             {
-                state.value = value;
+                state.@value = value;
                 state.previousValue = value - state.velocity * state.timeFraction * SfloatSOD.DeltaTime;
             }
         }

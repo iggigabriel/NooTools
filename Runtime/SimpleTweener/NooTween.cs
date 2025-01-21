@@ -104,14 +104,20 @@ namespace Noo.Tools.NooTween
     [Serializable]
     public abstract class NooTweenTrack<T> : NooTweenTrack
     {
+        protected virtual bool ShowDefaultDrawers => true;
+
+        [PropertyOrder(1)]
         public NooTweenTargetType from = NooTweenTargetType.Fixed;
 
-        [ShowIf("@from == NooTweenTargetType.Fixed"), LabelText(" ")]
+        [PropertyOrder(2)]
+        [ShowIf("@from == NooTweenTargetType.Fixed && ShowDefaultDrawers"), LabelText(" ")]
         public T fixedFromValue;
 
+        [PropertyOrder(3)]
         public NooTweenTargetType to = NooTweenTargetType.Fixed;
 
-        [ShowIf("@to == NooTweenTargetType.Fixed"), LabelText(" ")]
+        [PropertyOrder(4)]
+        [ShowIf("@to == NooTweenTargetType.Fixed && ShowDefaultDrawers"), LabelText(" ")]
         public T fixedToValue;
 
         public override void Init(NooTweenPlayer player)
@@ -186,6 +192,18 @@ namespace Noo.Tools.NooTween
 
     public abstract class NooTweenTrackColor : NooTweenTrack<Color>
     {
+        protected override bool ShowDefaultDrawers => false;
+
+#pragma warning disable IDE0051 // Remove unused private members
+        [PropertyOrder(2)]
+        [ShowInInspector, ShowIf("@from == NooTweenTargetType.Fixed"), LabelText(" "), ColorUsage(true, true)]
+        Color FromValueDrawer { get => fixedFromValue; set => fixedFromValue = value; }
+
+        [PropertyOrder(4)]
+        [ShowInInspector, ShowIf("@to == NooTweenTargetType.Fixed"), LabelText(" "), ColorUsage(true, true)]
+        Color ToValueDrawer { get => fixedToValue; set => fixedToValue = value; }
+#pragma warning restore IDE0051 // Remove unused private members
+
         protected override Color Lerp(Color from, Color to, float t) => Color.LerpUnclamped(from, to, t);
     }
 
@@ -244,6 +262,8 @@ namespace Noo.Tools.NooTween
         [SerializeField]
         string propertyName;
 
+        int PropertyId => RenderingUtils.GetShaderId(propertyName);
+
         protected override float GetValue(NooTweenPlayer player)
         {
             if (player.Target.TryGetComponent<Renderer>(out var renderer))
@@ -252,11 +272,19 @@ namespace Noo.Tools.NooTween
                 {
                     var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
                     renderer.GetPropertyBlock(props);
-                    return props.HasFloat(propertyName) ? props.GetFloat(propertyName) : default;
+
+                    if (props.HasFloat(PropertyId))
+                    {
+                        return props.GetFloat(PropertyId);
+                    }
                 }
-                else if (renderer.sharedMaterial)
+
+                if (renderer.sharedMaterial)
                 {
-                    return renderer.sharedMaterial.GetFloat(propertyName);
+                    if (renderer.sharedMaterial.HasFloat(PropertyId))
+                    {
+                        return renderer.sharedMaterial.GetFloat(PropertyId);
+                    }
                 }
             }
 
@@ -268,7 +296,73 @@ namespace Noo.Tools.NooTween
             if (player.Target.TryGetComponent<Renderer>(out var renderer))
             {
                 var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
-                props.SetFloat(propertyName, value);
+
+                if (renderer.HasPropertyBlock())
+                {
+                    renderer.GetPropertyBlock(props);
+                }
+
+                props.SetFloat(PropertyId, value);
+                renderer.SetPropertyBlock(props);
+            }
+        }
+
+        public override void Clear(NooTweenPlayer player)
+        {
+            base.Clear(player);
+
+            var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+            RenderingUtils.ReleaseMaterialPropertyBlock(props);
+        }
+    }
+
+    [Serializable]
+    public class MaterialPropertyColor : NooTweenTrackColor
+    {
+        [SerializeField]
+        string propertyName;
+
+        int PropertyId => RenderingUtils.GetShaderId(propertyName);
+
+        protected override Color GetValue(NooTweenPlayer player)
+        {
+            if (player.Target.TryGetComponent<Renderer>(out var renderer))
+            {
+                if (renderer.HasPropertyBlock())
+                {
+                    var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+                    renderer.GetPropertyBlock(props);
+
+                    if (props.HasColor(PropertyId))
+                    {
+                        return props.GetColor(PropertyId);
+                    }
+                }
+
+                if (renderer.sharedMaterial)
+                {
+                    if (renderer.sharedMaterial.HasColor(PropertyId))
+                    {
+                        return renderer.sharedMaterial.GetColor(PropertyId);
+                    }
+                }
+            }
+
+            return default;
+        }
+
+        protected override void SetValue(NooTweenPlayer player, Color value)
+        {
+            if (player.Target.TryGetComponent<Renderer>(out var renderer))
+            {
+                var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+
+                if (renderer.HasPropertyBlock())
+                {
+                    renderer.GetPropertyBlock(props);
+                }
+
+                props.SetColor(PropertyId, value);
                 renderer.SetPropertyBlock(props);
             }
         }
