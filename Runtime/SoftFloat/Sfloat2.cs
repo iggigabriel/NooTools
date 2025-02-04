@@ -247,6 +247,16 @@ namespace Noo.Tools
                 SfMath.Mul(a.RawY, ta) + SfMath.Mul(b.RawY, tb));
         }
 
+        public static Sfloat2 LerpClamped(Sfloat2 a, Sfloat2 b, Sfloat t)
+        {
+            t = Sfloat.Clamp01(t);
+            int tb = t.Raw;
+            int ta = SfMath.One - tb;
+            return new Sfloat2(
+                SfMath.Mul(a.RawX, ta) + SfMath.Mul(b.RawX, tb),
+                SfMath.Mul(a.RawY, ta) + SfMath.Mul(b.RawY, tb));
+        }
+
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Reflect(Sfloat2 vector, Sfloat2 normal)
         {

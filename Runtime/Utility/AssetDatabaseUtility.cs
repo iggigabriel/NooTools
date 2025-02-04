@@ -20,7 +20,7 @@ namespace Noo.Tools
                 .Cast<T>();
         }
 
-        public static T FindAssetOfType<T>(string query, Type filterType = null) where T : UnityEngine.Object
+        public static T FindAssetOfType<T>(string query = "", Type filterType = null) where T : UnityEngine.Object
         {
             return FindAllAssetsOfType<T>(query, filterType).FirstOrDefault();
         }

@@ -57,7 +57,7 @@ namespace Noo.Tools
             Raw = raw;
         }
 
-        [MethodImpl(SfUtil.AggressiveInlining)] public readonly bool IsZero() => Raw == 0;
+        public readonly bool IsZero => Raw == 0;
 
         // Construction
         [MethodImpl(SfUtil.AggressiveInlining)] public static Sfloat FromRaw(int raw) { return new Sfloat(raw); }
@@ -211,6 +211,14 @@ namespace Noo.Tools
 
         public static Sfloat Lerp(Sfloat a, Sfloat b, Sfloat t)
         {
+            int tb = t.Raw;
+            int ta = SfMath.One - tb;
+            return FromRaw(SfMath.Mul(a.Raw, ta) + SfMath.Mul(b.Raw, tb));
+        }
+
+        public static Sfloat LerpClamped(Sfloat a, Sfloat b, Sfloat t)
+        {
+            t = Clamp01(t);
             int tb = t.Raw;
             int ta = SfMath.One - tb;
             return FromRaw(SfMath.Mul(a.Raw, ta) + SfMath.Mul(b.Raw, tb));
