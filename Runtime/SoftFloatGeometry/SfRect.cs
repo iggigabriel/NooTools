@@ -141,5 +141,21 @@ namespace Noo.Tools
         {
             return $"Rect(min: {min.ToString("0.000")}, size: {size.ToString("0.000")}";
         }
+
+        public readonly SfCapsule GetInnerCapsule()
+        {
+            var halfSize = size >> 1;
+
+            if (size.x > size.y)
+            {
+                var p1 = min + halfSize.y;
+                return new SfCapsule(p1, new Sfloat2(p1.x + size.x - size.y, p1.y), halfSize.y);
+            }
+            else
+            {
+                var p1 = min + halfSize.x;
+                return new SfCapsule(p1, new Sfloat2(p1.x, p1.y + size.y - size.x), halfSize.x);
+            }
+        }
     }
 }

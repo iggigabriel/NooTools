@@ -97,6 +97,8 @@ namespace Noo.Tools
             get => SfRect.FromPoints(p1, p2);
         }
 
+        public readonly bool IsZeroLength => p1 == p2;
+
         public override readonly bool Equals(object obj)
         {
             return obj is SfLine line && Equals(line);

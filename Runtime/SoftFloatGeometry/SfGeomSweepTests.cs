@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.CompilerServices;
+using UnityEngine.Assertions.Must;
 
 namespace Noo.Tools
 {
@@ -430,6 +432,83 @@ namespace Noo.Tools
             else
             {
                 return false;
+            }
+        }
+
+        public static bool SweepPointVsCapsule(Sfloat2 point, Sfloat2 velocity, SfCapsule capsule, out SfSweepTestHit hit)
+        {
+            if (velocity.IsZeroLength())
+            {
+                if (capsule.Contains(point))
+                {
+                    hit = new SfSweepTestHit(default, point, point, capsule.Line.Normal); //todo normal flip
+                    return true;
+                }
+                else
+                {
+                    hit = default;
+                    return false;
+                }
+            }
+
+            var pointLine = new SfLine(point, point + velocity);
+            var capsuleLine = capsule.Line;
+
+            var nearestLine = ShortestLineBetweenTwoLines(pointLine, capsuleLine);
+            var nearestLineLength = nearestLine.Length;
+
+            if (nearestLineLength > capsule.radius)
+            {
+                hit = default;
+                return false;
+            }
+            else
+            {
+                var closestLine = ShortestLineBetweenPointAndLine(point, capsuleLine);
+                var closestLineLength = closestLine.Length;
+
+                var hitT = default(Sfloat);
+
+                Sfloat2 hitPoint, hitNormal;
+
+                if (closestLineLength.IsZero)
+                {
+                    hitNormal = capsuleLine.Normal;
+                    hitPoint = capsuleLine.p1;
+                }
+                else if (closestLineLength < capsule.radius)
+                {
+                    hitNormal = -closestLine.Vector.Normalized;
+                    hitPoint = point;
+                }
+                else
+                {
+                    var capsuleRay = capsuleLine.ToRay();
+                    var capsuleLineLength = capsuleLine.Length;
+
+                    var projectedPoint = NearestPointOnRay(point, capsuleRay, out var projectedT);
+                    var projectedLine = new SfLine(point, projectedPoint);
+                    var projectedLineLength = projectedLine.Length;
+
+                    hitNormal = -closestLine.Vector.Normalized;
+
+                    if (projectedT < Sfloat.Zero || projectedT > capsuleLineLength)
+                    {
+                        hitPoint = capsuleLine.p1; // TODO FIX THIS CASE
+                        // idea is to convert pointLine to ray, and find closest point on that ray from capsule points (depends on projectedT which line to use)
+                        // then use pythagoras with radius and that new length to find the final point of intersection with circle
+                    }
+                    else
+                    {
+                        var projectedLine2 = ShortestLineBetweenPointAndRay(pointLine.p2, capsuleRay);
+                        var totalProjectedDistnace = (projectedLine.Vector - projectedLine2.Vector).Magnitude;
+                        hitT = (projectedLineLength - capsule.radius) / totalProjectedDistnace;
+                        hitPoint = pointLine.GetPoint(hitT);
+                    }
+                }
+
+                hit = new SfSweepTestHit(hitT, hitPoint, hitPoint, hitNormal);
+                return true;
             }
         }
     }
