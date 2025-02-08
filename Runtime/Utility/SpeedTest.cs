@@ -21,7 +21,7 @@ namespace Noo.Tools
             Profiler.BeginSample(name);
         }
 
-        public static SpeedTest New(string name = "", bool log = true)
+        public static SpeedTest New(string name, bool log = true)
         {
             return new(sw.Elapsed.TotalMilliseconds, name, log);
         }
