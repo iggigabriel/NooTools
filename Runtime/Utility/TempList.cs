@@ -9,13 +9,26 @@ namespace Noo.Tools
     {
         private readonly List<T> list;
 
+        public TempList(IList<T> list = null)
+        {
+            this.list = ListPool<T>.Get();
+
+            if (list != null)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    this.list.Add(list[i]);
+                }
+            }
+        }
+
         public TempList(IEnumerable<T> list = null)
         {
             this.list = ListPool<T>.Get();
 
             if (list != null)
             {
-                foreach(var item in list) this.list.Add(item);
+                foreach (var item in list) this.list.Add(item);
             }
         }
 
