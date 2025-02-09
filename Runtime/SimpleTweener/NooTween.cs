@@ -190,6 +190,11 @@ namespace Noo.Tools.NooTween
         protected override Vector3 Lerp(Vector3 from, Vector3 to, float t) => Vector3.LerpUnclamped(from, to, t);
     }
 
+    public abstract class NooTweenTrackVector4 : NooTweenTrack<Vector4>
+    {
+        protected override Vector4 Lerp(Vector4 from, Vector4 to, float t) => Vector4.LerpUnclamped(from, to, t);
+    }
+
     public abstract class NooTweenTrackColor : NooTweenTrack<Color>
     {
         protected override bool ShowDefaultDrawers => false;
@@ -363,6 +368,75 @@ namespace Noo.Tools.NooTween
                 }
 
                 props.SetColor(PropertyId, value);
+                renderer.SetPropertyBlock(props);
+            }
+        }
+
+        public override void Clear(NooTweenPlayer player)
+        {
+            base.Clear(player);
+
+            var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+            RenderingUtils.ReleaseMaterialPropertyBlock(props);
+        }
+    }
+
+    [Serializable]
+    public class MaterialPropertyColorHSV : NooTweenTrackVector4
+    {
+        [SerializeField]
+        string propertyName;
+
+        int PropertyId => RenderingUtils.GetShaderId(propertyName);
+
+        protected override Vector4 GetValue(NooTweenPlayer player)
+        {
+            if (player.Target.TryGetComponent<Renderer>(out var renderer))
+            {
+                if (renderer.HasPropertyBlock())
+                {
+                    var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+                    renderer.GetPropertyBlock(props);
+
+                    if (props.HasColor(PropertyId))
+                    {
+                        var rgb = props.GetColor(PropertyId);
+                        var hsv = default(Vector4);
+                        hsv.w = rgb.a;
+                        Color.RGBToHSV(rgb, out hsv.x, out hsv.y, out hsv.z);
+                        return hsv;
+                    }
+                }
+
+                if (renderer.sharedMaterial)
+                {
+                    if (renderer.sharedMaterial.HasColor(PropertyId))
+                    {
+                        var rgb = renderer.sharedMaterial.GetColor(PropertyId);
+                        var hsv = default(Vector4);
+                        hsv.w = rgb.a;
+                        Color.RGBToHSV(rgb, out hsv.x, out hsv.y, out hsv.z);
+                        return hsv;
+                    }
+                }
+            }
+
+            return default;
+        }
+
+        protected override void SetValue(NooTweenPlayer player, Vector4 value)
+        {
+            if (player.Target.TryGetComponent<Renderer>(out var renderer))
+            {
+                var props = player.GetCustomData(this, "mpb", RenderingUtils.GetNewMaterialPropertyBlock);
+
+                if (renderer.HasPropertyBlock())
+                {
+                    renderer.GetPropertyBlock(props);
+                }
+                var rgb = Color.HSVToRGB(value.x, value.y, value.z, true);
+                rgb.a = value.w;
+                props.SetColor(PropertyId, rgb);
                 renderer.SetPropertyBlock(props);
             }
         }
