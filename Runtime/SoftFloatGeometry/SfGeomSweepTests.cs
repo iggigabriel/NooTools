@@ -23,7 +23,8 @@ namespace Noo.Tools
             this.t = t;
             this.point = point;
             this.centroid = centroid;
-            normal = Sfloat2.NormalizeFast(centroid - point);
+            var diff = centroid - point;
+            normal = diff.IsZeroLength() ? Sfloat2.Right : Sfloat2.NormalizeFast(diff);
         }
 
         public SfSweepTestHit(Sfloat t, Sfloat2 point, Sfloat2 centroid, Sfloat2 normal)

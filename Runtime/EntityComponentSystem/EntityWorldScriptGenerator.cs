@@ -312,19 +312,19 @@ namespace Noo.Tools
                         Space();
                     }
 
-                    using (Section($"public bool TryGetEntity(EntityRef entityRef, out Entity entity)"))
+                    using (Section($"public bool TryGetEntity(EntityRef entityDataIndex, out Entity entity)"))
                     {
                         Line($"entity = null;");
                         Space();
 
-                        using(Section("return entityRef.entityType switch", true))
+                        using(Section("return entityDataIndex.entityType switch", true))
                         {
                             Line($"0 => false,");
 
                             foreach (var archetype in script.ActiveEntities)
                             {
                                 var archetypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
-                                Line($"{archetypeIndex} => TryGet{archetype.typeName}AsEntity(entityRef, out entity),");
+                                Line($"{archetypeIndex} => TryGet{archetype.typeName}AsEntity(entityDataIndex, out entity),");
                             }
 
                             Line($"_ => false,");
@@ -620,17 +620,17 @@ namespace Noo.Tools
                         var archTypeVarName = archetype.typeName.ToLower();
                         var archTypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
 
-                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityRef, out {archType} {archTypeVarName})"))
+                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityDataIndex, out {archType} {archTypeVarName})"))
                         {
                             Line($"{archTypeVarName} = null;");
                             Space();
 
-                            Line($"if (entityRef.entityType != {archTypeIndex} || entityRef.entityId < 0 || entityRef.entityId >= array{archetype.typeName}.Length) return false;");
+                            Line($"if (entityDataIndex.entityType != {archTypeIndex} || entityDataIndex.entityId < 0 || entityDataIndex.entityId >= array{archetype.typeName}.Length) return false;");
                             Space();
 
-                            Line($"var entity = array{archetype.typeName}[entityRef.entityId];");
+                            Line($"var entity = array{archetype.typeName}[entityDataIndex.entityId];");
 
-                            using (Section($"if (entity && entity.UniqueId == entityRef.uniqueId)"))
+                            using (Section($"if (entity && entity.UniqueId == entityDataIndex.uniqueId)"))
                             {
                                 Line($"{archTypeVarName} = entity;");
                                 Line($"return true;");
@@ -639,18 +639,18 @@ namespace Noo.Tools
                             Line($"return false;");
                         }
 
-                        using (Section($"private bool TryGet{archetype.typeName}AsEntity(EntityRef entityRef, out Entity entity)"))
+                        using (Section($"private bool TryGet{archetype.typeName}AsEntity(EntityRef entityDataIndex, out Entity entity)"))
                         {
                             Line($"entity = null;");
                             Space();
 
-                            Line($"if (entityRef.entityType != {archTypeIndex} || entityRef.entityId < 0 || entityRef.entityId >= array{archetype.typeName}.Length) return false;");
+                            Line($"if (entityDataIndex.entityType != {archTypeIndex} || entityDataIndex.entityId < 0 || entityDataIndex.entityId >= array{archetype.typeName}.Length) return false;");
                             Space();
 
-                            Line($"entity = array{archetype.typeName}[entityRef.entityId];");
+                            Line($"entity = array{archetype.typeName}[entityDataIndex.entityId];");
                             Space();
 
-                            Line($"return entity && entity.UniqueId == entityRef.uniqueId;");
+                            Line($"return entity && entity.UniqueId == entityDataIndex.uniqueId;");
                         }
                     }
 
@@ -704,7 +704,7 @@ namespace Noo.Tools
                         {
                             Line($"if (structuralChangesLocked) throw new Exception(\"Not allowed to add entities during systems update.\");");
 
-                            Line($"if (entity.entityRef != -1) return;");
+                            Line($"if (entity.entityDataIndex != -1) return;");
                             Space();
                             Line($"entity.UniqueId = ++entityIdCounter;");
                             Space();
@@ -740,7 +740,7 @@ namespace Noo.Tools
                                 }
                             }
 
-                            Line($"entity.entityRef = index;");
+                            Line($"entity.entityDataIndex = index;");
                             Space();
 
                             Line($"array{archetype.typeName}[index] = entity;");
@@ -785,7 +785,7 @@ namespace Noo.Tools
                         using (Section($"internal void Unregister{archetype.typeName}({script.typePrefix}{archetype.typeName} entity)"))
                         {
                             Line($"if (structuralChangesLocked) throw new Exception(\"Not allowed to remove entities during systems update.\");");
-                            Line($"if (entity.entityRef == -1) return;");
+                            Line($"if (entity.entityDataIndex == -1) return;");
                             Space();
                             Line($"On{archetype.typeName}BeforeRemove?.Invoke(entity);");
                             Space();
@@ -793,7 +793,7 @@ namespace Noo.Tools
                             Space();
                             Line($"count{archetype.typeName}--;");
                             Space();
-                            Line($"var index = entity.entityRef;");
+                            Line($"var index = entity.entityDataIndex;");
                             Line($"var lastEntity = array{archetype.typeName}[count{archetype.typeName}];");
                             Space();
                             Line($"array{archetype.typeName}[index] = lastEntity;");
@@ -820,8 +820,8 @@ namespace Noo.Tools
                                 Space();
                             }
 
-                            Line($"lastEntity.entityRef = index;");
-                            Line($"entity.entityRef = -1;");
+                            Line($"lastEntity.entityDataIndex = index;");
+                            Line($"entity.entityDataIndex = -1;");
                             Line($"entity.UniqueId = -1;");
                         }
 
@@ -963,13 +963,13 @@ namespace Noo.Tools
                 {
                     Line($"[SerializeField, PropertyOrder(-200)]");
                     Line($"internal {script.typePrefix}EntityManager entityManager;");
-                    Line($"internal int entityRef = -1;");
-                    Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199), DisplayAsString]");
+                    Line($"internal int entityDataIndex = -1;");
+                    Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199)]");
                     Line($"public EntityRef EntityRef => new EntityRef(this);");
                     Line($"public int UniqueId {{ get; internal set; }} = -1;");
                     Space();
                     Line($"internal virtual ushort EntityType => 0;");
-                    Line($"public bool IsCreated => entityRef != -1;");
+                    Line($"public bool IsCreated => entityDataIndex != -1;");
 
                     using (Conditional("UNITY_EDITOR"))
                     using (Section($"protected {Choose(script.entitySettings.markOnResetAsOverride, "override ")}void Reset()"))
@@ -987,12 +987,12 @@ namespace Noo.Tools
                 {
                     Line($"[SerializeField, PropertyOrder(-200)]");
                     Line($"internal {script.typePrefix}EntityManager entityManager;");
-                    Line($"internal int entityRef = -1;");
+                    Line($"internal int entityDataIndex = -1;");
                     Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199), DisplayAsString]");
                     Line($"public int UniqueId {{ get; internal set; }} = -1;");
                     Space();
-                    Line($"public bool IsCreated => entityRef != -1;");
-                    Line($"public int DataIndex => entityRef;");
+                    Line($"public bool IsCreated => entityDataIndex != -1;");
+                    Line($"public int DataIndex => entityDataIndex;");
                 }
             }
 
@@ -1012,9 +1012,9 @@ namespace Noo.Tools
 
                         foreach (var component in dataEntity.componentDefinitions)
                         {
-                            Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{dataEntity.typeName}{component.name}[entityRef];");
-                            if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{dataEntity.typeName}{component.name}_prev[entityRef];");
-                            if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{dataEntity.typeName}{component.name}_delta[entityRef];");
+                            Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{dataEntity.typeName}{component.name}[entityDataIndex];");
+                            if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{dataEntity.typeName}{component.name}_prev[entityDataIndex];");
+                            if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{dataEntity.typeName}{component.name}_delta[entityDataIndex];");
                         }
 
                         Space();
@@ -1095,16 +1095,16 @@ namespace Noo.Tools
                             foreach (var component in archetype.componentDefinitions)
                             {
                                 Summary(component.description);
-                                Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{archetype.typeName}{component.name}[entityRef];");
-                                if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{archetype.typeName}{component.name}_prev[entityRef];");
-                                if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{archetype.typeName}{component.name}_delta[entityRef];");
+                                Line($"public ref {component.TypeName} {component.name} => ref entityManager.component{archetype.typeName}{component.name}[entityDataIndex];");
+                                if (!component.isStatic) Line($"public ref {component.TypeName} {component.name}Previous => ref entityManager.component{archetype.typeName}{component.name}_prev[entityDataIndex];");
+                                if (!component.isStatic && component.deltable) Line($"public ref {component.TypeName} {component.name}Delta => ref entityManager.component{archetype.typeName}{component.name}_delta[entityDataIndex];");
                             }
 
                             foreach (var buffer in archetype.componentBuffers)
                             {
                                 Line($"public const int Max{buffer.name}Count = {buffer.maxCapacity};");
                                 Summary(buffer.description);
-                                Line($"public ArrayBufferSlice<{buffer.TypeName}> {buffer.name} => Get{buffer.name}Slice(entityManager.buffer{archetype.typeName}{buffer.name}, entityManager.bufferCounts{archetype.typeName}{buffer.name}, entityRef);");
+                                Line($"public ArrayBufferSlice<{buffer.TypeName}> {buffer.name} => Get{buffer.name}Slice(entityManager.buffer{archetype.typeName}{buffer.name}, entityManager.bufferCounts{archetype.typeName}{buffer.name}, entityDataIndex);");
                             }
                         }
 
@@ -1117,19 +1117,19 @@ namespace Noo.Tools
                                 LineIf(!string.IsNullOrWhiteSpace(component.inspectorDrawerAttributes), component.inspectorDrawerAttributes);
                                 Line($"[Title(\"@Inspector{component.name}DataTitle\"), HideLabel, ShowInInspector, EnableIf(\"Inspector{component.name}DataEnabled\"), Tooltip(\"{component.description}\"), PropertyOrder(-100)]");
                                 Line($"private {component.TypeName} Inspector{component.name}Drawer {{ get => {component.name}EditorSafe; set => {component.name}EditorSafe = value; }}");
-                                Line($"internal ref {component.TypeName} {component.name}EditorSafe => ref entityRef == -1 ? ref initial{component.name} : ref {component.name};");
+                                Line($"internal ref {component.TypeName} {component.name}EditorSafe => ref entityDataIndex == -1 ? ref initial{component.name} : ref {component.name};");
                                 Line($"private string Inspector{component.name}DataTitle => Inspector{component.name}DataEnabled ? \"{component.name}\" : $\"{component.name} (Controlled by {{GetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>().GetType().GetNameNonAlloc()}})\";");
-                                Line($"private bool Inspector{component.name}DataEnabled => entityRef != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>(out var _);");
+                                Line($"private bool Inspector{component.name}DataEnabled => entityDataIndex != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>(out var _);");
 
                                 if (!component.isStatic)
                                 {
                                     Line($"[FoldoutGroup(\"Previous\"), Title(\"{component.name}\"), HideLabel, ShowInInspector, PropertyOrder(100), HideInEditorMode]");
-                                    Line($"private {component.TypeName} Inspector{component.name}PreviousDrawer => entityRef == -1 ? default : entityManager.component{archetype.typeName}{component.name}_prev[entityRef];");
+                                    Line($"private {component.TypeName} Inspector{component.name}PreviousDrawer => entityDataIndex == -1 ? default : entityManager.component{archetype.typeName}{component.name}_prev[entityDataIndex];");
 
                                     if (component.deltable)
                                     {
                                         Line($"[FoldoutGroup(\"Deltas\"), Title(\"{component.name}\"), HideLabel, ShowInInspector, PropertyOrder(100), HideInEditorMode]");
-                                        Line($"private {component.TypeName} Inspector{component.name}DeltaDrawer => entityRef == -1 ? default : entityManager.component{archetype.typeName}{component.name}_delta[entityRef];");
+                                        Line($"private {component.TypeName} Inspector{component.name}DeltaDrawer => entityDataIndex == -1 ? default : entityManager.component{archetype.typeName}{component.name}_delta[entityDataIndex];");
                                     }
                                 }
                             }
@@ -1139,21 +1139,21 @@ namespace Noo.Tools
                                 LineIf(!string.IsNullOrWhiteSpace(component.inspectorDrawerAttributes), component.inspectorDrawerAttributes);
                                 Line($"[LabelText(\"{component.name}\"), ShowInInspector, EnableIf(\"Inspector{component.name}DataEnabled\"), Tooltip(\"{component.description}\"), PropertyOrder(-100)]");
                                 Line($"private {component.TypeName} Inspector{component.name}Drawer {{ get => {component.name}EditorSafe; set => {component.name}EditorSafe = value; }}");
-                                Line($"internal ref {component.TypeName} {component.name}EditorSafe => ref entityRef == -1 ? ref initial{component.name} : ref {component.name};");
+                                Line($"internal ref {component.TypeName} {component.name}EditorSafe => ref entityDataIndex == -1 ? ref initial{component.name} : ref {component.name};");
                                 Line($"private string Inspector{component.name}DataTitle => Inspector{component.name}DataEnabled ? \"{component.name}\" : $\"{component.name} (Controlled by {{GetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>().GetType().GetNameNonAlloc()}})\";");
-                                Line($"private bool Inspector{component.name}DataEnabled => entityRef != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>(out var _);");
+                                Line($"private bool Inspector{component.name}DataEnabled => entityDataIndex != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{component.name}Baker>(out var _);");
                             }
                             foreach (var buffer in archetype.componentBuffers.Where(x => !x.hideInInspector))
                             {
                                 Line($"private string Inspector{buffer.name}BufferTitle => Inspector{buffer.name}BufferEnabled ? \"{buffer.name}\" : $\"{buffer.name} (Controlled by {{GetComponent<I{script.typePrefix}{archetype.typeName}{buffer.name}Baker>().GetType().GetNameNonAlloc()}})\";");
-                                Line($"private bool Inspector{buffer.name}BufferEnabled => entityRef != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{buffer.name}Baker>(out var _);");
+                                Line($"private bool Inspector{buffer.name}BufferEnabled => entityDataIndex != -1 || !TryGetComponent<I{script.typePrefix}{archetype.typeName}{buffer.name}Baker>(out var _);");
                                 LineIf(!string.IsNullOrWhiteSpace(buffer.inspectorDrawerAttributes), buffer.inspectorDrawerAttributes);
                                 Line($"[Title(\"@Inspector{buffer.name}BufferTitle\"), ShowInInspector, LabelText(\" \"), EnableIf(\"@Inspector{buffer.name}BufferEnabled\"), Tooltip(\"{buffer.description}\"), PropertyOrder(-100)]");
                                 Line($"[RequiredListLength(MaxLength = {buffer.maxCapacity})]");
                                 using (Section($"internal {buffer.TypeName}[] Inspector{buffer.name}EditorSafe"))
                                 {
-                                    Line($"get => entityRef == -1 ? initial{buffer.name}Buffer : {buffer.name}.ToArray();");
-                                    Line($"set {{ if (entityRef == -1) initial{buffer.name}Buffer = value; else {buffer.name}.SetData(value); }}");
+                                    Line($"get => entityDataIndex == -1 ? initial{buffer.name}Buffer : {buffer.name}.ToArray();");
+                                    Line($"set {{ if (entityDataIndex == -1) initial{buffer.name}Buffer = value; else {buffer.name}.SetData(value); }}");
                                 }
                             }
                             Pragma("pragma warning restore IDE0051 // Remove unused private members");
@@ -1197,7 +1197,7 @@ namespace Noo.Tools
                         using (Conditional("UNITY_EDITOR"))
                         using (Section($"protected {Choose(script.entitySettings.markUpdateAsOverride, "override ")}void Update()"))
                         {
-                            Line($"if (entityRef != -1) return;");
+                            Line($"if (entityDataIndex != -1) return;");
 
                             LineIf(script.entitySettings.markOnEnableAsOverride, "if (Application.isPlaying) base.Update();");
 
@@ -1309,7 +1309,7 @@ namespace Noo.Tools
                         }
                         using (Section("else"))
                         {
-                            Line($"entityId = (ushort)entity.entityRef;");
+                            Line($"entityId = (ushort)entity.entityDataIndex;");
                             Line($"entityType = entity.EntityType;");
                             Line($"uniqueId = entity.UniqueId;");
                         }
