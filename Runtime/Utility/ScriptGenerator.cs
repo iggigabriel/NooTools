@@ -23,10 +23,12 @@ namespace Noo.Tools
         public readonly struct BracesLevel : IDisposable
         {
             readonly ScriptGenerator generator;
+            readonly bool trailingSemicolon;
 
-            public BracesLevel(ScriptGenerator generator)
+            public BracesLevel(ScriptGenerator generator, bool trailingSemicolon)
             {
                 this.generator = generator;
+                this.trailingSemicolon = trailingSemicolon;
                 generator.Line("{");
                 generator.indent++;
             }
@@ -34,7 +36,7 @@ namespace Noo.Tools
             public void Dispose()
             {
                 generator.indent--;
-                generator.Line("}");
+                generator.Line(trailingSemicolon ? "};" : "}");
             }
         }
 
@@ -149,12 +151,12 @@ namespace Noo.Tools
         public void Space() => sb.AppendLine("");
 
         public IndentLevel Indent() => new(this);
-        public BracesLevel Section() => new(this);
+        public BracesLevel Section(bool trailingSemicolon = false) => new(this, trailingSemicolon);
 
-        public BracesLevel Section(string title)
+        public BracesLevel Section(string title, bool trailingSemicolon = false)
         {
             Line(title);
-            return new(this);
+            return new(this, trailingSemicolon);
         }
 
         public ConditionScope Conditional(string condition)

@@ -312,6 +312,25 @@ namespace Noo.Tools
                         Space();
                     }
 
+                    using (Section($"public bool TryGetEntity(EntityRef entityRef, out Entity entity)"))
+                    {
+                        Line($"entity = null;");
+                        Space();
+
+                        using(Section("return entityRef.entityType switch", true))
+                        {
+                            Line($"0 => false,");
+
+                            foreach (var archetype in script.ActiveEntities)
+                            {
+                                var archetypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
+                                Line($"{archetypeIndex} => TryGet{archetype.typeName}AsEntity(entityRef, out entity),");
+                            }
+
+                            Line($"_ => false,");
+                        }
+                    }
+
                     using (Section($"{Choose(script.managerSettings.markAwakeAsOverride, "protected override ", "private ")}void Awake()"))
                     {
                         LineIf(script.managerSettings.markAwakeAsOverride, "base.Awake();");
@@ -593,6 +612,46 @@ namespace Noo.Tools
 
                         Line($"SceneManager.MoveGameObjectToScene(entity.gameObject, entitiesScenes[typeof(T)]);");
                         Line($"return entity;");
+                    }
+
+                    foreach(var archetype in script.ActiveEntities)
+                    {
+                        var archType = $"{script.typePrefix}{archetype.typeName}";
+                        var archTypeVarName = archetype.typeName.ToLower();
+                        var archTypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
+
+                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityRef, out {archType} {archTypeVarName})"))
+                        {
+                            Line($"{archTypeVarName} = null;");
+                            Space();
+
+                            Line($"if (entityRef.entityType != {archTypeIndex} || entityRef.entityId < 0 || entityRef.entityId >= array{archetype.typeName}.Length) return false;");
+                            Space();
+
+                            Line($"var entity = array{archetype.typeName}[entityRef.entityId];");
+
+                            using (Section($"if (entity && entity.UniqueId == entityRef.uniqueId)"))
+                            {
+                                Line($"{archTypeVarName} = entity;");
+                                Line($"return true;");
+                            }
+
+                            Line($"return false;");
+                        }
+
+                        using (Section($"private bool TryGet{archetype.typeName}AsEntity(EntityRef entityRef, out Entity entity)"))
+                        {
+                            Line($"entity = null;");
+                            Space();
+
+                            Line($"if (entityRef.entityType != {archTypeIndex} || entityRef.entityId < 0 || entityRef.entityId >= array{archetype.typeName}.Length) return false;");
+                            Space();
+
+                            Line($"entity = array{archetype.typeName}[entityRef.entityId];");
+                            Space();
+
+                            Line($"return entity && entity.UniqueId == entityRef.uniqueId;");
+                        }
                     }
 
                     foreach (var archetype in script.ActiveArchetypes)
@@ -906,8 +965,10 @@ namespace Noo.Tools
                     Line($"internal {script.typePrefix}EntityManager entityManager;");
                     Line($"internal int entityRef = -1;");
                     Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199), DisplayAsString]");
+                    Line($"public EntityRef EntityRef => new EntityRef(this);");
                     Line($"public int UniqueId {{ get; internal set; }} = -1;");
                     Space();
+                    Line($"internal virtual ushort EntityType => 0;");
                     Line($"public bool IsCreated => entityRef != -1;");
 
                     using (Conditional("UNITY_EDITOR"))
@@ -1007,6 +1068,9 @@ namespace Noo.Tools
                     Line($"[AddComponentMenu(\"{script.name}/{archetype.typeName}\"), SelectionBase]");
                     using (Section($"public partial class {script.typePrefix}{archetype.typeName} : {script.typePrefix}Entity"))
                     {
+                        Line($"internal override ushort EntityType => {script.ActiveEntities.IndexOf(archetype) + 1};");
+                        Space();
+
                         using (CommentBlock("Serialization"))
                         {
                             foreach (var component in archetype.componentDefinitions)
@@ -1214,6 +1278,51 @@ namespace Noo.Tools
                     {
                         Line($"void On{archetype.typeName}Destroyed();");
                     }
+                }
+            }
+
+            using (WriteFile($"{script.typePrefix}EntityRef.{fileExtension}"))
+            using (FileHeader())
+            {
+                Line($"[StructLayout(LayoutKind.Explicit)]");
+                using (Section($"public readonly struct EntityRef : IEquatable<EntityRef>"))
+                {
+                    Line($"public static readonly EntityRef None = default;");
+                    Space();
+
+                    Line($"[FieldOffset(0)] private readonly long id;");
+                    Line($"[FieldOffset(0)] public readonly ushort entityType;");
+                    Line($"[FieldOffset(2)] public readonly ushort entityId;");
+                    Line($"[FieldOffset(4)] public readonly int uniqueId;");
+                    Space();
+
+                    using (Section($"public EntityRef(Entity entity)"))
+                    {
+                        Line($"id = default;");
+                        Space();
+
+                        using (Section("if (entity == null)"))
+                        {
+                            Line($"entityId = default;");
+                            Line($"entityType = default;");
+                            Line($"uniqueId = default;");
+                        }
+                        using (Section("else"))
+                        {
+                            Line($"entityId = (ushort)entity.entityRef;");
+                            Line($"entityType = entity.EntityType;");
+                            Line($"uniqueId = entity.UniqueId;");
+                        }
+                    }
+
+                    Line($"public override bool Equals(object obj) => obj is EntityRef @ref && Equals(@ref);");
+                    Line($"public bool Equals(EntityRef other) => id == other.id;");
+                    Line($"public override int GetHashCode() => id.GetHashCode();");
+                    Line($"public static bool operator ==(EntityRef left, EntityRef right) => left.id == right.id;");
+                    Line($"public static bool operator !=(EntityRef left, EntityRef right) => left.id != right.id;");
+                    Space();
+
+                    Line($"public static implicit operator EntityRef(Entity entity) => new(entity);");
                 }
             }
         }
