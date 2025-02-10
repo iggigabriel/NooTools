@@ -228,13 +228,9 @@ namespace Noo.Tools
 
         public static Sfloat2 ClampLength(Sfloat2 a, Sfloat maxLength)
         {
-            if (Length(a) > maxLength) return Normalize(a) * maxLength;
-            else return a;
-        }
-
-        public static Sfloat2 ClampLengthFast(Sfloat2 a, Sfloat maxLength)
-        {
-            if (LengthFast(a) > maxLength) return NormalizeFast(a) * maxLength;
+            if (a.IsZeroLength()) return default;
+            var length = a.Magnitude;
+            if (length > maxLength) return (a / length) * maxLength;
             else return a;
         }
 
