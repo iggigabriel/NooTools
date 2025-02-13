@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Noo.Tools
@@ -30,6 +31,12 @@ namespace Noo.Tools
             }
 
             return -1;
+        }
+
+        public static bool TryWhere<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource result)
+        {
+            result = source.First(predicate);
+            return result != null;
         }
     }
 }
