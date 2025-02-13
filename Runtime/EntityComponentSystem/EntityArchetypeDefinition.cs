@@ -90,6 +90,7 @@ namespace Noo.Tools
         public bool needsUnityGameObjectAccess = true;
         public bool deparentTransformOnRegister = true;
         public string classAttributes;
+        public bool classSealed;
 
         [Title("Components"), TableList(AlwaysExpanded = true, DrawScrollView = false, ShowPaging = false), LabelText(" ")]
         public ComponentRef[] componentDefinitions;

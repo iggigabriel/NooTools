@@ -1004,7 +1004,7 @@ namespace Noo.Tools
                 using (FileHeader())
                 {
                     LineIf(!string.IsNullOrWhiteSpace(dataEntity.classAttributes), dataEntity.classAttributes);
-                    using (Section($"public partial class {archType} : {script.typePrefix}DataEntity"))
+                    using (Section($"public {Choose(dataEntity.classSealed, "sealed")} partial class {archType} : {script.typePrefix}DataEntity"))
                     {
                         Line($"internal {archType}() {{ }}");
 
@@ -1040,7 +1040,7 @@ namespace Noo.Tools
 
                         Space();
 
-                        using (Section($"public virtual void DestroyAndReturnToPool()"))
+                        using (Section($"public void DestroyAndReturnToPool()"))
                         {
                             Line($"if (IsCreated) entityManager.Unregister{dataEntity.typeName}(this);");
                             Line($"entityManager.Release{dataEntity.typeName}ToPool(this);");
