@@ -244,7 +244,9 @@ namespace Noo.Tools
                         Pragma("pragma warning restore IDE0051 // Remove unused private members");
                     }
 
-                    Line($"private int entityIdCounter = 0;");
+                    Line($"private uint entityIdCounter = 0;");
+                    Line($"private Dictionary<uint, Entity> entityMap = new(2048);");
+                    Line($"private Dictionary<uint, DataEntity> dataEntityMap = new(4096);");
                     Space();
 
                     Line($"[Title(\"Runtime\"), HideInEditorMode, ShowInInspector, DisplayAsString, LabelText(\"Tick\", Icon = SdfIconType.ClockHistory)]");
@@ -312,23 +314,9 @@ namespace Noo.Tools
                         Space();
                     }
 
-                    using (Section($"public bool TryGetEntity(EntityRef entityDataIndex, out Entity entity)"))
+                    using (Section($"public bool TryGetEntity(EntityRef entityRef, out Entity entity)"))
                     {
-                        Line($"entity = null;");
-                        Space();
-
-                        using(Section("return entityDataIndex.entityType switch", true))
-                        {
-                            Line($"0 => false,");
-
-                            foreach (var archetype in script.ActiveEntities)
-                            {
-                                var archetypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
-                                Line($"{archetypeIndex} => TryGet{archetype.typeName}AsEntity(entityDataIndex, out entity),");
-                            }
-
-                            Line($"_ => false,");
-                        }
+                        Line($"return entityMap.TryGetValue(entityRef.uniqueId, out entity);");
                     }
 
                     using (Section($"{Choose(script.managerSettings.markAwakeAsOverride, "protected override ", "private ")}void Awake()"))
@@ -620,37 +608,18 @@ namespace Noo.Tools
                         var archTypeVarName = archetype.typeName.ToLower();
                         var archTypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
 
-                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityDataIndex, out {archType} {archTypeVarName})"))
+                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityRef, out {archType} {archTypeVarName})"))
                         {
-                            Line($"{archTypeVarName} = null;");
-                            Space();
-
-                            Line($"if (entityDataIndex.entityType != {archTypeIndex} || entityDataIndex.entityId < 0 || entityDataIndex.entityId >= array{archetype.typeName}.Length) return false;");
-                            Space();
-
-                            Line($"var entity = array{archetype.typeName}[entityDataIndex.entityId];");
-
-                            using (Section($"if (entity && entity.UniqueId == entityDataIndex.uniqueId)"))
+                            using (Section($"if (entityMap.TryGetValue(entityRef.uniqueId, out var entity) && entity is {archType} {archTypeVarName}Entity)"))
                             {
-                                Line($"{archTypeVarName} = entity;");
+                                Line($"{archTypeVarName} = {archTypeVarName}Entity;");
                                 Line($"return true;");
                             }
-
-                            Line($"return false;");
-                        }
-
-                        using (Section($"private bool TryGet{archetype.typeName}AsEntity(EntityRef entityDataIndex, out Entity entity)"))
-                        {
-                            Line($"entity = null;");
-                            Space();
-
-                            Line($"if (entityDataIndex.entityType != {archTypeIndex} || entityDataIndex.entityId < 0 || entityDataIndex.entityId >= array{archetype.typeName}.Length) return false;");
-                            Space();
-
-                            Line($"entity = array{archetype.typeName}[entityDataIndex.entityId];");
-                            Space();
-
-                            Line($"return entity && entity.UniqueId == entityDataIndex.uniqueId;");
+                            using (Section($"else"))
+                            {
+                                Line($"{archTypeVarName} = null;");
+                                Line($"return false;");
+                            }
                         }
                     }
 
@@ -706,7 +675,17 @@ namespace Noo.Tools
 
                             Line($"if (entity.entityDataIndex != -1) return;");
                             Space();
-                            Line($"entity.UniqueId = ++entityIdCounter;");
+                            Line($"entity.uniqueId = ++entityIdCounter;");
+
+                            if (archetype.needsUnityGameObjectAccess)
+                            {
+                                Line($"entityMap[entity.uniqueId] = entity;");
+                            }
+                            else
+                            {
+                                Line($"dataEntityMap[entity.uniqueId] = entity;");
+                            }
+
                             Space();
 
                             if (archetype.deparentTransformOnRegister)
@@ -821,8 +800,18 @@ namespace Noo.Tools
                             }
 
                             Line($"lastEntity.entityDataIndex = index;");
+
+                            if (archetype.needsUnityGameObjectAccess)
+                            {
+                                Line($"entityMap.Remove(entity.uniqueId);");
+                            }
+                            else
+                            {
+                                Line($"dataEntityMap.Remove(entity.uniqueId);");
+                            }
+
                             Line($"entity.entityDataIndex = -1;");
-                            Line($"entity.UniqueId = -1;");
+                            Line($"entity.uniqueId = 0;");
                         }
 
                         foreach (var component in archetype.componentDefinitions)
@@ -966,7 +955,7 @@ namespace Noo.Tools
                     Line($"internal int entityDataIndex = -1;");
                     Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199)]");
                     Line($"public EntityRef EntityRef => new EntityRef(this);");
-                    Line($"public int UniqueId {{ get; internal set; }} = -1;");
+                    Line($"internal uint uniqueId;");
                     Space();
                     Line($"internal virtual ushort EntityType => 0;");
                     Line($"public bool IsCreated => entityDataIndex != -1;");
@@ -989,7 +978,7 @@ namespace Noo.Tools
                     Line($"internal {script.typePrefix}EntityManager entityManager;");
                     Line($"internal int entityDataIndex = -1;");
                     Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199), DisplayAsString]");
-                    Line($"public int UniqueId {{ get; internal set; }} = -1;");
+                    Line($"public uint uniqueId = 0;");
                     Space();
                     Line($"public bool IsCreated => entityDataIndex != -1;");
                     Line($"public int DataIndex => entityDataIndex;");
@@ -1284,42 +1273,31 @@ namespace Noo.Tools
             using (WriteFile($"{script.typePrefix}EntityRef.{fileExtension}"))
             using (FileHeader())
             {
-                Line($"[StructLayout(LayoutKind.Explicit)]");
                 using (Section($"public readonly struct EntityRef : IEquatable<EntityRef>"))
                 {
                     Line($"public static readonly EntityRef None = default;");
                     Space();
 
-                    Line($"[FieldOffset(0)] private readonly long id;");
-                    Line($"[FieldOffset(0)] public readonly ushort entityType;");
-                    Line($"[FieldOffset(2)] public readonly ushort entityId;");
-                    Line($"[FieldOffset(4)] public readonly int uniqueId;");
+                    Line($"public readonly uint uniqueId;");
                     Space();
 
                     using (Section($"public EntityRef(Entity entity)"))
                     {
-                        Line($"id = default;");
-                        Space();
-
                         using (Section("if (entity == null)"))
                         {
-                            Line($"entityId = default;");
-                            Line($"entityType = default;");
                             Line($"uniqueId = default;");
                         }
                         using (Section("else"))
                         {
-                            Line($"entityId = (ushort)entity.entityDataIndex;");
-                            Line($"entityType = entity.EntityType;");
-                            Line($"uniqueId = entity.UniqueId;");
+                            Line($"uniqueId = entity.uniqueId;");
                         }
                     }
 
                     Line($"public override bool Equals(object obj) => obj is EntityRef @ref && Equals(@ref);");
-                    Line($"public bool Equals(EntityRef other) => id == other.id;");
-                    Line($"public override int GetHashCode() => id.GetHashCode();");
-                    Line($"public static bool operator ==(EntityRef left, EntityRef right) => left.id == right.id;");
-                    Line($"public static bool operator !=(EntityRef left, EntityRef right) => left.id != right.id;");
+                    Line($"public bool Equals(EntityRef other) => uniqueId == other.uniqueId;");
+                    Line($"public override int GetHashCode() => uniqueId.GetHashCode();");
+                    Line($"public static bool operator ==(EntityRef left, EntityRef right) => left.uniqueId == right.uniqueId;");
+                    Line($"public static bool operator !=(EntityRef left, EntityRef right) => left.uniqueId != right.uniqueId;");
                     Space();
 
                     Line($"public static implicit operator EntityRef(Entity entity) => new(entity);");
