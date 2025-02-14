@@ -245,8 +245,8 @@ namespace Noo.Tools
                     }
 
                     Line($"private uint entityIdCounter = 0;");
-                    Line($"private Dictionary<uint, Entity> entityMap = new(2048);");
-                    Line($"private Dictionary<uint, DataEntity> dataEntityMap = new(4096);");
+                    Line($"private readonly Dictionary<uint, Entity> entityMap = new(2048);");
+                    Line($"private readonly Dictionary<uint, DataEntity> dataEntityMap = new(4096);");
                     Space();
 
                     Line($"[Title(\"Runtime\"), HideInEditorMode, ShowInInspector, DisplayAsString, LabelText(\"Tick\", Icon = SdfIconType.ClockHistory)]");
