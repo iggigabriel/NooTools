@@ -243,7 +243,7 @@ namespace Noo.Tools
 
         public static Sfloat RemapClamped(Sfloat value, Sfloat fromMin, Sfloat fromMax, Sfloat toMin, Sfloat toMax)
         {
-            return Lerp(toMin, toMax, LerpInverse(fromMin, fromMax, value));
+            return LerpClamped(toMin, toMax, LerpInverse(fromMin, fromMax, value));
         }
 
         public readonly bool Equals(Sfloat other)
