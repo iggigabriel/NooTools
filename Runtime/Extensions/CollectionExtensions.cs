@@ -5,6 +5,12 @@ namespace Noo.Tools
 {
     public static class CollectionExtensions
     {
+        public static void AddOnce<T>(this IList<T> list, T item)
+        {
+            if (list.Contains(item)) return;
+            list.Add(item);
+        }
+
         public static void RemoveAndPushBack<T>(this IList<T> list, int index)
         {
             if (index < 0 || index >= list.Count) throw new ArgumentOutOfRangeException(nameof(index));
