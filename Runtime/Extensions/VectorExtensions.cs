@@ -113,6 +113,11 @@ namespace Noo.Tools
 
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Vector2Int AsYX(this Vector2Int vector) => new(vector.y, vector.x);
+
+        public static Sfloat2 ToSfloat2(this Vector2Int value)
+        {
+            return Sfloat2.FromInt(value.x, value.y);
+        }
     }
 
     public static class Vector3Extensions
