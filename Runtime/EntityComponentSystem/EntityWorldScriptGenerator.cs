@@ -931,6 +931,7 @@ namespace Noo.Tools
                     Line($"public virtual void OnAfterDraw(float lerpTime) {{ }}");
                     Line($"public virtual void OnBeforeTick(Sfloat deltaTime) {{ }}");
                     Line($"public virtual void OnAfterTick(Sfloat deltaTime) {{ }}");
+                    Line($"public virtual void OnClear() {{ }}");
                     Space();
 
                     using (Conditional("UNITY_EDITOR"))
