@@ -51,7 +51,7 @@ namespace Noo.Tools
         }
 
         /// <summary>
-        /// Checks if rect fully contains the Other and returns delta that tells how much the other rect has to move to stay inside the Other
+        /// Checks if rect fully contains the Other and returns delta that tells how much the other rect has to move to stay outside the Other
         /// </summary>
         public static bool Contains(this Rect rect, Rect other, out Vector2 delta)
         {
@@ -63,17 +63,10 @@ namespace Noo.Tools
             }
             else
             {
-                var minDiff = other.min - rect.min;
-                var maxDiff = other.max - rect.max;
-                var sizeDiff = other.size - rect.size;
+                var d1 = (rect.max - other.min).Abs();
+                var d2 = (other.max - rect.min).Abs();
 
-                // Todo special case when other is bigger than source
-
-                if (minDiff.x < 0) delta.x -= minDiff.x;
-                if (maxDiff.x > 0) delta.x -= maxDiff.x;
-
-                if (minDiff.y < 0) delta.y -= minDiff.y;
-                if (maxDiff.y > 0) delta.y -= maxDiff.y;
+                delta = new Vector2(d1.x < d2.x ? -d1.x : d2.x, d1.y < d2.y ? -d1.y : d2.y);
 
                 return false;
             }
