@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine.Pool;
 
 namespace Noo.Tools
@@ -88,10 +89,40 @@ namespace Noo.Tools
         {
             return list.Remove(item);
         }
+
+        public TempList<T> Clone()
+        {
+            return new TempList<T>(list);
+        }
+
+        readonly static StringBuilder sb = new(1024);
+
+        public override string ToString()
+        {
+            sb.Clear();
+
+            sb.Append('{');
+
+            if (list.Count > 0)
+            {
+                sb.Append(list[0].ToString());
+
+                for (int i = 1; i < list.Count; i++)
+                {
+                    sb.Append(',');
+                    sb.Append(list[i].ToString());
+                }
+            }
+
+            sb.Append('}');
+
+            return sb.ToString();
+        }
     }
 
     public static class TempListUtility
     {
         public static TempList<T> ToTempList<T>(this IEnumerable<T> list) => new(list);
+        public static TempList<T> ToTempList<T>(this IList<T> list) => new(list);
     }
 }
