@@ -95,6 +95,21 @@ namespace Noo.Tools
             return new TempList<T>(list);
         }
 
+        public void Sort()
+        {
+            list?.Sort();
+        }
+
+        public void Sort<TComparer>(TComparer comparer) where TComparer : IComparer<T>
+        {
+            list?.Sort(comparer);
+        }
+
+        public void Sort<TComparer>() where TComparer : struct, IComparer<T>
+        {
+            list?.Sort(default(TComparer));
+        }
+
         readonly static StringBuilder sb = new(1024);
 
         public override string ToString()

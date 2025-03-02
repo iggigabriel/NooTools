@@ -53,13 +53,18 @@ namespace Noo.Tools
             return Mathf.RoundToInt(value / spacing) * spacing;
         }
 
-        /// <summary>
-        /// Returns true if are touching
-        /// </summary>
+        /// <summary>Returns true if are touching in any cardinal directions</summary>
         public static bool IsNextTo(this Vector2Int target, Vector2Int value)
         {
             var diff = target - value;
             return (diff.x == 0 && math.abs(diff.y) == 1) || (diff.y == 0 && math.abs(diff.x) == 1);
+        }
+
+        /// <summary>Returns true if are touching in any cardinal or ordinal directions</summary>
+        public static bool IsNextToOrdinal(this Vector2Int target, Vector2Int value)
+        {
+            var diff = (target - value).Abs();
+            return (diff.x <= 1 && diff.y <= 1);
         }
 
         public static Vector3 ToVector3XY(this Vector2 value)
