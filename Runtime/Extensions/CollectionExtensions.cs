@@ -46,5 +46,32 @@ namespace Noo.Tools
                     newArray[i, j] = original[i, j];
             return newArray;
         }
+
+        public static void FilterContent<T, TPredicate>(this List<T> list, TPredicate predicate) where TPredicate : struct, IListPredicate<T>
+        {
+            using var tempList = TempList<T>.Empty();
+            for (int i = 0; i < list.Count; i++) if (predicate.Test(list[i])) tempList.Add(list[i]);
+            list.Clear();
+            for (int i = 0; i < tempList.Count; i++) list.Add(tempList[i]);
+        }
+
+        public static void FilterContent<T, TPredicate>(this TempList<T> list, TPredicate predicate) where TPredicate : struct, IListPredicate<T>
+        {
+            using var tempList = TempList<T>.Empty();
+            for (int i = 0; i < list.Count; i++) if (predicate.Test(list[i])) tempList.Add(list[i]);
+            list.Clear();
+            for (int i = 0; i < tempList.Count; i++) list.Add(tempList[i]);
+        }
+
+        public static void AddRangeNonAlloc<T>(this IList<T> list, IList<T> values)
+        {
+            if (values == null) return;
+            for (int i = 0; i < values.Count; i++) list.Add(values[i]);
+        }
+    }
+
+    public interface IListPredicate<T>
+    {
+        public bool Test(T item);
     }
 }

@@ -23,6 +23,8 @@ namespace Noo.Tools
             }
         }
 
+        public List<T> AsList() => list;
+
         public TempList(IEnumerable<T> list = null)
         {
             this.list = ListPool<T>.Get();
@@ -100,6 +102,11 @@ namespace Noo.Tools
             list?.Sort();
         }
 
+        public void Sort(Comparison<T> comparison)
+        {
+            list?.Sort(comparison);
+        }
+
         public void Sort<TComparer>(TComparer comparer) where TComparer : IComparer<T>
         {
             list?.Sort(comparer);
@@ -139,5 +146,11 @@ namespace Noo.Tools
     {
         public static TempList<T> ToTempList<T>(this IEnumerable<T> list) => new(list);
         public static TempList<T> ToTempList<T>(this IList<T> list) => new(list);
+
+        public static void ClearAndDisposeChildren<T>(this TempList<TempList<T>> list2d)
+        {
+            for (int i = 0; i < list2d.Count; i++) list2d[i].Dispose();
+            list2d.Clear();
+        }
     }
 }
