@@ -16,6 +16,11 @@ namespace Noo.Tools
             {
                 return new Sfloat(intVal);
             }
+            else if (reader.Value is double doubleVal)
+            {
+                var dec = new decimal(doubleVal * 100d);
+                return Sfloat.Ratio100((int)dec);
+            }
             else
             {
                 return default;
@@ -24,7 +29,10 @@ namespace Noo.Tools
 
         public override void WriteJson(JsonWriter writer, Sfloat value, JsonSerializer serializer)
         {
-            writer.WriteValue(value.Raw);
+            var integer = Sfloat.RoundToInt(value);
+            var fract = Sfloat.RoundToInt((value - integer) * Sfloat.FromInt(100));
+            var dec = integer + fract / 100m;
+            writer.WriteValue(dec);
         }
     }
 }
