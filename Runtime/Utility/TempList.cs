@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 
 namespace Noo.Tools
 {
-    public readonly struct TempList<T> : IList<T>, IDisposable
+    public readonly struct TempList<T> : IList<T>, IReadOnlyList<T>, IDisposable
     {
         private readonly List<T> list;
 
