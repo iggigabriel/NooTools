@@ -1185,7 +1185,7 @@ namespace Noo.Tools
 
 
                         using (Conditional("UNITY_EDITOR"))
-                        using (Section($"protected {Choose(script.entitySettings.markUpdateAsOverride, "override ")}void Update()"))
+                        using (Section($"{Choose(archetype.classSealed, "private", "protected")} {Choose(script.entitySettings.markUpdateAsOverride, "override ")}void Update()"))
                         {
                             Line($"if (entityDataIndex != -1) return;");
 
@@ -1218,7 +1218,7 @@ namespace Noo.Tools
                             }
                         }
 
-                        using (Section($"protected {Choose(script.entitySettings.markOnEnableAsOverride, "override ")}void OnEnable()"))
+                        using (Section($"{Choose(archetype.classSealed, "private", "protected")} {Choose(script.entitySettings.markOnEnableAsOverride, "override ")}void OnEnable()"))
                         {
                             LineIf(script.entitySettings.markOnEnableAsOverride, "base.OnEnable();");
 
@@ -1230,7 +1230,7 @@ namespace Noo.Tools
                             Line($"if (entityManager) entityManager.Register{archetype.typeName}(this);");
                         }
 
-                        using (Section($"protected {Choose(script.entitySettings.markOnDisableAsOverride, "override ")}void OnDisable()"))
+                        using (Section($"{Choose(archetype.classSealed, "private", "protected")} {Choose(script.entitySettings.markOnDisableAsOverride, "override ")}void OnDisable()"))
                         {
                             LineIf(script.entitySettings.markOnDisableAsOverride, "base.OnDisable();");
 
