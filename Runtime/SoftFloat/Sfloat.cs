@@ -209,6 +209,21 @@ namespace Noo.Tools
         public static Sfloat Clamp(Sfloat a, Sfloat min, Sfloat max) { return FromRaw(SfMath.Clamp(a.Raw, min.Raw, max.Raw)); }
         public static Sfloat Clamp01(Sfloat a) { return FromRaw(SfMath.Clamp(a.Raw, SfMath.Zero, SfMath.One)); }
 
+        /// <summary>Lerp (delta-time insensitive)</summary>
+        /// <param name="lambda">From 0 to infinity</param>
+        /// <param name="dt">Delta time</param>
+        /// <returns></returns>
+        public static Sfloat Damp(Sfloat a, Sfloat b, Sfloat lambda, Sfloat dt)
+        {
+            return Lerp(a, b, One - Exp(-lambda * dt));
+        }
+
+        /// <summary>Lerp (delta-time insensitive) same as <see cref="Damp(Sfloat, Sfloat, Sfloat, Sfloat)"/><summary>
+        public static Sfloat LerpDti(Sfloat a, Sfloat b, Sfloat lambda, Sfloat dt)
+        {
+            return Lerp(a, b, One - Exp(-lambda * dt));
+        }
+
         public static Sfloat Lerp(Sfloat a, Sfloat b, Sfloat t)
         {
             int tb = t.Raw;
