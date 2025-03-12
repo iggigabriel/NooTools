@@ -10,11 +10,11 @@ namespace Noo.Tools
         {
             if (reader.Value is long longVal)
             {
-                return new Sfloat((int)longVal);
+                return Sfloat.FromInt((int)longVal);
             }
             else if (reader.Value is int intVal)
             {
-                return new Sfloat(intVal);
+                return Sfloat.FromInt(intVal);
             }
             else if (reader.Value is double doubleVal)
             {
