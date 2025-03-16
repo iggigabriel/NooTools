@@ -35,7 +35,7 @@ namespace Noo.Tools
 
         public static bool TryFind<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource result)
         {
-            result = source.First(predicate);
+            result = source.FirstOrDefault(predicate);
             return result != null;
         }
     }
