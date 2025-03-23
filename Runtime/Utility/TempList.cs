@@ -10,6 +10,19 @@ namespace Noo.Tools
     {
         private readonly List<T> list;
 
+        public TempList(ReadOnlySpan<T> list)
+        {
+            this.list = ListPool<T>.Get();
+
+            if (!list.IsEmpty)
+            {
+                for (int i = 0; i < list.Length; i++)
+                {
+                    this.list.Add(list[i]);
+                }
+            }
+        }
+
         public TempList(IList<T> list = null)
         {
             this.list = ListPool<T>.Get();
@@ -35,7 +48,7 @@ namespace Noo.Tools
             }
         }
 
-        public static TempList<T> Empty() => new(null);
+        public static TempList<T> Empty() => new(default(ReadOnlySpan<T>));
 
         public T this[int index] { get => list[index]; set => list[index] = value; }
 
@@ -146,6 +159,7 @@ namespace Noo.Tools
     {
         public static TempList<T> ToTempList<T>(this IEnumerable<T> list) => new(list);
         public static TempList<T> ToTempList<T>(this IList<T> list) => new(list);
+        public static TempList<T> ToTempList<T>(this ReadOnlySpan<T> list) => new(list);
 
         public static void ClearAndDisposeChildren<T>(this TempList<TempList<T>> list2d)
         {
