@@ -8,6 +8,7 @@ namespace Noo.Tools.NooTween
     {
         public float delay;
         public float speed = 1f;
+        public bool useUnscaledTime;
 
         [SerializeField, HideLabel, InlineProperty]
         private NooTween tween;
@@ -34,7 +35,9 @@ namespace Noo.Tools.NooTween
 
         private void LateUpdate()
         {
-            player?.Update(Time.smoothDeltaTime * speed);
+            var deltaTime = useUnscaledTime ? Time.unscaledDeltaTime : Time.smoothDeltaTime;
+
+            player?.Update(deltaTime * speed);
         }
     }
 }
