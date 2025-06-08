@@ -245,8 +245,8 @@ namespace Noo.Tools
                     }
 
                     Line($"private uint entityIdCounter = 0;");
-                    Line($"private readonly Dictionary<uint, Entity> entityMap = new(2048);");
-                    Line($"private readonly Dictionary<uint, DataEntity> dataEntityMap = new(4096);");
+                    Line($"private readonly Dictionary<uint, {script.typePrefix}Entity> entityMap = new(2048);");
+                    Line($"private readonly Dictionary<uint, {script.typePrefix}DataEntity> dataEntityMap = new(4096);");
                     Space();
 
                     Line($"[Title(\"Runtime\"), HideInEditorMode, ShowInInspector, DisplayAsString, LabelText(\"Tick\", Icon = SdfIconType.ClockHistory)]");
@@ -314,7 +314,7 @@ namespace Noo.Tools
                         Space();
                     }
 
-                    using (Section($"public bool TryGetEntity(EntityRef entityRef, out Entity entity)"))
+                    using (Section($"public bool TryGetEntity({script.typePrefix}EntityRef entityRef, out {script.typePrefix}Entity entity)"))
                     {
                         Line($"return entityMap.TryGetValue(entityRef.uniqueId, out entity);");
                     }
@@ -545,6 +545,44 @@ namespace Noo.Tools
                         }
                     }
 
+
+                    using (Section("public void QueueDispose<T>(NativeArray<T> disposable) where T : struct"))
+                    {
+                        Line($"DisposeJobHandle = JobHandle.CombineDependencies(DisposeJobHandle, disposable.Dispose(JobHandle));");
+                    }
+
+                    using (Section("public void QueueJobsParallel(NativeArray<JobHandle> jobs)"))
+                    {
+                        Line($"JobHandle = JobHandle.CombineDependencies(JobHandle, JobHandle.CombineDependencies(jobs));");
+                    }
+
+                    using (Section("public void QueueJob<T>(ref T job) where T : struct, IJob"))
+                    {
+                        Line($"JobHandle = job.ScheduleByRef(JobHandle);");
+                    }
+
+                    using (Section("public void QueueJobFor<T>(ref T job, int arrayLength) where T : struct, IJobFor"))
+                    {
+                        Line($"JobHandle = job.ScheduleByRef(arrayLength, JobHandle);");
+                    }
+
+                    using (Section("public void QueueJobFor<T>(ref T job, int arrayLength, int innerLoopBatchCount) where T : struct, IJobFor"))
+                    {
+                        Line($"JobHandle = job.ScheduleParallelByRef(arrayLength, innerLoopBatchCount, JobHandle);");
+                    }
+
+                    using (Section("public void QueueJobParallelFor<T>(ref T job, int arrayLength, int innerLoopBatchCount) where T : struct, IJobParallelFor"))
+                    {
+                        Line($"JobHandle = job.ScheduleByRef(arrayLength, innerLoopBatchCount, JobHandle);");
+                    }
+
+                    using (Section("public void QueueJobParallelForTransform<T>(ref T job, TransformAccessArray transforms) where T : struct, IJobParallelForTransform"))
+                    {
+                        Line($"JobHandle = job.ScheduleByRef(transforms, JobHandle);");
+                    }
+
+
+
                     Line($"public T GetSystem<T>() where T : {script.typePrefix}EntitySystem => (systemsByType.TryGetValue(typeof(T), out var system)) ? system as T : default;");
 
                     using (Section("public void ScheduleJobs()"))
@@ -608,7 +646,7 @@ namespace Noo.Tools
                         var archTypeVarName = archetype.typeName.ToLower();
                         var archTypeIndex = script.ActiveEntities.IndexOf(archetype) + 1;
 
-                        using (Section($"public bool TryGet{archetype.typeName}(EntityRef entityRef, out {archType} {archTypeVarName})"))
+                        using (Section($"public bool TryGet{archetype.typeName}({script.typePrefix}EntityRef entityRef, out {archType} {archTypeVarName})"))
                         {
                             using (Section($"if (entityMap.TryGetValue(entityRef.uniqueId, out var entity) && entity is {archType} {archTypeVarName}Entity)"))
                             {
@@ -955,7 +993,7 @@ namespace Noo.Tools
                     Line($"internal {script.typePrefix}EntityManager entityManager;");
                     Line($"internal int entityDataIndex = -1;");
                     Line($"[ShowInInspector, HideInEditorMode, PropertyOrder(-199)]");
-                    Line($"public EntityRef EntityRef => new EntityRef(this);");
+                    Line($"public {script.typePrefix}EntityRef {script.typePrefix}EntityRef => new {script.typePrefix}EntityRef(this);");
                     Line($"internal uint uniqueId;");
                     Space();
                     Line($"internal virtual ushort EntityType => 0;");
@@ -1274,15 +1312,15 @@ namespace Noo.Tools
             using (WriteFile($"{script.typePrefix}EntityRef.{fileExtension}"))
             using (FileHeader())
             {
-                using (Section($"public readonly struct EntityRef : IEquatable<EntityRef>"))
+                using (Section($"public readonly struct {script.typePrefix}EntityRef : IEquatable<{script.typePrefix}EntityRef>"))
                 {
-                    Line($"public static readonly EntityRef None = default;");
+                    Line($"public static readonly {script.typePrefix}EntityRef None = default;");
                     Space();
 
                     Line($"public readonly uint uniqueId;");
                     Space();
 
-                    using (Section($"public EntityRef(Entity entity)"))
+                    using (Section($"public {script.typePrefix}EntityRef({script.typePrefix}Entity entity)"))
                     {
                         using (Section("if (entity == null)"))
                         {
@@ -1294,14 +1332,14 @@ namespace Noo.Tools
                         }
                     }
 
-                    Line($"public override bool Equals(object obj) => obj is EntityRef @ref && Equals(@ref);");
-                    Line($"public bool Equals(EntityRef other) => uniqueId == other.uniqueId;");
+                    Line($"public override bool Equals(object obj) => obj is {script.typePrefix}EntityRef @ref && Equals(@ref);");
+                    Line($"public bool Equals({script.typePrefix}EntityRef other) => uniqueId == other.uniqueId;");
                     Line($"public override int GetHashCode() => uniqueId.GetHashCode();");
-                    Line($"public static bool operator ==(EntityRef left, EntityRef right) => left.uniqueId == right.uniqueId;");
-                    Line($"public static bool operator !=(EntityRef left, EntityRef right) => left.uniqueId != right.uniqueId;");
+                    Line($"public static bool operator ==({script.typePrefix}EntityRef left, {script.typePrefix}EntityRef right) => left.uniqueId == right.uniqueId;");
+                    Line($"public static bool operator !=({script.typePrefix}EntityRef left, {script.typePrefix}EntityRef right) => left.uniqueId != right.uniqueId;");
                     Space();
 
-                    Line($"public static implicit operator EntityRef(Entity entity) => new(entity);");
+                    Line($"public static implicit operator {script.typePrefix}EntityRef({script.typePrefix}Entity entity) => new(entity);");
                 }
             }
         }
