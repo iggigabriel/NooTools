@@ -1,0 +1,511 @@
+.dtk-window
+{
+    .nui-window__title
+    {
+        -unity-text-align: middle-center;
+    }
+}
+
+.dtk-line-height
+{
+    height: 32px;
+}
+
+DtkCommandsPage
+{
+    > NuiToolbar .nui-toolbar__middle
+    {
+        overflow: hidden;
+
+        NuiToolbarButton
+        {
+            font-size: 10px;
+            color: $lightGrey;
+        }
+    }
+}
+
+.dtk-inspector-group
+{
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.dtk-inspector-view
+{
+    @include fit-to-parent;
+
+    padding-top: 2px;
+    padding-bottom: 2px;
+    transition: opacity 50ms, translate 150ms ease-out;
+
+    &.dtk--hidden
+    {
+        transition: opacity 150ms, translate 150ms ease-out;
+        opacity: 0;
+    }
+}
+
+.dtk-drawer
+{
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.nui-btn.dtk-drawer__inspector-button
+{
+    flex-grow: 1;
+    min-height: 35px;
+    padding: 1px 3px 1px 3px;
+
+    &.dtk-drawer__page-button 
+    {
+        .nui-btn-icon-right
+        {
+            //visibility: hidden;
+        }
+
+        &:enabled:hover 
+        {
+            .nui-btn-icon-right
+            {
+                //visibility: visible;
+            }
+        }
+    }
+}
+
+.dtk-drawer__header
+{
+    color: $darkWhite;
+    margin: 16px 4px 6px 6px;
+    padding: 2px 0px 6px 0px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    flex-grow: 1;
+    font-size: $fontSize + 3px;
+}
+
+.dtk-drawer__text
+{
+    color: $darkWhite;
+    margin: 4px 4px 4px 6px;
+    flex-grow: 1;
+    font-size: $fontSize;
+}
+
+
+.dtk-property-drawer
+{
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+    min-height: 29px;
+    align-items: flex-start;
+
+    &.dtk--inline  
+    {
+        flex-wrap: nowrap;
+
+        .dtk-property-drawer__property-container
+        {
+            min-width: initial;
+        }
+    }
+}
+
+.dtk-property-drawer__indicator 
+{
+    position: absolute;
+    width: 2px;
+    height: 17px;
+    left: 0px;
+    top: 6px;
+    background-color: $lightBlack;
+    visibility: hidden;
+
+    @at-root :hover > & 
+    {
+        visibility: visible;
+    }
+
+    @at-root .nui--focused > & 
+    {
+        visibility: visible;
+        background-color: $blue;
+    }
+
+    @at-root .nui--focused.dtk--read-only > & 
+    {
+        visibility: visible;
+        background-color: $lightBlack;
+    }
+}
+
+.dtk-property-drawer__label-container 
+{
+    flex-direction: row;
+    min-width: 66%;
+    align-items: flex-start;
+    padding: 6px 2px 0px 6px;
+
+    > .nui-icon
+    {
+        color: $darkWhite;
+    }
+}
+
+.dtk-property-drawer__label 
+{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+$dtkInputFieldHeight: 23px;
+
+.dtk-property-drawer__property-container 
+{
+    flex-direction: row;
+    flex-grow: 1;
+    height: $dtkInputFieldHeight + 6px;
+    width: 33%;
+
+    @at-root .dtk-property-drawer.dtk--read-only &
+    {
+        color: #666;
+    }
+}
+
+.dtk-input-field
+{
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 4px 0 4px;
+    padding: 0 4px 0 4px;
+
+    > .unity-base-text-field__input
+    {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: scroll;
+        flex-direction: row;
+        align-items: stretch;
+        -unity-text-align: middle-left;
+        white-space: nowrap;
+        font-size: 12px;
+        --unity-selection-color: rgba(22, 97, 211, 0.3);
+        -unity-overflow-clip-box: content-box;
+
+        @at-root .dtk-property-drawer.dtk--read-only &
+        {
+            --unity-selection-color: rgba(145, 145, 145, 0.05);
+        }
+
+        > .unity-text-element
+        {
+            flex-grow: 1;
+            flex-shrink: 0;
+            -unity-text-align: middle-left;
+            white-space: nowrap;
+        }
+    }
+}
+
+.dtk-input-field__background
+{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: $dtkInputFieldHeight;
+    background-color: $darkBlack;
+    align-self: center;
+    border-radius: 4px;
+    border-width: 1px; 
+    
+    @include nui-border(change-color(black, $alpha: 0.5), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2));
+
+    @at-root .dtk-input-field:focus > &, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-input-field:focus > & 
+    {
+        border-color: $blue;
+        border-width: 2px;
+        left: -1px;
+        right: -1px;
+        height: calc($dtkInputFieldHeight + 2px);
+    }
+
+    @at-root .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-input-field > & 
+    {
+        border-color: $lightBlack;
+    }
+
+    @at-root .dtk-property-drawer.dtk--read-only > .dtk-property-drawer__property-container > .dtk-input-field:focus > &, .dtk-property-drawer.dtk--read-only:enabled:hover > .dtk-property-drawer__property-container > .dtk-input-field > & 
+    {
+        border-color: $lightBlack;
+    }
+}
+
+.dtk-property-drawer.dtk-property-drawer-bool
+{
+    flex-wrap: nowrap;
+
+    > .dtk-property-drawer__property-container
+    {
+        min-width: initial;
+        width: $dtkInputFieldHeight + 3px;
+        flex-shrink: 0;
+        flex-grow: 0;
+        align-items: center;
+        justify-content: center;
+        padding: 0px 4px 0px 4px;
+
+        > .nui-icon.dtk-bool-field
+        {
+            font-size: 26px;
+        }
+    }
+}
+
+.dtk-bool-field
+{
+    @include fit-to-parent;
+
+    > .unity-toggle__input
+    {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        top: 5px;
+        height: $dtkInputFieldHeight - 5px;
+        background-color: $darkBlack;
+        align-self: center;
+        border-radius: 2px;
+        border-width: 1px; 
+
+        @include nui-border(change-color(black, $alpha: 0.5), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2));
+    }
+
+    > .unity-toggle__input > .unity-toggle__checkmark { visibility: hidden; }
+    &:checked > .unity-toggle__input > .unity-toggle__checkmark { visibility: visible; }
+
+    @at-root &:enabled:focus, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > &:enabled:focus 
+    {
+        > .unity-toggle__input 
+        {
+            border-color: $blue;
+            border-width: 2px;
+            border-radius: 4px;
+            left: 3px;
+            right: 3px;
+            top: 4px;
+            height: calc($dtkInputFieldHeight - 3px);
+        }
+    }
+
+    @at-root .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > & 
+    {
+        &:enabled > .unity-toggle__input 
+        {
+            border-color: $lightBlack;
+        }
+    }
+
+    @at-root .dtk-property-drawer.dtk--read-only:enabled:hover > .dtk-property-drawer__property-container > &, .dtk-property-drawer.dtk--read-only > .dtk-property-drawer__property-container > & 
+    {
+        &:enabled > .unity-toggle__input, &:focus > .unity-toggle__input 
+        {
+            border-color: $lightBlack;
+        }
+    }
+}
+
+
+.dtk-drawer.dtk-method-drawer
+{
+    flex-direction: column;
+    align-items: stretch;
+
+    > .dtk-property-drawer__indicator { display: none; }
+
+    > .dtk-property-drawer__label-container
+    {
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 4px 4px 10px;
+
+        > .dtk-property-drawer__label {
+            font-size: $fontSize + 1px;
+        }
+
+        > .nui-btn {
+            height: 26px;
+        }
+    }
+
+    > .dtk-property-drawer__property-container
+    {
+        width: auto;
+        height: auto;
+        flex-grow: 1;
+        flex-direction: column;
+        align-items: stretch;
+
+        > .dtk-property-drawer
+        {
+            margin-bottom: 0;
+            
+            > .dtk-property-drawer__label-container
+            {
+                padding-left: 16px;
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+.dtk-property-drawer-md
+{
+    > .dtk-property-drawer__label-container { min-width: 50%; }
+    > .dtk-property-drawer__property-container { min-width: 50%; }
+}
+
+.dtk-property-drawer-lg
+{
+    > .dtk-property-drawer__label-container { min-width: 33%; }
+    > .dtk-property-drawer__property-container { min-width: 66%; }
+}
+
+.dtk-drawer.dtk-property-drawer-enum, .dtk-drawer.dtk-property-drawer-dropdown
+{
+    > .dtk-property-drawer__property-container
+    {
+        padding: 2px 3px 2px 3px;
+
+        .nui-btn-text 
+        {
+            font-size: $fontSize - 1px;
+        } 
+    }
+}
+
+.dtk-slider-field
+{
+    overflow: visible;
+    flex-direction: row;
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 30px;
+
+    &.unity-slider
+    {
+        flex-basis: auto;
+        flex-grow: 1;
+        flex-shrink: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    &:enabled:focus
+    {
+        > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger 
+        {
+            border-color: $blue;
+            width: 12px;
+            height: 24px;
+            margin-left: -1px;
+            margin-top: 3px;
+        }
+    }
+
+    > .unity-label
+    {
+        position: absolute;
+        -unity-text-align: middle-right;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 40px;
+        margin-left: -42px;
+        overflow: hidden;
+        white-space: nowrap;
+        color: darken3($white);
+        font-size: $fontSize - 2px;
+    }
+
+    > .unity-base-slider__input, & > .unity-slider__input
+    {
+        flex:  1 0 auto;
+        flex-wrap: nowrap;
+        overflow: visible;
+        flex-direction: row;
+        margin: 0px 3px 0px 3px;
+        width: auto;
+
+        > .unity-base-slider__drag-container
+        {
+            flex-grow: 1;
+            min-width: 20px;
+            align-items: auto;
+
+            > .unity-base-slider__dragger
+            {
+                padding: 0 0 0 0;
+                margin: 4px 0 0 0;
+                width: 10px;
+                height: 20px;
+                border-width: 2px;
+                position: absolute;
+                background-color: $darkWhite;
+                border-radius: 4px;
+                border-color: $darkWhite;
+            }
+
+            > .unity-base-slider__tracker
+            {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 6px;
+                margin-top: -3px;
+                background-color: rgb(126, 126, 126, 0.2);
+                border-radius: 4px;
+            }
+
+            > .unity-base-slider__dragger-border
+            {
+                position: absolute;
+                width: 0;
+                height: 0;
+                padding: 0;
+                margin: 0 0 0 -4px;
+                display: none;
+            }
+        }
+    }
+}
+
+.dtk-vector-input-drawer
+{
+    > .dtk-property-drawer__property-container
+    {
+
+    }
+}
+
+.dtk-vector-field__container
+{
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100%;
+}
+
+.dtk-vector-field__label
+{
+    padding: 6px 0px 0px 4px;
+    flex-shrink: 0;
+}

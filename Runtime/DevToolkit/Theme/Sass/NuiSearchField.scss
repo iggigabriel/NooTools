@@ -1,0 +1,110 @@
+$searchFieldHeight: 23px;
+
+.nui-search-field
+{
+    flex-shrink: 1;
+    flex-grow: 1;
+    align-items: stretch;
+    flex-direction: row;
+    color: map-get($map: $colorsAll, $key: "dark-white");
+    height: $searchFieldHeight + 10px;
+
+    > .unity-text-field__input
+    {
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0;
+        overflow: scroll;
+        flex-direction: row;
+        align-items: stretch;
+        -unity-text-align: middle-left;
+        white-space: nowrap;
+        font-size: 12px;
+        --unity-selection-color: rgba(22, 97, 211, 0.3);
+        -unity-overflow-clip-box: content-box;
+
+        > .unity-text-element
+        {
+            flex-grow: 1;
+            flex-shrink: 0;
+            -unity-text-align: middle-left;
+            white-space: nowrap;
+        }
+    }
+
+    &.nui--sm
+    {
+        $searchFieldHeightSm: 18px;
+
+        height: $searchFieldHeightSm + 12px;
+
+        &:focus > , &:enabled:hover:focus >
+        {
+            .nui-search-field__background
+            {
+                height: calc($searchFieldHeightSm + 2px);
+            }
+        }
+
+        .nui-search-field__background
+        {
+            height: $searchFieldHeightSm;
+            border-radius: calc($searchFieldHeightSm / 2);
+        }
+
+        .nui-search-field-clear__btn, .nui-search-field__icon
+        {
+            width: $searchFieldHeightSm;
+            height: $searchFieldHeightSm;
+        }
+    }
+}
+
+.nui-search-field__background
+{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: $searchFieldHeight;
+    background-color: map-get($map: $colorsAll, $key: "dark-black");
+    align-self: center;
+    border-radius: calc($searchFieldHeight / 2);
+    border-width: 1px; border-color: $borderColorDark;
+
+    @at-root .nui-search-field:focus > &, .nui-search-field:enabled:hover:focus > &
+    {
+        border-color: $blue;
+        border-width: 2px;
+        left: -1px;
+        right: -1px;
+        height: calc($searchFieldHeight + 2px);
+    }
+
+    @at-root .nui-search-field:enabled:hover > & 
+    {
+        border-color: $lightBlack;
+    }
+}
+
+.nui-search-field-clear__btn
+{
+    width: $searchFieldHeight;
+    height: $searchFieldHeight;
+    align-self: center;
+    padding: 1px;
+
+    .nui-icon 
+    {
+        color: map-get($map: $colorsAll, $key: "dark-white");
+        font-size: 12px;
+    }
+}
+
+.nui-search-field__icon
+{
+    width: $searchFieldHeight;
+    height: $searchFieldHeight;
+    align-self: center;
+    font-size: 12px;
+    padding-left: 2px;
+}

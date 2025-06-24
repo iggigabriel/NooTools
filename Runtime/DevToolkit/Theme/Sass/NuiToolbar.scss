@@ -1,0 +1,34 @@
+.nui-toolbar 
+{
+    height: 38px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+}
+
+.nui-toolbar-btn
+{
+    padding: 2px;
+}
+
+.nui-toolbar-separator 
+{
+    margin: 6px 0px 6px 0px;
+    width: 1px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: $borderColorLight;
+}
+
+.nui-toolbar-bottom-border 
+{
+    position: absolute;
+    height: 1px;
+    left: 2px;
+    right: 2px;
+    bottom: 0px;
+    background-color: $borderColorLight;
+}

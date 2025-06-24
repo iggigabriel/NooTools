@@ -1,0 +1,53 @@
+.nui-window 
+{
+    position: absolute;
+}
+
+.nui-window__container
+{
+    border-radius: 16px;
+    background-color: $darkBlack;
+    @include fit-to-parent;
+    border-color: #ffffff01;
+    border-width: 1px;
+}
+
+.nui-window__title
+{
+    -unity-text-align: middle-left;
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nui-window__background
+{
+    @include shadow;
+}
+
+.nui-window__topbar
+{
+    height: 33px;
+    margin: 2px;
+}
+
+.nui-window__statusbar 
+{ 
+    height: 20px;
+}
+
+.nui-window__body
+{
+    margin-left: 4px;
+    margin-right: 4px;
+    background-color: $black;
+    border-radius: 4px;
+    flex-grow: 1;
+}
+
+.nui--portrait .nui-window
+{
+    position: absolute;
+    align-self: center;
+    left: 20px;
+}

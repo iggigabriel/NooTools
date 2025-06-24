@@ -1,0 +1,76 @@
+$dropdownItemHeight: 26px;
+
+.nui-dropdown-list
+{
+    min-width: 130px;
+    max-width: 260px;
+    max-height: 320px;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.nui-dropdown-list__window
+{
+    flex-direction: column;
+    align-items: stretch;
+    background-color: $black;
+    overflow: hidden;
+
+    @include nui-border3d(0.01, 0.2, 0.4);
+    border-width: 1px;
+    border-radius: 8px;
+
+    > .nui-search-field
+    {
+        flex-shrink: 0;
+        margin: 0px 6px 0px 6px;
+        border-bottom-width: 1px;
+        border-bottom-color: rgba(255, 255, 255, 0.01);
+    }
+}
+
+.nui-dropdown-list__item
+{
+    align-self: stretch;
+    flex-direction: row;
+    align-items: stretch;
+    flex-grow: 1;
+}
+
+.nui-dropdown-list__shadow
+{
+    @include shadow(-16px);
+}
+
+.nui-btn.nui-dropdown-list-button
+{
+    flex-grow: 1;
+
+    @include nui-btn-style-flat(fade-out($lightBlue, 1), fade-out($lightBlue, 0.8), fade-out($lightBlue, 0.7), $textColor, lighten2($textColor), lighten2($textColor));
+
+    > .nui-btn-bg
+    {
+        border-radius: 0px;
+        border-width: 0px;
+        padding-left: calc($dropdownItemHeight - 6px - 2px);
+        padding-right: 4px;
+    }
+}
+
+.nui-dropdown-list-button__checkmark
+{
+    position: absolute;
+    width: calc($dropdownItemHeight - 6px);
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    font-size: 14px;
+    opacity: 0.4;
+    display: none;
+    color: #0f0;
+
+    @at-root .nui--selected > & 
+    {
+        display: flex;
+    }
+}

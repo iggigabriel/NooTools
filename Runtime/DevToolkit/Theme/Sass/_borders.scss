@@ -1,0 +1,29 @@
+.b-0 { border-width: 0px; }
+
+$borderColorLight: change-color(white, $alpha: 0.01);
+$borderColorDark: change-color(black, $alpha: 0.2);
+
+.b-light { border-width: 1px; border-color: $borderColorLight; }
+.b-dark { border-width: 1px; border-color: $borderColorDark; }
+
+.b3d
+{
+    @include nui-border3d(0.01, 0.2, 0.4);
+    border-width: 1px;
+}
+
+@each $k, $v in $sides {
+    .b#{$k}-0 { border-#{$v}-width: 0px; }
+    .b#{$k}-light { border-#{$v}-width: 1px; border-#{$v}-color: $borderColorLight; }
+    .b#{$k}-dark { border-#{$v}-width: 1px; border-#{$v}-color: $borderColorDark; }
+}
+
+@each $name, $color in $colorsAll
+{
+    .b-#{$name} { border-color: $color; border-width: 1px; }
+
+    @each $sideKey, $sideValue in $sides {
+        .b#{$sideKey}-#{$name} { border-#{$sideValue}-color: $color; border-#{$sideValue}-width: 1px; }
+    }
+}
+

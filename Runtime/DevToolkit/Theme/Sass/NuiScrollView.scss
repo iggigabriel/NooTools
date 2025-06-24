@@ -1,0 +1,135 @@
+$scrollerSize: 16px;
+
+.unity-scroll-view 
+{
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.unity-scroll-view__content-and-vertical-scroll-container
+{
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.unity-scroll-view__content-viewport
+{
+    flex-basis: auto;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.unity-scroll-view__content-container
+{
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: scroll;
+}
+
+.unity-scroller 
+{
+    flex-shrink: 0;
+}
+
+.unity-scroller--vertical 
+{
+    width: $scrollerSize;
+}
+
+.unity-slider
+{
+    flex-basis: 0%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin-top: $scrollerSize;
+    margin-bottom: $scrollerSize;
+}
+
+.unity-slider--vertical
+{
+    flex-direction: column;
+    width: $scrollerSize;
+}
+
+.unity-slider__input
+{
+    flex-basis: auto;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    overflow: visible;
+    width: 100%;
+}
+
+.unity-base-slider__drag-container
+{
+    flex-grow: 1;
+    align-items: center;
+}
+
+.unity-base-slider__dragger
+{
+    background-color: change-color($color: $white, $alpha: 0.07);
+    border-radius: 2px;
+    min-height: 22px;
+    width: 4px;
+
+    @at-root .unity-scroller__slider:focus &, .unity-scroller__slider:hover & 
+    {
+        width: 6px;
+        border-radius: 3px;
+        background-color: change-color($color: $white, $alpha: 0.3);
+    }
+}
+
+.unity-base-slider__tracker
+{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    @at-root .unity-scroller--vertical & 
+    {
+        right: -4px;
+    }
+}
+
+.unity-scroller__low-button, .unity-scroller__high-button
+{
+    width: $scrollerSize;
+    height: $scrollerSize;
+    position: absolute;
+
+    > .nui-scroller-btn-icon 
+    {
+        font-size: 20px;
+        color: change-color($color: $white, $alpha: 0.07);
+    }
+
+    &:hover > .nui-scroller-btn-icon 
+    {
+        color: change-color($color: $white, $alpha: 0.3);
+    }
+
+    &:active > .nui-scroller-btn-icon 
+    {
+        color: change-color($color: $white, $alpha: 0.6);
+    }
+}
+
+.unity-scroller--vertical > .unity-scroller__low-button
+{
+    left: 0px;
+    top: 0px;
+}
+
+.unity-scroller--vertical > .unity-scroller__high-button
+{
+    left: 0px;
+    bottom: 0px;
+}

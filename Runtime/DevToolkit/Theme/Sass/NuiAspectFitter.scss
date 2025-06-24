@@ -1,0 +1,11 @@
+.nui-aspect-fitter 
+{
+    width: 100%;
+    height: 0;
+}
+
+.nui-aspect-fitter__container 
+{
+    @include fit-to-parent;
+}
+

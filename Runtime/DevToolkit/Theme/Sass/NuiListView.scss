@@ -1,0 +1,15 @@
+.nui-listview
+{
+    .unity-list-view__empty-label
+    {
+        visibility: hidden;
+    }
+}
+
+.nui-listview__item 
+{
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: auto;
+}
+

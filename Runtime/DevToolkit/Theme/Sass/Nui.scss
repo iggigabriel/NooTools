@@ -1,0 +1,47 @@
+:root 
+{
+    font-size: $fontSize;
+    color: $textColor;
+    -unity-font-definition: $fontFamily;
+    flex-grow: 1;
+}
+
+TemplateContainer
+{
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.nui-row 
+{
+    flex-direction: row;
+
+    &.nui--reverse { flex-direction: row-reverse; }
+}
+
+.nui-col 
+{
+    flex-direction: column;
+
+    &.nui--reverse { flex-direction: column-reverse; }
+}
+
+:disabled 
+{
+    opacity: 0.4;
+
+    :disabled 
+    {
+        opacity: 1;
+    }
+}
+
+.overflow-hidden
+{
+    overflow: hidden;
+}
+
+.display-flex { display: flex; }
+.display-none { display: none; }
+
+.nui--transparent { opacity: 0; }

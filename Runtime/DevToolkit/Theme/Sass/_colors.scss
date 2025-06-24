@@ -1,0 +1,64 @@
+$black: #262527;
+$white: #d8dad7;
+$grey: #535c5f;
+$red: #9c2617;
+$blue: #0853c2;
+$green: #108a2c;
+$yellow: #ffc107;
+$cyan: #0c8f8f;
+
+$darkBlack: darken2($black);
+$darkWhite: darken2($white);
+$darkGrey: darken2($grey);
+$darkRed: darken2($red);
+$darkBlue: darken2($blue);
+$darkGreen: darken2($green);
+$darkYellow: darken2($yellow);
+$darkCyan: darken2($cyan);
+
+$lightBlack: lighten1($black);
+$lightWhite: lighten1($white);
+$lightGrey: lighten1($grey);
+$lightRed: lighten1($red);
+$lightBlue: lighten1($blue);
+$lightGreen: lighten1($green);
+$lightYellow: lighten1($yellow);
+$lightCyan: lighten1($cyan);
+
+$colors: (
+  "black": $black,
+  "white": $white,
+  "grey": $grey,
+  "red": $red,
+  "blue": $blue,
+  "green": $green,
+  "yellow": $yellow,
+  "cyan": $cyan,
+);
+
+$colorsAll: (
+  "black": $black,
+  "dark-black": $darkBlack,
+  "light-black": $lightBlack,
+  "white": $white,
+  "dark-white": $darkWhite,
+  "light-white": $lightWhite,
+  "grey": $grey,
+  "dark-grey": $darkGrey,
+  "light-grey": $lightGrey,
+  "red": $red,
+  "dark-red": darken2($red),
+  "light-red": lighten1($red),
+  "blue": $blue,
+  "dark-blue": darken2($blue),
+  "light-blue": lighten1($blue),
+  "green": $green,
+  "dark-green": darken2($green),
+  "light-green": lighten1($green),
+  "yellow": $yellow,
+  "dark-yellow": darken2($yellow),
+  "light-yellow": lighten1($yellow),
+  "cyan": $cyan,
+  "dark-cyan": darken2($cyan),
+  "light-cyan": lighten1($cyan),
+);

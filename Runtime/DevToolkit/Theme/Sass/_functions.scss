@@ -1,0 +1,30 @@
+$sides: (
+    "t": "top",
+    "r": "right",
+    "b": "bottom",
+    "l": "left",
+);
+
+@function tint($color, $percentage) 
+{
+    @return mix(change-color(white, $alpha: alpha($color)), $color, $percentage);
+}
+
+@function shade($color, $percentage) 
+{
+    @return mix(change-color(black, $alpha: alpha($color)), $color, $percentage);
+}
+
+@function lighten1($color) { @return tint($color, 10%); }
+@function lighten2($color) { @return tint($color, 20%); }
+@function lighten3($color) { @return tint($color, 45%); }
+@function lighten4($color) { @return tint($color, 60%); }
+@function lighten5($color) { @return tint($color, 75%); }
+
+@function darken1($color) { @return shade($color, 15%); }
+@function darken2($color) { @return shade($color, 30%); }
+@function darken3($color) { @return shade($color, 45%); }
+@function darken4($color) { @return shade($color, 60%); }
+@function darken5($color) { @return shade($color, 75%); }
+
+@function luma($color) { @return  calc((0.2126 * red($color) + 0.7152 * green($color) + 0.0722 * blue($color)) / 255); }

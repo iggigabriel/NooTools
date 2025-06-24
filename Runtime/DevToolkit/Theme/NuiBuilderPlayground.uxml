@@ -1,0 +1,52 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Noo.DevToolkit/Theme/NuiStylesheet.uss?fileID=7433441132597879392&amp;guid=53e311b6071641945aa0be3f6b41f895&amp;type=3#NuiStylesheet" />
+    <ui:VisualElement class="rounded-2 test-btn" style="flex-grow: 1; width: 135px; position: absolute; top: 192px; left: 70px; background-color: rgb(103, 103, 103); border-left-color: rgb(197, 197, 197); border-right-color: rgb(197, 197, 197); border-top-color: rgb(197, 197, 197); border-bottom-color: rgb(197, 197, 197);" />
+    <ui:VisualElement class="rounded-3 bg-black b3d-black" style="flex-grow: 1; height: 177px; width: 359px; position: absolute; top: 325px; left: 69px;" />
+    <ui:Button text="Button" class="test-btn" style="position: absolute; top: 361px; left: 102px;" />
+    <Noo.Nui.NuiIconMat style="color: rgb(255, 255, 255);" />
+    <ui:VisualElement name="VisualElement" class="rounded-1 bg-black bd3-black" style="flex-grow: 1; height: 62px; width: 80px; position: absolute; top: 251px; left: 167px;" />
+    <ui:VisualElement name="VisualElement" class="rounded-1 bg-light-black" style="flex-grow: 1; height: 62px; width: 80px; position: absolute; top: 251px; left: 265px;" />
+    <ui:VisualElement name="VisualElement" class="rounded-1 bg-dark-red" style="flex-grow: 1; height: 68px; width: 76px; position: absolute; top: 152px; left: 71px;" />
+    <ui:VisualElement name="VisualElement" class="bg-red rounded-2 b3d-red" style="flex-grow: 1; height: 68px; width: 76px; position: absolute; top: 153px; left: 171px;">
+        <Noo.Nui.NuiText text="testis" class="text-block text-red text-bold" />
+    </ui:VisualElement>
+    <ui:VisualElement name="VisualElement" class="bg-dark-black rounded-2 b3d-dark-black" style="flex-grow: 1; height: 68px; width: 76px; position: absolute; top: 246px; left: 72px;">
+        <Noo.Nui.NuiText text="testis" class="text-white text-block" />
+    </ui:VisualElement>
+    <ui:VisualElement name="VisualElement" class="rounded-1 bg-light-red" style="flex-grow: 1; height: 68px; width: 76px; position: absolute; top: 156px; left: 270px;" />
+    <ui:VisualElement name="VisualElement" class="bg-red rounded-2 b3d-red" style="flex-grow: 1; height: 20px; width: 73px; position: absolute; top: 467px; left: 335px; margin-top: 1px;" />
+    <ui:VisualElement name="VisualElement" class="bg-red rounded-2 b3d-red" style="flex-grow: 1; height: 21px; width: 73px; position: absolute; top: 467px; left: 245px; border-bottom-width: 2px;" />
+    <ui:VisualElement name="VisualElement" class="rounded-2 bg-blue b3d-blue" style="flex-grow: 1; height: 21px; width: 73px; position: absolute; top: 467px; left: 144px;" />
+    <Noo.Nui.NuiRow class="bg-black" style="height: 32px;">
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-red-flat" />
+    </Noo.Nui.NuiRow>
+    <Noo.Nui.NuiRow class="bg-dark-black" style="height: 32px;">
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-red-flat" />
+    </Noo.Nui.NuiRow>
+    <Noo.Nui.NuiRow class="bg-light-black" style="height: 32px;">
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton name="NuiButton" icon-left="home" class="m-2" />
+        <Noo.Nui.NuiButton name="NuiButton" icon-left="close" class="m-2 btn-red-flat" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-blue-flat" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-orange-flat" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-green-flat" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-yellow-flat" />
+    </Noo.Nui.NuiRow>
+    <Noo.Nui.NuiRow class="bg-light-black" style="height: 28px;">
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" icon-left="home" class="m-2 btn-red" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-blue" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-cyan" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-green" />
+        <Noo.Nui.NuiButton button-text="test" name="NuiButton" class="m-2 btn-yellow" />
+    </Noo.Nui.NuiRow>
+</ui:UXML>

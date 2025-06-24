@@ -1,0 +1,32 @@
+$fontSize: 12px;
+$textColor: $white;
+$fontFamily: url(../Theme/Fonts/NotoSans/NotoSans.ttf);
+
+@each $name, $color in $colors 
+{
+    .text-#{$name} 
+    {
+        color: $color;
+    }
+
+    .text-dark-#{$name} 
+    {
+        color: shade($color, 30%);
+    }
+
+    .text-light-#{$name} 
+    {
+        color: tint($color, 18%);
+    }
+}
+
+.text-center { -unity-text-align: middle-center; }
+.text-left { -unity-text-align: middle-left; }
+.text-right { -unity-text-align: middle-right; }
+
+.text-bold { -unity-font-style: bold; }
+
+.text-block {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+}

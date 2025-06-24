@@ -1,0 +1,127 @@
+@use 'sass:color';
+
+@mixin nui-border($colorTop, $colorRight, $colorBottom, $colorLeft)
+{
+    border-top-color: $colorTop;
+    border-right-color: $colorRight;
+    border-bottom-color: $colorBottom;
+    border-left-color: $colorLeft;
+}
+
+@mixin nui-border3d($opacityTop, $opacitySides, $opacityBottom)
+{
+    border-top-color: change-color($color: white, $alpha: $opacityTop);
+    border-right-color: change-color($color: black, $alpha: $opacitySides);
+    border-bottom-color: change-color($color: black, $alpha: $opacityBottom);
+    border-left-color: change-color($color: black, $alpha: $opacitySides);
+}
+
+@mixin nui-btn-style-flat($bgColor, $bgHover, $bgActive, $textColor, $textHover, $textActive)
+{
+    color: $textColor;
+
+    .nui-btn-bg 
+    {
+        $_bgColor: $bgColor;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.02), min($alpha, 0.3), min($alpha, 0.5));
+
+        background-color: $bgColor;
+    }
+
+    &:enabled:focus .nui-btn-bg 
+    {
+        $_bgColor: scale-color($bgHover, $alpha:-50%);
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.3), min($alpha, 0.5));
+
+        color: $textHover;
+        background-color: $_bgColor;
+    }
+
+    &:enabled:hover .nui-btn-bg, &:enabled:focus:hover .nui-btn-bg 
+    {
+        $_bgColor: $bgHover;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.3), min($alpha, 0.5));
+
+        color: $textHover;
+        background-color: $_bgColor;
+    }
+
+    &:enabled:active .nui-btn-bg, &:enabled:focus:active .nui-btn-bg 
+    {
+        $_bgColor: $bgActive;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.02), min($alpha, 0.3), min($alpha, 0.5));
+
+        color: $textActive;
+        background-color: $_bgColor;
+    }
+}
+
+@mixin nui-btn-style-3d($bgColor, $bgHover, $bgActive, $textColor, $textHover, $textActive)
+{
+    @if (luma($bgColor) > 0.66)
+    {
+        $textColor: invert($textColor);
+        $textHover: invert($textHover);
+        $textActive: invert($textActive);
+    }
+
+    .nui-btn-bg 
+    {
+        margin-top: 0px;
+        border-bottom-width: 2px;
+
+        $_bgColor: $bgColor;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.3), min($alpha, 0.4));
+
+        color: $textColor;
+        background-color: $bgColor;
+    }
+
+    &:enabled:focus .nui-btn-bg 
+    {
+        $_bgColor: $bgHover;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.4), min($alpha, 0.5));
+
+        color: $textHover;
+        background-color: $_bgColor;
+    }
+
+    &:enabled:hover .nui-btn-bg, &:enabled:focus:hover .nui-btn-bg 
+    {
+        $_bgColor: $bgHover;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.4), min($alpha, 0.5));
+
+        color: $textHover;
+        background-color: $_bgColor;
+    }
+
+    &:enabled:active .nui-btn-bg, &:enabled:focus:active .nui-btn-bg 
+    {
+        margin-top: 1px;
+        border-bottom-width: 1px;
+
+        $_bgColor: $bgActive;
+        $alpha: alpha($_bgColor);
+        @include nui-border3d(min($alpha, 0.01), min($alpha, 0.4), min($alpha, 0.5));
+
+        color: $textActive;
+        background-color: $_bgColor;
+    }
+}
+
+@mixin fit-to-parent 
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+

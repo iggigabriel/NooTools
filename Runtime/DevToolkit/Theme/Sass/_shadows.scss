@@ -1,0 +1,19 @@
+@mixin shadow($shadowOffset: -18px, $shadowSlice: 31)
+{
+    position: absolute;
+    top: $shadowOffset;
+    bottom: calc($shadowOffset - 2px);
+    left: $shadowOffset;
+    right: $shadowOffset;
+    background-image: url(../Theme/Images/dropShadow64.png);
+    -unity-slice-left: $shadowSlice;
+    -unity-slice-right: $shadowSlice;
+    -unity-slice-top: $shadowSlice;
+    -unity-slice-bottom: $shadowSlice;
+    -unity-background-image-tint-color: rgba(0, 0, 0, 0.5);
+}
+
+.nui-shadow
+{
+    @include shadow();
+}
