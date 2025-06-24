@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Assertions;
@@ -214,7 +213,8 @@ namespace Noo.Nui
 
         public void ScrollToStart()
         {
-            scrollView.scrollOffset = default;
+            scrollView.scrollOffset = new UnityEngine.Vector2(0f, 0.001f);
+            scrollView.verticalScroller.value = 0.001f;
         }
     }
 }

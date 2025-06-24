@@ -38,19 +38,15 @@ namespace Noo.DevToolkit
             toolbar.left.Add(toolbarBackBtn = new NuiToolbarButton(MatIcon.ArrowBackIosNew));
             toolbar.right.Add(toolbarMoreBtn = new NuiToolbarButton(MatIcon.MoreVert));
 
-            toolbarBackBtn.clicked += GoBack;
-            toolbarMoreBtn.clicked += ShowMore;
-
             searchField = new NuiSearchField().WithClass("ml-4", "mr-4").AppendTo(toolbar.middle);
-            searchField.RegisterValueChangedCallback(OnSearchQueryChanged);
 
             var inspectorBase = new VisualElement().WithClass("flex-grow", "overflow-hidden").AppendTo(this);
 
-            inspectorViewA = new DtkInspectorView().AppendTo(inspectorBase);
-            inspectorViewB = new DtkInspectorView().WithClass("dtk--hidden").AppendTo(inspectorBase);
-            inspectorSearch = new DtkInspectorView().WithClass("dtk--hidden").AppendTo(inspectorBase);
+            inspectorViewA = new DtkInspectorView().WithName("inspectorViewA").WithClass("dtk--hidden").AppendTo(inspectorBase);
+            inspectorViewB = new DtkInspectorView().WithName("inspectorViewB").WithClass("dtk--hidden").AppendTo(inspectorBase);
+            inspectorSearch = new DtkInspectorView().WithName("inspectorSearch").WithClass("dtk--hidden").AppendTo(inspectorBase);
 
-            inspectorViewB.style.display = inspectorSearch.style.display = DisplayStyle.None;
+            inspectorSearch.style.display = DisplayStyle.None;
         }
 
         private void ShowMore()
@@ -147,20 +143,30 @@ namespace Noo.DevToolkit
             previousInspectorView = activeInspectorView;
             activeInspectorView = view;
 
-            activeInspectorView.BringToFront();
-
             if (previousInspectorView != null)
             {
-                previousInspectorView.AddToClassList("dtk--hidden");
+                previousInspectorView.WithClass("dtk--hidden");
                 previousInspectorView.style.translate = new Translate(showFromRight ? -20f : 20f, 0f);
             }
 
-            activeInspectorView.style.transitionDuration = StyleKeyword.Initial;
-            activeInspectorView.style.translate = new Translate(showFromRight ? 90f : -40f, 0f);
-            activeInspectorView.style.transitionDuration = StyleKeyword.Null;
-            activeInspectorView.style.translate = StyleKeyword.Null;
+            if (activeInspectorView != null)
+            {
+                activeInspectorView.BringToFront();
 
-            activeInspectorView.WithoutClass("dtk--hidden");
+                if (previousInspectorView == null)
+                {
+                    activeInspectorView.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    activeInspectorView.style.transitionDuration = StyleKeyword.Initial;
+                    activeInspectorView.style.translate = new Translate(showFromRight ? 90f : -40f, 0f);
+                    activeInspectorView.style.transitionDuration = StyleKeyword.Null;
+                    activeInspectorView.style.translate = StyleKeyword.Null;
+                }
+
+                activeInspectorView.WithoutClass("dtk--hidden");
+            }
         }
 
         private void SetActivePage(DevToolkitCommands.CommandPage page, bool showFromRight)
@@ -177,6 +183,7 @@ namespace Noo.DevToolkit
             page.AssertSorted();
 
             activePage = page;
+
             activeInspectorView.SetDrawers(page.drawers);
         }
 
@@ -184,12 +191,44 @@ namespace Noo.DevToolkit
         {
             base.OnEnable();
             NuiTask.OnInterval(NuiTask.ExecutionOrder.Update, 1f / 12f, false, UpdateDrawers);
+
+            toolbarBackBtn.clicked += GoBack;
+            toolbarMoreBtn.clicked += ShowMore;
+            searchField.RegisterValueChangedCallback(OnSearchQueryChanged);
+
+            inspectorViewA.ConfigureEvents(true);
+            inspectorViewB.ConfigureEvents(true);
+            inspectorSearch.ConfigureEvents(true);
         }
 
         internal override void OnDisable()
         {
             base.OnDisable();
             NuiTask.Cancel(UpdateDrawers);
+            searchField.value = string.Empty;
+            searchActive = false;
+            SetActiveView(null, false);
+            activeInspectorView = null;
+            previousInspectorView = null;
+
+            toolbarBackBtn.clicked -= GoBack;
+            toolbarMoreBtn.clicked -= ShowMore;
+            searchField.UnregisterValueChangedCallback(OnSearchQueryChanged);
+
+            activePage = null;
+            activePages.Clear();
+
+            inspectorViewA.SetDrawers(null);
+            inspectorViewB.SetDrawers(null);
+            inspectorSearch.SetDrawers(null);
+
+            inspectorViewA.ConfigureEvents(false);
+            inspectorViewB.ConfigureEvents(false);
+            inspectorSearch.ConfigureEvents(false);
+
+            inspectorViewA.ClearStyle();
+            inspectorViewB.ClearStyle();
+            inspectorSearch.ClearStyle();
         }
 
         void UpdateDrawers()

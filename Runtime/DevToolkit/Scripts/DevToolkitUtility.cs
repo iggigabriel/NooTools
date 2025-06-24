@@ -37,7 +37,8 @@ namespace Noo.DevToolkit
         {
             devAssemblies = FindAssembliesWithAttribute<DevAssemblyAttribute>();
             devTypes = devAssemblies.SelectMany(x => x.GetTypes()).ToList();
-            devTypesMap = devTypes.ToDictionary(x => x.FullName);
+            devTypesMap = new Dictionary<string, Type>();
+            foreach (var type in devTypes) devTypesMap.TryAdd(type.FullName, type);
         }
 
         /// <summary>Ex: "m_thisIsCamelCase" -> "This Is Camel Case"</summary>

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -35,8 +34,6 @@ namespace Noo.Nui
             setTooltipPostion = SetTooltipPosition;
             onPointerEnter = OnPointerEnter;
             onPointerExit = OnPointerExit;
-
-            tooltipElement.RegisterCallback(setTooltipPostion);
         }
 
         protected override void OnEnable()
@@ -45,6 +42,8 @@ namespace Noo.Nui
 
             Panel?.visualTree.RegisterCallback(onPointerEnter, TrickleDown.TrickleDown);
             Panel?.visualTree.RegisterCallback(onPointerExit, TrickleDown.TrickleDown);
+
+            tooltipElement.RegisterCallback(setTooltipPostion);
         }
 
         protected override void OnDisable()
@@ -53,6 +52,8 @@ namespace Noo.Nui
 
             Panel?.visualTree.UnregisterCallback(onPointerEnter, TrickleDown.TrickleDown);
             Panel?.visualTree.UnregisterCallback(onPointerExit, TrickleDown.TrickleDown);
+
+            tooltipElement.UnregisterCallback(setTooltipPostion);
         }
 
         bool TryGetValidTooltipTarget(IEventHandler target, out VisualElement element)

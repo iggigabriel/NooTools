@@ -7,6 +7,7 @@ namespace Noo.Nui
 {
     [AddComponentMenu("")]
     [RequireComponent(typeof(UIDocument))]
+    [DefaultExecutionOrder(100)]
     public abstract class NuiSystem : MonoBehaviour
     {
         static readonly Dictionary<IPanel, Dictionary<Type, NuiSystem>> instances = new();
@@ -22,6 +23,9 @@ namespace Noo.Nui
 
         protected virtual void OnEnable()
         {
+            Document = GetComponent<UIDocument>();
+            if (Document) Panel = Document.rootVisualElement.panel;
+
             if (Panel != null)
             {
                 if (!instances.TryGetValue(Panel, out var panelSystems))

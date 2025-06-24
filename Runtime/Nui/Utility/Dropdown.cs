@@ -17,7 +17,7 @@ namespace Noo.Nui
         public void Show(VisualElement target)
         {
             if (Showing || target == null || target.panel == null) return;
-                        
+
             Showing = true;
             Target = target;
 
@@ -56,7 +56,7 @@ namespace Noo.Nui
                 NuiPool.Return(List);
                 List = null;
             }
-            
+
             if (Items != null)
             {
                 foreach (var item in Items) NuiPool.Return(item);
@@ -67,7 +67,7 @@ namespace Noo.Nui
             Target = null;
         }
 
-        public void Hide() 
+        public void Hide()
         {
             Clear();
             OnHide?.Invoke();
