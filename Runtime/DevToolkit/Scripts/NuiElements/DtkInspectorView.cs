@@ -26,39 +26,19 @@ namespace Noo.DevToolkit
             validDrawers = new();
         }
 
-        void TransitionStartEvent(TransitionStartEvent e)
+        public void Show()
         {
             style.display = DisplayStyle.Flex;
+            list.focusable = true;
+            list.ScrollToStart();
         }
 
-        void TransitionEndEvent(TransitionEndEvent e)
+        public void Hide()
         {
-            if (resolvedStyle.opacity > 0f)
-            {
-                style.display = DisplayStyle.Flex;
-                list.focusable = true;
-            }
-            else
-            {
-                list.ScrollToStart();
-                list.focusable = false;
-                list.SetItems(null);
-                style.display = DisplayStyle.None;
-            }
-        }
-
-        public void ConfigureEvents(bool enable)
-        {
-            if (enable)
-            {
-                RegisterCallback<TransitionStartEvent>(TransitionStartEvent);
-                RegisterCallback<TransitionEndEvent>(TransitionEndEvent);
-            }
-            else
-            {
-                UnregisterCallback<TransitionStartEvent>(TransitionStartEvent);
-                UnregisterCallback<TransitionEndEvent>(TransitionEndEvent);
-            }
+            list.ScrollToStart();
+            SetDrawers(null);
+            list.focusable = false;
+            style.display = DisplayStyle.None;
         }
 
         public void SetDrawers(IReadOnlyList<NuiDrawer> drawers)
@@ -78,13 +58,6 @@ namespace Noo.DevToolkit
             }
 
             list.SetItems(validDrawers);
-        }
-
-        public void ClearStyle()
-        {
-            list.ScrollToStart();
-            style.transitionDuration = StyleKeyword.Null;
-            style.translate = StyleKeyword.Null;
         }
     }
 }

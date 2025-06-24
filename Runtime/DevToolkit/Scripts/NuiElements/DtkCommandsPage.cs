@@ -42,11 +42,9 @@ namespace Noo.DevToolkit
 
             var inspectorBase = new VisualElement().WithClass("flex-grow", "overflow-hidden").AppendTo(this);
 
-            inspectorViewA = new DtkInspectorView().WithName("inspectorViewA").WithClass("dtk--hidden").AppendTo(inspectorBase);
-            inspectorViewB = new DtkInspectorView().WithName("inspectorViewB").WithClass("dtk--hidden").AppendTo(inspectorBase);
-            inspectorSearch = new DtkInspectorView().WithName("inspectorSearch").WithClass("dtk--hidden").AppendTo(inspectorBase);
-
-            inspectorSearch.style.display = DisplayStyle.None;
+            inspectorViewA = new DtkInspectorView().WithName("inspectorViewA").AppendTo(inspectorBase);
+            inspectorViewB = new DtkInspectorView().WithName("inspectorViewB").AppendTo(inspectorBase);
+            inspectorSearch = new DtkInspectorView().WithName("inspectorSearch").AppendTo(inspectorBase);
         }
 
         private void ShowMore()
@@ -67,27 +65,21 @@ namespace Noo.DevToolkit
                 if (!searchActive) return;
 
                 searchActive = false;
-
-                inspectorSearch.SetDrawers(Array.Empty<NuiDrawer>());
-                inspectorSearch.WithClass("dtk--hidden");
+                inspectorSearch.Hide();
 
                 if (activeInspectorView != null && activePage != null)
                 {
                     activeInspectorView.SetDrawers(activePage.drawers);
-                    activeInspectorView.style.display = DisplayStyle.Flex;
+                    activeInspectorView.Show();
                 }
             }
             else
             {
                 searchActive = true;
 
-                if (activeInspectorView != null)
-                {
-                    activeInspectorView.SetDrawers(Array.Empty<NuiDrawer>());
-                    activeInspectorView.style.display = DisplayStyle.None;
-                }
+                activeInspectorView?.Hide();
 
-                inspectorSearch.WithoutClass("dtk--hidden");
+                inspectorSearch.Show();
                 inspectorSearch.SetDrawers(drawers);
             }
 
@@ -143,30 +135,8 @@ namespace Noo.DevToolkit
             previousInspectorView = activeInspectorView;
             activeInspectorView = view;
 
-            if (previousInspectorView != null)
-            {
-                previousInspectorView.WithClass("dtk--hidden");
-                previousInspectorView.style.translate = new Translate(showFromRight ? -20f : 20f, 0f);
-            }
-
-            if (activeInspectorView != null)
-            {
-                activeInspectorView.BringToFront();
-
-                if (previousInspectorView == null)
-                {
-                    activeInspectorView.style.display = DisplayStyle.Flex;
-                }
-                else
-                {
-                    activeInspectorView.style.transitionDuration = StyleKeyword.Initial;
-                    activeInspectorView.style.translate = new Translate(showFromRight ? 90f : -40f, 0f);
-                    activeInspectorView.style.transitionDuration = StyleKeyword.Null;
-                    activeInspectorView.style.translate = StyleKeyword.Null;
-                }
-
-                activeInspectorView.WithoutClass("dtk--hidden");
-            }
+            previousInspectorView?.Hide();
+            activeInspectorView.Show();
         }
 
         private void SetActivePage(DevToolkitCommands.CommandPage page, bool showFromRight)
@@ -196,9 +166,9 @@ namespace Noo.DevToolkit
             toolbarMoreBtn.clicked += ShowMore;
             searchField.RegisterValueChangedCallback(OnSearchQueryChanged);
 
-            inspectorViewA.ConfigureEvents(true);
-            inspectorViewB.ConfigureEvents(true);
-            inspectorSearch.ConfigureEvents(true);
+            inspectorViewA.Hide();
+            inspectorViewB.Hide();
+            inspectorSearch.Hide();
         }
 
         internal override void OnDisable()
@@ -207,7 +177,6 @@ namespace Noo.DevToolkit
             NuiTask.Cancel(UpdateDrawers);
             searchField.value = string.Empty;
             searchActive = false;
-            SetActiveView(null, false);
             activeInspectorView = null;
             previousInspectorView = null;
 
@@ -218,17 +187,9 @@ namespace Noo.DevToolkit
             activePage = null;
             activePages.Clear();
 
-            inspectorViewA.SetDrawers(null);
-            inspectorViewB.SetDrawers(null);
-            inspectorSearch.SetDrawers(null);
-
-            inspectorViewA.ConfigureEvents(false);
-            inspectorViewB.ConfigureEvents(false);
-            inspectorSearch.ConfigureEvents(false);
-
-            inspectorViewA.ClearStyle();
-            inspectorViewB.ClearStyle();
-            inspectorSearch.ClearStyle();
+            inspectorViewA.Hide();
+            inspectorViewB.Hide();
+            inspectorSearch.Hide();
         }
 
         void UpdateDrawers()
