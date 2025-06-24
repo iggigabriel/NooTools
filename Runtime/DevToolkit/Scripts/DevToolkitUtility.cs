@@ -62,7 +62,7 @@ namespace Noo.DevToolkit
             for (int i = 1; i < input.Length; i++)
             {
                 char c = input[i];
-                if (char.IsUpper(c) && !char.IsUpper(input[i - 1])) stringBuilder.Append(' ');
+                if (char.IsUpper(c) && !char.IsUpper(input[i - 1]) && input[i - 1] != ' ') stringBuilder.Append(' ');
                 stringBuilder.Append(c);
             }
 

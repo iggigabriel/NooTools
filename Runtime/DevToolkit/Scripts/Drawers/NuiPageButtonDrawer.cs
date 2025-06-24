@@ -8,7 +8,7 @@ namespace Noo.DevToolkit
 
         public NuiPageButtonDrawer(string path, string displayName) : base(displayName, MatIcon.ChevronRight, () => DevToolkit.Commands.ShowPage(path))
         {
-            Order = -1000000;
+            Order = 1000000;
         }
 
         protected override void OnCreate()

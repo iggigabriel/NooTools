@@ -82,6 +82,7 @@ namespace Noo.DevToolkit
 
         public void ClearStyle()
         {
+            list.ScrollToStart();
             style.transitionDuration = StyleKeyword.Null;
             style.translate = StyleKeyword.Null;
         }

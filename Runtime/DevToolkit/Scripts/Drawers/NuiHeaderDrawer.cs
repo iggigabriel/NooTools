@@ -2,7 +2,7 @@ using Noo.Nui;
 
 namespace Noo.DevToolkit
 {
-    internal class NuiHeaderDrawer : NuiDrawer
+    public class NuiHeaderDrawer : NuiDrawer
     {
         private readonly string title;
         private readonly bool centered;
@@ -23,6 +23,11 @@ namespace Noo.DevToolkit
         protected override void OnDestroy()
         {
             NuiPool.Return(Root.FirstChild<NuiText>().WithoutClass("dtk-drawer__header", "text-center"));
+        }
+
+        protected override bool OnFilter(string query)
+        {
+            return false;
         }
     }
 }

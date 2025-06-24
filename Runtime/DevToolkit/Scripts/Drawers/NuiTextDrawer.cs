@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Noo.DevToolkit
 {
-    internal class NuiTextDrawer : NuiDrawer
+    public class NuiTextDrawer : NuiDrawer
     {
         private readonly string text;
         private readonly bool centered;
@@ -31,6 +31,11 @@ namespace Noo.DevToolkit
             textElement.WithoutClass("dtk-drawer__text", "text-center");
             textElement.style.color = StyleKeyword.Null;
             NuiPool.Return(textElement);
+        }
+
+        protected override bool OnFilter(string query)
+        {
+            return text.ToLowerInvariant().Contains(query);
         }
     }
 }

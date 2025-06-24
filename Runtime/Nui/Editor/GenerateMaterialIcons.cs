@@ -18,7 +18,7 @@ namespace Noo.Nui
         [Sirenix.OdinInspector.FilePath(RequireExistingPath = false, Extensions = "cs")]
         public string outputFile;
 
-        [MenuItem("Tools/Noo Nui/Material Icons Script Generator")]
+        //[MenuItem("Tools/Noo Nui/Material Icons Script Generator")]
         public static void Open() => GetWindow<GenerateMaterialIcons>();
 
         [Serializable]

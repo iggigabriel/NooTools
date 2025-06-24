@@ -179,6 +179,8 @@ namespace Noo.DevToolkit
 
         public static void AddCommands(string pagePath, IReadOnlyList<NuiDrawer> drawers)
         {
+            pagePath = pagePath.Trim('/');
+
             if (drawers != null && drawers.Count > 0)
             {
                 var page = GetOrCreatePage(pagePath);
