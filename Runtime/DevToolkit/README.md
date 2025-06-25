@@ -2,6 +2,41 @@
 
 ![DevConsole](../../.docs/dev-toolkit-console.png)
 
+## Usage
+
+1. Unity -> Package Manager -> Install package from git URL... (use: `https://github.com/iggigabriel/NooTools.git`)
+
+2. Drag `\Packages\com.noo.tools\Runtime\DevToolkit\Assets\DevConsole.prefab` to Scene.
+
+3. You will need to write your own script to enable/disable that GameObject, for example: 
+
+```c#
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Noo.DevToolkit;
+
+public class DevConsoleManager : MonoBehaviour
+{
+    public DevConsole devConsole;
+    public InputActionReference toggleAction;
+
+    private void Awake()
+    {
+        if (devConsole && toggleAction != null && toggleAction.action != null)
+        {
+            toggleAction.action.performed += (e) =>
+            {
+                if (devConsole) devConsole.gameObject.SetActive(!devConsole.gameObject.activeSelf);
+            };
+        }
+    }
+}
+```
+4. Add `[DevAssembly]` attribute to your namespace.
+5. Add `[DevCommand]` on your properties, fields or methods,
+
+   or `[DevCommands]` on your classes to automatically create commands for each of its properties, fields or methods.
+
 ## Attributes
 
 ### `[DevAssembly]`
