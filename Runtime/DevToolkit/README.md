@@ -1,5 +1,7 @@
 # Dev Console
 
+![DevConsole](../../~Docs/dev-toolkit-console.png)
+
 ## Attributes
 
 ### `[DevAssembly]`
