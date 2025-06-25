@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Noo.DevToolkit
 {
     [DevCommands("Hidden/Example Properties", GenerateMemberFlags = BindingFlags.Static | BindingFlags.Public)]
-    public static class ExampleDrawers
+    internal static class ExampleDrawers
     {
         public enum ExampleEnum
         {
@@ -64,10 +64,20 @@ namespace Noo.DevToolkit
             { 3, "Three" },
             { 4, "Four" },
         };
+
+        public static void ExampleMethod()
+        {
+            Debug.Log("Hello from Example Method");
+        }
+
+        public static void ExampleMethodWithParams(int number, ExampleEnumFlag days)
+        {
+            Debug.Log($"Number: {number}, Days: {days}");
+        }
     }
 
     [DevCommands("Hidden/UnityEngine.Time", GenerateMemberFlags = BindingFlags.Static | BindingFlags.Public)]
-    public class ExampleUnityDrawers
+    internal class ExampleUnityDrawers
     {
         [DevCommand("Time (String)")]
         public static string TimeAsString => TimeSpan.FromSeconds(Time).ToString("c");

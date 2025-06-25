@@ -6,6 +6,8 @@ namespace Noo.DevToolkit
 {
     public class NuiTextDrawer : NuiDrawer
     {
+        protected override string TextContent => text;
+
         private readonly string text;
         private readonly bool centered;
         private readonly Color? color;

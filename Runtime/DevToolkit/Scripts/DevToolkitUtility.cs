@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEngine.Pool;
 
 namespace Noo.DevToolkit
@@ -40,6 +41,14 @@ namespace Noo.DevToolkit
             devTypesMap = new Dictionary<string, Type>();
             foreach (var type in devTypes) devTypesMap.TryAdd(type.FullName, type);
         }
+
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("Help/Noo.Tools/Dev Console")]
+        internal static void OpenHelp()
+        {
+            UnityEngine.Application.OpenURL("https://github.com/iggigabriel/NooTools/tree/main/Runtime/DevToolkit");
+        }
+#endif
 
         /// <summary>Ex: "m_thisIsCamelCase" -> "This Is Camel Case"</summary>
         public static string NiceifyName(string input)

@@ -4,6 +4,8 @@ namespace Noo.DevToolkit
 {
     public class NuiHeaderDrawer : NuiDrawer
     {
+        protected override string TextContent => title;
+
         private readonly string title;
         private readonly bool centered;
 

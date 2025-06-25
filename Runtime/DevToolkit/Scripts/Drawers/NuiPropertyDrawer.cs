@@ -5,6 +5,8 @@ namespace Noo.DevToolkit
 {
     public abstract class NuiPropertyDrawer : NuiCompositeDrawer
     {
+        protected override string TextContent => Label;
+
         public string Label { get; set; }
         public string Info { get; set; }
 

@@ -43,6 +43,7 @@ namespace Noo.DevToolkit
 
             if (field != null)
             {
+                field.Blur();
                 field.RemoveManipulator(UpdateManipulator);
                 field.isReadOnly = false;
                 field.UnregisterValueChangedCallback(OnChanged);
@@ -105,6 +106,7 @@ namespace Noo.DevToolkit
 
             if (field != null)
             {
+                field.Blur();
                 field.RemoveManipulator(UpdateManipulator);
                 field.isReadOnly = false;
                 field.UnregisterValueChangedCallback(OnChanged);

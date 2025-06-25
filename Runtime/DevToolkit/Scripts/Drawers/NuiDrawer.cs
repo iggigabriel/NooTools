@@ -12,10 +12,17 @@ namespace Noo.DevToolkit
 
         public VisualElement Root { get; private set; }
 
+        /// <summary>Will be used for default sorting and filtering of drawers</summary>
+        protected virtual string TextContent => null;
+
         protected virtual void OnCreate() { }
         protected virtual void OnDestroy() { }
         protected virtual void OnUpdate() { }
-        protected virtual bool OnFilter(string query) { return true; }
+
+        protected virtual bool OnFilter(string query)
+        {
+            return TextContent == null || TextContent.Contains(query);
+        }
 
         public bool OnFilter(IReadOnlyList<string> queries)
         {
@@ -55,6 +62,16 @@ namespace Noo.DevToolkit
             return OnFilter(query);
         }
 
-        public int CompareTo(NuiDrawer other) => other == null ? 1 : Order.CompareTo(other.Order);
+        public virtual int CompareTo(NuiDrawer other)
+        {
+            if (other == null) return 1;
+
+            if (Order == other.Order && TextContent != null && other.TextContent != null)
+            {
+                return TextContent.CompareTo(other.TextContent);
+            }
+
+            return other == null ? 1 : Order.CompareTo(other.Order);
+        }
     }
 }

@@ -1,6 +1,6 @@
 # Dev Console
 
-![DevConsole](../../~Docs/dev-toolkit-console.png)
+![DevConsole](../../.docs/dev-toolkit-console.png)
 
 ## Attributes
 

@@ -83,6 +83,7 @@ namespace Noo.DevToolkit
                 field.input.WithoutClass("dtk-input-field");
                 field.background.WithoutClass("dtk-input-field__background");
 
+                field.input.Blur();
                 field.input.isReadOnly = false;
                 field.input.UnregisterValueChangedCallback(OnChanged);
                 field.input.SetValueWithoutNotify(default);
