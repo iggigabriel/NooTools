@@ -1,5 +1,7 @@
 # Dev Console
 
+Built with Unity UIElements, battle tested in Unity 6+
+
 ![DevConsole](../../.docs/dev-toolkit-console.png)
 
 ## Usage
