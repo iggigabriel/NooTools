@@ -93,7 +93,7 @@ Use it on field or property to draw Slider component.
 |--|--|--|
 |float|Min|Minimum value for the slider|
 |float|Max|Maximum value for the slider|
-
+|string|Parameter|If DevDropdown is used on method, you must specify Parameter name to which to apply decorator.|
 
 ### Example Code
 
