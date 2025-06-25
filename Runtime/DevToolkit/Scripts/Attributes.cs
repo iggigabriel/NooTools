@@ -33,13 +33,13 @@ namespace Noo.DevToolkit
     public class DevCommandAttribute : Attribute
     {
         /// <summary>Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.</summary>
-        public string PathName { get; private set; }
+        public string PathName { get; set; }
 
         /// <summary>Drawing order of the command.</summary>
         public int Order { get; set; }
 
         /// <summary>Additional info for this command displayed in the inspector.</summary>
-        public string Info { get; private set; }
+        public string Info { get; set; }
 
         /// <summary>Only used by Method drawers to draw method inline.</summary>
         public bool Inline { get; set; } = true;

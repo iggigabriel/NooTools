@@ -219,7 +219,7 @@ $dtkInputFieldHeight: 23px;
     
     @include nui-border(change-color(black, $alpha: 0.5), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2), change-color(black, $alpha: 0.2));
 
-    @at-root .dtk-input-field:focus > &, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-input-field:focus > & 
+    @at-root .dtk-input-field:focus > &, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container .dtk-input-field:focus > & 
     {
         border-color: $blue;
         border-width: 2px;
@@ -237,11 +237,22 @@ $dtkInputFieldHeight: 23px;
     {
         border-color: $lightBlack;
     }
+
+    @at-root .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field > & 
+    {
+        border-color: $lightBlack;
+    }
+
+    @at-root .dtk-property-drawer.dtk--read-only > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field:focus > &, .dtk-property-drawer.dtk--read-only:enabled:hover > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field > & 
+    {
+        border-color: $lightBlack;
+    }
 }
 
 .dtk-property-drawer.dtk-property-drawer-bool
 {
     flex-wrap: nowrap;
+    justify-content: space-between;
 
     > .dtk-property-drawer__property-container
     {
@@ -328,7 +339,7 @@ $dtkInputFieldHeight: 23px;
         padding: 4px 4px 4px 10px;
 
         > .dtk-property-drawer__label {
-            font-size: $fontSize + 1px;
+            font-size: $fontSize ;
         }
 
         > .nui-btn {
@@ -371,6 +382,14 @@ $dtkInputFieldHeight: 23px;
 
 .dtk-drawer.dtk-property-drawer-enum, .dtk-drawer.dtk-property-drawer-dropdown
 {
+    &:enabled:hover > .dtk-property-drawer__property-container
+    {
+        > .nui-btn > .nui-btn-bg
+        {
+            background-color: lighten1($lightBlack);
+        }
+    }
+
     > .dtk-property-drawer__property-container
     {
         padding: 2px 3px 2px 3px;
@@ -393,6 +412,27 @@ $dtkInputFieldHeight: 23px;
     margin-bottom: 0;
     margin-left: 30px;
 
+    @at-root .dtk-property-drawer:enabled:hover
+    {
+        > .dtk-property-drawer__property-container > .dtk-slider-field
+        {
+            > .unity-label
+            {
+                color: darken3($white);
+            }
+
+            > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger 
+            {
+                background-color: lighten2($darkWhite);
+            }
+
+            > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__tracker 
+            {
+                background-color: rgb(126, 126, 126, 0.25);
+            }
+        }
+    }
+
     &.unity-slider
     {
         flex-basis: auto;
@@ -404,13 +444,31 @@ $dtkInputFieldHeight: 23px;
 
     &:enabled:focus
     {
-        > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger 
+        > .unity-label
         {
-            border-color: $blue;
-            width: 12px;
-            height: 24px;
-            margin-left: -1px;
-            margin-top: 3px;
+            color: darken3($white);
+        }
+
+        > .unity-base-slider__input > .unity-base-slider__drag-container
+        {
+            > .unity-base-slider__dragger 
+            {
+                border-color: $blue;
+                width: 12px;
+                height: 24px;
+                margin-left: -1px;
+                margin-top: 3px;
+            }
+
+            > .unity-base-slider__dragger 
+            {
+                background-color: lighten2($darkWhite);
+            }
+
+            > .unity-base-slider__tracker 
+            {
+                background-color: rgb(126, 126, 126, 0.25);
+            }
         }
     }
 
@@ -425,7 +483,7 @@ $dtkInputFieldHeight: 23px;
         margin-left: -42px;
         overflow: hidden;
         white-space: nowrap;
-        color: darken3($white);
+        color: darken4($white);
         font-size: $fontSize - 2px;
     }
 
@@ -465,7 +523,7 @@ $dtkInputFieldHeight: 23px;
                 right: 0;
                 height: 6px;
                 margin-top: -3px;
-                background-color: rgb(126, 126, 126, 0.2);
+                background-color: rgb(126, 126, 126, 0.15);
                 border-radius: 4px;
             }
 
@@ -479,14 +537,6 @@ $dtkInputFieldHeight: 23px;
                 display: none;
             }
         }
-    }
-}
-
-.dtk-vector-input-drawer
-{
-    > .dtk-property-drawer__property-container
-    {
-
     }
 }
 

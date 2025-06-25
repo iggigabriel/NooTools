@@ -6,7 +6,7 @@ namespace Noo.DevToolkit
     {
         public string buttonClass;
 
-        public NuiPageButtonDrawer(string path, string displayName) : base(displayName, MatIcon.ChevronRight, () => DevToolkit.Commands.ShowPage(path))
+        public NuiPageButtonDrawer(string path, string displayName) : base(displayName, MatIcon.None, MatIcon.ChevronRight, () => DevToolkit.Commands.ShowPage(path))
         {
             Order = 1000000;
         }

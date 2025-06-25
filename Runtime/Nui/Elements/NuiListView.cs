@@ -121,6 +121,7 @@ namespace Noo.Nui
         {
             this.items.Clear();
             if (items != null) this.items.AddRange(items);
+            RefreshItems();
             FilterItems();
         }
 
@@ -213,8 +214,8 @@ namespace Noo.Nui
 
         public void ScrollToStart()
         {
-            scrollView.scrollOffset = new UnityEngine.Vector2(0f, 0.001f);
-            scrollView.verticalScroller.value = 0.001f;
+            scrollView.scrollOffset = new UnityEngine.Vector2(0f, 0.01f);
+            scrollView.verticalScroller.value = 0.01f;
         }
     }
 }

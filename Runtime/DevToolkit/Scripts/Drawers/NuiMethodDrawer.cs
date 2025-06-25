@@ -41,7 +41,7 @@ namespace Noo.DevToolkit
 
             btn = NuiPool.Rent<NuiButton>();
             btn.WithClass("nui-btn-light-black");
-            btn.ButtonText = "Invoke";
+            btn.ButtonText = string.IsNullOrEmpty(Info) ? "Invoke" : Info;
             btn.IconRight = MatIcon.PlayArrow;
             btn.clicked += OnInvoke;
             LabelContainer.Add(btn);

@@ -3577,7 +3577,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   border-bottom-color: rgba(0, 0, 0, 0.2);
   border-left-color: rgba(0, 0, 0, 0.2);
 }
-.dtk-input-field:focus > .dtk-input-field__background, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-input-field:focus > .dtk-input-field__background {
+.dtk-input-field:focus > .dtk-input-field__background, .dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container .dtk-input-field:focus > .dtk-input-field__background {
   border-color: #0853c2;
   border-width: 2px;
   left: -1px;
@@ -3593,8 +3593,17 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   border-color: #3c3b3d;
 }
 
+.dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field > .dtk-input-field__background {
+  border-color: #3c3b3d;
+}
+
+.dtk-property-drawer.dtk--read-only > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field:focus > .dtk-input-field__background, .dtk-property-drawer.dtk--read-only:enabled:hover > .dtk-property-drawer__property-container > .dtk-vector-field__container > .dtk-input-field > .dtk-input-field__background {
+  border-color: #3c3b3d;
+}
+
 .dtk-property-drawer.dtk-property-drawer-bool {
   flex-wrap: nowrap;
+  justify-content: space-between;
 }
 .dtk-property-drawer.dtk-property-drawer-bool > .dtk-property-drawer__property-container {
   min-width: initial;
@@ -3668,7 +3677,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   padding: 4px 4px 4px 10px;
 }
 .dtk-drawer.dtk-method-drawer > .dtk-property-drawer__label-container > .dtk-property-drawer__label {
-  font-size: 13px;
+  font-size: 12px;
 }
 .dtk-drawer.dtk-method-drawer > .dtk-property-drawer__label-container > .nui-btn {
   height: 26px;
@@ -3702,6 +3711,9 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   min-width: 66%;
 }
 
+.dtk-drawer.dtk-property-drawer-enum:enabled:hover > .dtk-property-drawer__property-container > .nui-btn > .nui-btn-bg, .dtk-drawer.dtk-property-drawer-dropdown:enabled:hover > .dtk-property-drawer__property-container > .nui-btn > .nui-btn-bg {
+  background-color: #504f50;
+}
 .dtk-drawer.dtk-property-drawer-enum > .dtk-property-drawer__property-container, .dtk-drawer.dtk-property-drawer-dropdown > .dtk-property-drawer__property-container {
   padding: 2px 3px 2px 3px;
 }
@@ -3719,6 +3731,16 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   margin-bottom: 0;
   margin-left: 30px;
 }
+.dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-slider-field > .unity-label {
+  color: #777876;
+}
+.dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-slider-field > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger {
+  background-color: #acadac;
+}
+.dtk-property-drawer:enabled:hover > .dtk-property-drawer__property-container > .dtk-slider-field > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__tracker {
+  background-color: rgba(126, 126, 126, 0.25);
+}
+
 .dtk-slider-field.unity-slider {
   flex-basis: auto;
   flex-grow: 1;
@@ -3726,12 +3748,21 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   margin-top: 0;
   margin-bottom: 0;
 }
+.dtk-slider-field:enabled:focus > .unity-label {
+  color: #777876;
+}
 .dtk-slider-field:enabled:focus > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger {
   border-color: #0853c2;
   width: 12px;
   height: 24px;
   margin-left: -1px;
   margin-top: 3px;
+}
+.dtk-slider-field:enabled:focus > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger {
+  background-color: #acadac;
+}
+.dtk-slider-field:enabled:focus > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__tracker {
+  background-color: rgba(126, 126, 126, 0.25);
 }
 .dtk-slider-field > .unity-label {
   position: absolute;
@@ -3743,7 +3774,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   margin-left: -42px;
   overflow: hidden;
   white-space: nowrap;
-  color: #777876;
+  color: #565756;
   font-size: 10px;
 }
 .dtk-slider-field > .unity-base-slider__input, .dtk-slider-field > .unity-slider__input {
@@ -3777,7 +3808,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   right: 0;
   height: 6px;
   margin-top: -3px;
-  background-color: rgba(126, 126, 126, 0.2);
+  background-color: rgba(126, 126, 126, 0.15);
   border-radius: 4px;
 }
 .dtk-slider-field > .unity-base-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger-border, .dtk-slider-field > .unity-slider__input > .unity-base-slider__drag-container > .unity-base-slider__dragger-border {

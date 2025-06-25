@@ -2,27 +2,27 @@
 
 ## Attributes
 
-### [DevAssembly]
+### `[DevAssembly]`
 This needs to be included once per assembly to let the console know where to search and parse all other attributes
 
-### [DevCommand]
+### `[DevCommand]`
 Use it on field, property or method to create drawer in dev console. It can be used on static properties or MonoBehaviour/ScriptableObject properties (if used on Unity objects, target will be identified by utilizing `FindAnyObjectByType(FindObjectsInactive.Exclude)`)
 
 #### Properties
 
-|type|name|description|
+|Type|Name|Description|
 |--|--|--|
 |string|PathName|Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.|
 |string|Info|Additional info for this command displayed in the inspector.|
 |int|Order|Drawing order for the command.|
 |bool|Inline|Only used by Method drawers to draw method inline. (default: true)|
 
-### [DevCommands]
+### `[DevCommands]`
 Use it on a class to auto-generate commands from all its fields, properties and methods.
 
 #### Properties
 
-|type|name|description|
+|Type|Name|Description|
 |--|--|--|
 |string|PathName|Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.|
 |int|Order|Drawing order for the command.|
@@ -34,7 +34,7 @@ Use it on a class to auto-generate commands from all its fields, properties and 
 
 Special drawers can be used in combination with [DevCommand] to decorate drawer for property fields or method parameters. 
 
-### [DevDropdown]
+### `[DevDropdown]`
 Use it on field or property to draw Dropdown box of predefined values. Predefined values should be in static field, property or method. These are the valid types for Dropdown data source:
 	- `IReadOnlyDictionary<object, string>`
 	- `IEnumerable<(object, string)>`
@@ -42,17 +42,17 @@ Use it on field or property to draw Dropdown box of predefined values. Predefine
 
 #### Properties
 
-|type|name|description|
+|Type|Name|Description|
 |--|--|--|
 |string|Items|local or fullpath (including Namespace) to a static member.|
 |string|Parameter|If DevDropdown is used on method, you must specify Parameter name to which to apply decorator.|
 
-### [DevSlider]
+### `[DevSlider]`
 Use it on field or property to draw Slider component.
 
 #### Properties
 
-|type|name|description|
+|Type|Name|Description|
 |--|--|--|
 |float|Min|Minimum value for the slider|
 |float|Max|Maximum value for the slider|
@@ -78,6 +78,8 @@ namespace TestNamespace
 	
 	public class TestBehaviour : MonoBehaviour
 	{
+		static IEnumerable ExampleLocalData => Enumerable.Range(0, 10000);
+
 		[DevCommand, ShowInInspector]
 		public static int staticIntField;
 		
@@ -87,7 +89,7 @@ namespace TestNamespace
 		[DevCommand]
 		public static int StaticIntPropertyReadOnly { get; } = 420;
 
-		[DevCommand, DevDropdown("TestNamespace.ExampleDataSource.ExampleData")]
+		[DevCommand, DevDropdown("ExampleLocalData")]
 		public static int DropdownSimple { get; set; };
 
 		[DevCommand, DevDropdown("TestNamespace.ExampleDataSource.ExampleDataComplex")]
@@ -96,7 +98,7 @@ namespace TestNamespace
 		[DevCommand, ShowInInspector, DevSlider(-1f, 1f)]
 		public static float floatSliderField;
 
-		[DevCommand]
+		[DevCommand(Info = "Log")] //"Log" will be name of the button
 		void LocalMethod()
 		{
 			UnityEngine.Debug.Log("Hello from LocalMethod");
@@ -150,7 +152,7 @@ static void GenerateTestCommands()
 
 ### Available Property Drawer Types
 
-|type|note|
+|Type|Note|
 |--|--|
 |int, float, double, byte, short, long ||
 |char, string||

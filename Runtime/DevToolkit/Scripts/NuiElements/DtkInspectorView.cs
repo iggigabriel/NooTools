@@ -43,8 +43,6 @@ namespace Noo.DevToolkit
 
         public void SetDrawers(IReadOnlyList<NuiDrawer> drawers)
         {
-            list.ScrollToStart();
-
             validDrawers.Clear();
 
             if (drawers != null)
@@ -58,6 +56,8 @@ namespace Noo.DevToolkit
             }
 
             list.SetItems(validDrawers);
+
+            list.ScrollToStart();
         }
     }
 }
