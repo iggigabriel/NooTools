@@ -10,5 +10,11 @@
     "email": "ivan.gabriel.juricic@gmail.com",
     "url": "https://noopol.com/"
   },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.burst": "1.7.2",
+    "com.unity.collections": "2.1.4",
+    "com.unity.addressables": "2.3.16"
+  },
   "samples": []
 }
