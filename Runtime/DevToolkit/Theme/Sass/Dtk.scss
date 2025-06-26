@@ -162,7 +162,7 @@ $dtkInputFieldHeight: 23px;
     flex-direction: row;
     flex-grow: 1;
     height: $dtkInputFieldHeight + 6px;
-    width: 33%;
+    min-width: 33%;
 
     @at-root .dtk-property-drawer.dtk--read-only &
     {

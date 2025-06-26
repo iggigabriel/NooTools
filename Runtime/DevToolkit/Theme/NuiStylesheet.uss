@@ -3527,7 +3527,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   flex-direction: row;
   flex-grow: 1;
   height: 29px;
-  width: 33%;
+  min-width: 33%;
 }
 .dtk-property-drawer.dtk--read-only .dtk-property-drawer__property-container {
   color: #666;

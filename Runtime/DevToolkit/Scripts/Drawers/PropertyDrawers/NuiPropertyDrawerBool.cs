@@ -12,6 +12,7 @@ namespace Noo.DevToolkit
         {
             Root.WithClass("dtk-property-drawer-bool");
             if (!Property.IsReadOnly) LabelContainer.RegisterCallback<ClickEvent>(Toggle);
+            LabelContainer.WithClass("flex-grow");
 
             toggle = NuiPool.Rent<Toggle>().WithClass("dtk-bool-field").AppendTo(PropertyContainer);
             toggle.value = Value;
@@ -29,6 +30,7 @@ namespace Noo.DevToolkit
         {
             Root.WithoutClass("dtk-property-drawer-bool");
             LabelContainer.UnregisterCallback<ClickEvent>(Toggle);
+            LabelContainer.WithoutClass("flex-grow");
 
             if (toggleIcon != null)
             {
