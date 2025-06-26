@@ -1,5 +1,7 @@
 # NooTools
 
+Unity -> Package Manager -> Install package from git URL... (use: `https://github.com/iggigabriel/NooTools.git`)
+
 ## Dev Console ([#](/Runtime/DevToolkit#dev-console))
 
 A way to quickly expose properties, fields and methods in a console for runtime testing.
