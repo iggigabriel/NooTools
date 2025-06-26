@@ -2,6 +2,8 @@
 
 Unity -> Package Manager -> Install package from git URL... (use: `https://github.com/iggigabriel/NooTools.git`)
 
+Note: Some modules depend on [Odin Inspector](https://odininspector.com/)
+
 ## Dev Console ([#](/Runtime/DevToolkit#dev-console)) ([demo](https://noopol.com/dev-console-demo/))
 
 A way to quickly expose properties, fields and methods in a console for runtime testing.
