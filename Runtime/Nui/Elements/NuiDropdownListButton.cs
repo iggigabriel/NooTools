@@ -45,7 +45,7 @@ namespace Noo.Nui
 
         public override bool Filter(string query)
         {
-            return buttonText.Contains(query, StringComparison.InvariantCultureIgnoreCase);
+            return buttonText.ToLowerInvariant().Contains(query, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override void OnReturnToPool()
