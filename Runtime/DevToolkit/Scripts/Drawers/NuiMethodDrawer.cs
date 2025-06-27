@@ -1,5 +1,4 @@
 using Noo.Nui;
-using Noo.Tools;
 using System.Reflection;
 
 namespace Noo.DevToolkit
@@ -79,7 +78,7 @@ namespace Noo.DevToolkit
             }
             else
             {
-                UnityEngine.Debug.LogError($"No valid instance of type ({methodInfo.DeclaringType.GetNameNonAlloc()}) found to invoke method ({methodInfo.Name}).");
+                UnityEngine.Debug.LogError($"No valid instance of type ({methodInfo.DeclaringType.Name}) found to invoke method ({methodInfo.Name}).");
             }
         }
     }

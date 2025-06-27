@@ -8,7 +8,7 @@ WebGL Demo: ([https://noopol.com/dev-console-demo/](https://noopol.com/dev-conso
 
 ## Usage
 
-1. Unity -> Package Manager -> Install package from git URL... (use: `https://github.com/iggigabriel/NooTools.git`)
+1. Copy the `/Runtime/DevToolkit/` somewhere in you Assets folder, DevToolkit has no third-party dependancies, or if install the whole [NooTools](../../) package.
 
 2. Drag `\Packages\com.noo.tools\Runtime\DevToolkit\Assets\DevConsole.prefab` to Scene.
 
