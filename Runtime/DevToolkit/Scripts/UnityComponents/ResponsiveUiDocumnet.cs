@@ -25,9 +25,10 @@ namespace Noo.DevToolkit
         private void OnEnable()
         {
             OnScreenSizeChanged();
+            screenSize = null;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!screenSize.HasValue || screenSize.Value != new Vector2Int(Screen.width, Screen.height))
             {
