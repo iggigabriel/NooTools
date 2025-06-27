@@ -14,10 +14,6 @@ namespace Noo.DevToolkit
         [SerializeField]
         int height = 480;
 
-        [SerializeField]
-        [Tooltip("From top-left position of the screen")]
-        Vector2Int initialPosition = new(20, 20);
-
         DtkWindow dtkWindow;
 
         private void Initialize()
@@ -27,8 +23,6 @@ namespace Noo.DevToolkit
             dtkWindow = new();
             dtkWindow.style.width = width;
             dtkWindow.style.height = height;
-            dtkWindow.style.left = initialPosition.x;
-            dtkWindow.style.top = initialPosition.y;
 
             var page = DevToolkit.Commands.rootVisualElement;
 
