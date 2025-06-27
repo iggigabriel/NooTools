@@ -22,6 +22,14 @@ namespace Noo.DevToolkit
             targetDocument = GetComponent<UIDocument>();
         }
 
+        private void Awake()
+        {
+            if (targetDocument && targetDocument.panelSettings)
+            {
+                targetDocument.panelSettings = Instantiate(targetDocument.panelSettings);
+            }
+        }
+
         private void OnEnable()
         {
             OnScreenSizeChanged();
@@ -56,7 +64,7 @@ namespace Noo.DevToolkit
                 targetDocument.panelSettings.scale = screenSize.Value.x / targetPortraitWidth;
             }
 
-            var rootElement = targetDocument.runtimePanel.visualTree;
+            var rootElement = targetDocument.rootVisualElement;
 
             rootElement.EnableInClassList("nui--landscape", isLandscape);
             rootElement.EnableInClassList("nui--portrait", !isLandscape);
