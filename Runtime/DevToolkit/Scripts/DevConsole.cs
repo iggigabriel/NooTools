@@ -29,9 +29,9 @@ namespace Noo.DevToolkit
             dtkWindow.Add(page);
             dtkWindow.Title = page.Title;
 
-            dtkWindow.IsDraggable = uiDocument.runtimePanel.visualTree.ClassListContains("nui--landscape");
+            dtkWindow.IsDraggable = uiDocument.rootVisualElement.ClassListContains("nui--landscape");
 
-            uiDocument.runtimePanel.visualTree.RegisterCallback<ScreenSizeChangeEvent>((e) =>
+            uiDocument.rootVisualElement.RegisterCallback<ScreenSizeChangeEvent>((e) =>
             {
                 dtkWindow.IsDraggable = e.isLandscape;
             });
