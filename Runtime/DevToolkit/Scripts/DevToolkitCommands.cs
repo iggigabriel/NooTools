@@ -280,6 +280,19 @@ namespace Noo.DevToolkit
             }
         }
 
+        public bool PageHasValidItems(string path)
+        {
+            if (TryGetPage(path, out var page))
+            {
+                foreach (var drawer in page.drawers)
+                {
+                    if (drawer.IsValid) return true;
+                }
+            }
+
+            return false;
+        }
+
         internal static CommandInfo GetCommandInfo(MemberInfo memberInfo)
         {
             if (!commandInfos.TryGetValue(memberInfo, out CommandInfo commandInfo))
