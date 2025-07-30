@@ -63,6 +63,21 @@ namespace Noo.Tools
             for (int i = 0; i < tempList.Count; i++) list.Add(tempList[i]);
         }
 
+        public static bool TryFind<T, TPredicate>(this IList<T> list, TPredicate predicate, out T item) where TPredicate : struct, IListPredicate<T>
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (predicate.Test(list[i]))
+                {
+                    item = list[i];
+                    return true;
+                }
+            }
+
+            item = default;
+            return false;
+        }
+
         public static void AddRangeNonAlloc<T>(this IList<T> list, IList<T> values)
         {
             if (values == null) return;
