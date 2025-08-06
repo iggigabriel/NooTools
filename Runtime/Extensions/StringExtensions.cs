@@ -23,5 +23,10 @@ namespace Noo.Tools
                 @"(\p{Ll})(\P{Ll})", "$1 $2"
             );
         }
+
+        public static string Wrap(this string str, string prefix, string suffix)
+        {
+            return $"{prefix}{str}{suffix}";
+        }
     }
 }
