@@ -47,6 +47,7 @@ namespace Noo.Tools
         public string typePrefix;
         public string @namespace = "";
         public string outputFolder;
+        public string menuItem = "Tools/NooEntities";
 
         public readonly string[] defaultUsings = new string[] {
             "System",

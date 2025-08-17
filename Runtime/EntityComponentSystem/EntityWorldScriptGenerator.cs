@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -274,6 +275,13 @@ namespace Noo.Tools
                     Line($"Dictionary<Type, {script.typePrefix}EntitySystem> systemsByType;");
                     Space();
 
+                    foreach (var systemType in GetAvailableEntitySystems())
+                    {
+                        Line($"public {systemType.FullName} @{systemType.Name} {{ get; private set; }}");
+                    }
+                    Space();
+
+
                     Line("[Title(\"Entities\")]");
                     foreach (var archetype in script.ActiveArchetypes)
                     {
@@ -325,6 +333,10 @@ namespace Noo.Tools
                         Line($"Initialize();");
                     }
 
+                    Space();
+                    Line($"partial void OnInitialize();");
+                    Space();
+
                     using (Section($"public void Initialize()"))
                     {
                         Line($"if (initialized) return;");
@@ -370,6 +382,21 @@ namespace Noo.Tools
                         Line($"GetComponentsInChildren(true, systems);");
                         Line($"systems.Sort((a, b) => a.SystemExecutionOrder.CompareTo(b.SystemExecutionOrder));");
                         Line($"systemsByType = systems.ToDictionary(x => x.GetType());");
+
+                        Space();
+
+                        using (Section("foreach (var system in systems)"))
+                        {
+                            using (Section("switch (system)"))
+                            {
+                                foreach (var systemType in GetAvailableEntitySystems())
+                                {
+                                    Line($"case {systemType.FullName} _s: @{systemType.Name} = _s; break;");
+                                }
+                            }
+                        }
+
+                        Line($"OnInitialize();");
                     }
 
                     using (Section($"public void OnTick()"))
@@ -640,7 +667,7 @@ namespace Noo.Tools
                         Line($"return entity;");
                     }
 
-                    foreach(var archetype in script.ActiveEntities)
+                    foreach (var archetype in script.ActiveEntities)
                     {
                         var archType = $"{script.typePrefix}{archetype.typeName}";
                         var archTypeVarName = archetype.typeName.ToLower();
@@ -938,7 +965,7 @@ namespace Noo.Tools
 
                     using (Conditional("UNITY_EDITOR"))
                     {
-                        Line($"[UnityEditor.MenuItem(\"Tools/NooEntities/{script.name}\")]");
+                        Line($"[UnityEditor.MenuItem(\"{script.menuItem}/{script.name}\")]");
                         using (Section($"private static void SelectEntityWorldMainAsset()"))
                         {
                             Line($"var mainAsset = AssetDatabaseUtility.FindAssetWithName<EntityWorldDefinition>(\"{script.name}\");");
@@ -1342,6 +1369,22 @@ namespace Noo.Tools
                     Line($"public static implicit operator {script.typePrefix}EntityRef({script.typePrefix}Entity entity) => new(entity);");
                 }
             }
+        }
+
+        private List<Type> GetAvailableEntitySystems()
+        {
+            var entitySystemType = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => !a.IsDynamic)
+                .SelectMany(a => a.GetTypes())
+                .FirstOrDefault(t => t.Name.Equals($"{script.typePrefix}EntitySystem"));
+
+            if (entitySystemType == null) return new List<Type>();
+
+            return entitySystemType.Assembly
+                .GetTypes()
+                .Where(x => x != entitySystemType)
+                .Where(x => !x.IsAbstract)
+                .Where(x => entitySystemType.IsAssignableFrom(x)).ToList();
         }
 
         void InlineMethod() => Line("[MethodImpl(MethodImplOptions.AggressiveInlining)]");
