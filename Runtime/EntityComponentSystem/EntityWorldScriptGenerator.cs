@@ -385,16 +385,12 @@ namespace Noo.Tools
 
                         Space();
 
-                        using (Section("foreach (var system in systems)"))
+                        foreach (var systemType in GetAvailableEntitySystems())
                         {
-                            using (Section("switch (system)"))
-                            {
-                                foreach (var systemType in GetAvailableEntitySystems())
-                                {
-                                    Line($"case {systemType.FullName} _s: @{systemType.Name} = _s; break;");
-                                }
-                            }
+                            Line($"@{systemType.Name} = GetSystem<{systemType.FullName}>();");
                         }
+
+                        Space();
 
                         Line($"OnInitialize();");
                     }
@@ -608,9 +604,8 @@ namespace Noo.Tools
                         Line($"JobHandle = job.ScheduleByRef(transforms, JobHandle);");
                     }
 
-
-
                     Line($"public T GetSystem<T>() where T : {script.typePrefix}EntitySystem => (systemsByType.TryGetValue(typeof(T), out var system)) ? system as T : default;");
+                    Space();
 
                     using (Section("public void ScheduleJobs()"))
                     {
