@@ -179,6 +179,7 @@ static void GenerateTestCommands()
     {
         var testCommands = new List<NuiDrawer>();
 
+        // Text Drawers
         for (int i = 0; i < 100; i++)
         {
             var drawer = new NuiTextDrawer($"Item {i}", color: (i % 2 == 0) ? Color.aliceBlue : Color.lawnGreen);
@@ -186,6 +187,34 @@ static void GenerateTestCommands()
             testCommands.Add(drawer);
         }
 
+
+        // Generic Property Drawers
+        var floatValue = 3f;
+
+		var floatDrawer = NuiDrawerUtility.CreateDrawer
+		(
+		    "Floaty",
+		    () => floatValue,
+		    (x) => floatValue = x
+		);
+
+		testCommands.Add(floatDrawer);
+
+
+		// Generic Property Drawers with custom attributes
+		var sliderValue = 0.5f;
+
+		var sliderDrawer = NuiDrawerUtility.CreateDrawer
+		(
+		    "Floaty (Slider)",
+		    () => sliderValue,
+		    (x) => sliderValue = x,
+		    new DevSliderAttribute(0f, 1f)
+		);
+
+		testCommands.Add(sliderDrawer);
+
+		// Create console page with all drawers
         DevToolkitCommands.AddCommands("Test/Commands", testCommands);
     };
 }

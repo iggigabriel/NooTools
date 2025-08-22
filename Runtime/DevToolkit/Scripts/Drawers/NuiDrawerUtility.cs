@@ -93,6 +93,37 @@ namespace Noo.DevToolkit
             return drawer;
         }
 
+        public static NuiPropertyDrawer CreateDrawer<T>(string label, Func<T> getter, Action<T> setter, params DrawerAttribute[] attributes)
+        {
+            var memberType = typeof(T);
+            var drawer = default(NuiPropertyDrawer);
+
+            if (attributes != null)
+            {
+                foreach (var attr in attributes)
+                {
+                    TryCreateDrawerForAttribute(attr, out drawer);
+                }
+            }
+
+            drawer ??= CreateDrawerForType(memberType);
+
+            drawer.Label = label;
+
+            drawer.Property = new NuiProperty
+            (
+                memberType,
+                () => getter != null ? getter() : default,
+                (x) => { if (x == null) setter?.Invoke(default); if (x is T tx) setter?.Invoke(tx); },
+                attributes
+            );
+
+            drawer.OnInit();
+
+            return drawer;
+
+        }
+
         static bool TryCreateDrawerForAttribute(DrawerAttribute attribute, out NuiPropertyDrawer drawer)
         {
             if (attribute != null && attributeDrawerTypes.TryGetValue(attribute.GetType(), out var drawerType))

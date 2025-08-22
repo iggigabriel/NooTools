@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -109,6 +110,17 @@ namespace Noo.DevToolkit
             setter = (x) => parameterValue = x;
 
             Attributes = parameterInfo.GetAllAttributes(true);
+        }
+
+        public NuiProperty(Type type, Func<object> getter, Action<object> setter, params DrawerAttribute[] attributes)
+        {
+            PropertyType = type;
+            DeclaringType = type;
+
+            this.getter = getter;
+            this.setter = setter;
+
+            Attributes = attributes?.Cast<Attribute>().ToList();
         }
 
         public static bool IsValidMemberForProperty(MemberInfo memberInfo)
