@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.CompilerServices;
-using UnityEngine.Assertions.Must;
 
 namespace Noo.Tools
 {
@@ -178,7 +176,7 @@ namespace Noo.Tools
             {
                 var l1p1BackDistance = Sfloat.SqrtFast(c1RadiusSqr - l1p1q1LenghtSqr);
                 var hitCentroid = c1l1q1 - c1VelocityRay.Direction * l1p1BackDistance;
-                var hitT = Sfloat2.LengthFast(hitCentroid - c1.origin) / c1VelocityLength;
+                var hitT = Sfloat.Max(Sfloat.Zero, Sfloat2.LengthFast(hitCentroid - c1.origin) / c1VelocityLength);
 
                 if (hitT.Raw <= SfMath.One && (!hitFound || hit.t > hitT))
                 {
@@ -197,7 +195,7 @@ namespace Noo.Tools
             {
                 var l1p2BackDistance = Sfloat.SqrtFast(c1RadiusSqr - l1p2q2LenghtSqr);
                 var hitCentroid = c1l1q2 - c1VelocityRay.Direction * l1p2BackDistance;
-                var hitT = Sfloat2.LengthFast(hitCentroid - c1.origin) / c1VelocityLength;
+                var hitT = Sfloat.Max(Sfloat.Zero, Sfloat2.LengthFast(hitCentroid - c1.origin) / c1VelocityLength);
 
                 if (hitT.Raw <= SfMath.One && (!hitFound || hit.t > hitT))
                 {
@@ -302,7 +300,7 @@ namespace Noo.Tools
             {
                 if (Overlaps(rect, point, out var delta))
                 {
-                    var overlapNormal = Sfloat.Abs(delta.x) < Sfloat.Abs(delta.y) ? 
+                    var overlapNormal = Sfloat.Abs(delta.x) < Sfloat.Abs(delta.y) ?
                         (delta.RawX < 0 ? Sfloat2.Left : Sfloat2.Right) :
                         (delta.RawY < 0 ? Sfloat2.Down : Sfloat2.Up);
 
