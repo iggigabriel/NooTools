@@ -89,7 +89,7 @@ namespace Noo.DevToolkit
             }
             else
             {
-                btn.ButtonText = "<missing>";
+                btn.ButtonText = "";
             }
         }
 

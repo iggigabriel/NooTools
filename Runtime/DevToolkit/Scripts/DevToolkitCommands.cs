@@ -1,4 +1,5 @@
 using Noo.Nui;
+using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace Noo.DevToolkit
             public string path;
             public string displayName;
             public string info;
-            public bool inline = true;
+            public bool inline;
         }
 
         internal class CommandPage
@@ -142,7 +143,7 @@ namespace Noo.DevToolkit
 
                     var commandInfo = GetCommandInfo(method);
 
-                    if (commandInfo.inline)
+                    if (commandInfo.inline || method.GetParameters().Length == 0)
                     {
                         var page = GetOrCreatePage(commandInfo.path);
                         page.drawers.Add(NuiDrawerUtility.CreateDrawer(method));
@@ -313,7 +314,7 @@ namespace Noo.DevToolkit
                     {
                         customPathName = attr.PathName;
                         commandInfo.order = attr.Order;
-                        commandInfo.inline = true;
+                        commandInfo.inline = attr.Inline;
                     }
                 }
                 else
