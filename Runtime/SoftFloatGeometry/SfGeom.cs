@@ -113,6 +113,21 @@ namespace Noo.Tools
             return Sfloat.Clamp(angle - Sfloat.Floor(angle / Deg360) * Deg360, Sfloat.Zero, Deg360) - Deg180;
         }
 
+        // https://math.stackexchange.com/questions/383321/rotating-x-y-points-45-degrees
+        // [cos(45), -sin(45)]
+        // [sin(45),  cos(45)]
+        [MethodImpl(SfUtil.AggressiveInlining)]
+        public static Sfloat2 Rotate45(this Sfloat2 vector)
+        {
+            const int sqrt2rcp = 0xB504; // cos(45) = 1.0/sqrt(2.0) = 0.7071
+
+            return new Sfloat2
+            (
+                SfMath.Mul(vector.x.Raw + vector.y.Raw, sqrt2rcp),
+                SfMath.Mul(vector.y.Raw - vector.x.Raw, sqrt2rcp)
+            );
+        }
+
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Rotate90(this Sfloat2 vector) => new(vector.y, -vector.x);
 
