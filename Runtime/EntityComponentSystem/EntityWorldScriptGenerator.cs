@@ -272,7 +272,7 @@ namespace Noo.Tools
                     Line($"internal JobHandle DisposeJobHandle {{ get {{ return disposeJobHandle; }} set {{ disposeJobsQueued = true; disposeJobHandle = value; }} }}");
                     Line($"List<{script.typePrefix}EntitySystem> systems;");
                     Line($"readonly List<{script.typePrefix}EntitySystem> activeSystems = new();");
-                    Line($"Dictionary<Type, {script.typePrefix}EntitySystem> systemsByType;");
+                    Line($"Dictionary<Type, {script.typePrefix}EntitySystem> systemsByType = new();");
                     Space();
 
                     foreach (var systemType in GetAvailableEntitySystems())

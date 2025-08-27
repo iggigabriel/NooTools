@@ -15,7 +15,7 @@ namespace Noo.DevToolkit
         object lastSetValue;
 
         DropdownSelect<object> dropdownSelect;
-        Dictionary<object, string> nameValuePairs = new();
+        readonly Dictionary<object, string> nameValuePairs = new();
 
         MemberInfo dataSourceMember;
         Exception dataSourceException;
@@ -89,7 +89,7 @@ namespace Noo.DevToolkit
             }
             else
             {
-                btn.ButtonText = "";
+                btn.ButtonText = " ";
             }
         }
 
