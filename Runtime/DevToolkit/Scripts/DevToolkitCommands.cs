@@ -1,5 +1,4 @@
 using Noo.Nui;
-using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
