@@ -83,7 +83,7 @@ namespace Noo.DevToolkit
 
             lastSetValue = Property.Value;
 
-            if (nameValuePairs.TryGetValue(Property.Value, out var valueName))
+            if (Property.Value != null && nameValuePairs.TryGetValue(Property.Value, out var valueName))
             {
                 btn.ButtonText = valueName;
             }

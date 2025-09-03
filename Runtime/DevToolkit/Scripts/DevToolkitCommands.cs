@@ -33,7 +33,7 @@ namespace Noo.DevToolkit
             public string path;
             public string displayName;
             public string info;
-            public bool inline;
+            public bool inline = true;
         }
 
         internal class CommandPage

@@ -37,9 +37,10 @@ namespace Noo.DevToolkit
         static DevToolkitUtility()
         {
             devAssemblies = FindAssembliesWithAttribute<DevAssemblyAttribute>();
-            devTypes = devAssemblies.SelectMany(x => x.GetTypes()).ToList();
+            devTypes = devAssemblies.SelectMany(x => x.GetTypes().Where(x => !x.IsAutoClass && !x.IsSpecialName)).ToList();
             devTypesMap = new Dictionary<string, Type>();
             foreach (var type in devTypes) devTypesMap.TryAdd(type.FullName, type);
+
         }
 
 #if UNITY_EDITOR

@@ -17,7 +17,7 @@ namespace Noo.DevToolkit
         public int Order { get; set; }
 
         /// <summary>Only used by Method drawers to draw method inline.</summary>
-        public bool Inline { get; set; } = false;
+        public bool Inline { get; set; } = true;
 
         /// <summary>Auto generate DevCommands from all members matching these binding flags.</summary>
         public BindingFlags GenerateMemberFlags { get; set; }
@@ -45,7 +45,7 @@ namespace Noo.DevToolkit
         public string Info { get; set; }
 
         /// <summary>Only used by Method drawers to draw method inline.</summary>
-        public bool Inline { get; set; } = false;
+        public bool Inline { get; set; } = true;
 
         /// <summary>Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.</summary>
         public DevCommandAttribute(string pathName = null, string info = null)
