@@ -4,7 +4,7 @@ Built with Unity UIElements, battle tested in Unity 6+
 
 WebGL Demo: ([https://noopol.com/dev-console-demo/](https://noopol.com/dev-console-demo/))
 
-![DevConsole](../../.docs/img/dev-toolkit-console.png)
+![DevConsole](../../docs/img/dev-toolkit-console.png)
 
 ## Usage
 
