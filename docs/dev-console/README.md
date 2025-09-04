@@ -99,7 +99,7 @@ Use it on field or property to draw Slider component.
 |float|Max|Maximum value for the slider|
 |string|Parameter|If DevDropdown is used on method, you must specify Parameter name to which to apply decorator.|
 
-### Example Code
+## Example Code
 
 ```cs
 using Noo.DevToolkit;
@@ -167,7 +167,7 @@ namespace TestNamespace
 }
 ```
 
-### Procedural Commands
+## Procedural Commands
 
 You can also add new commands and drawers from script, for example:
 
@@ -220,7 +220,7 @@ static void GenerateTestCommands()
 }
 ```
 
-### Available Property Drawer Types
+## Available Property Drawer Types
 
 |Type|Note|
 |--|--|
