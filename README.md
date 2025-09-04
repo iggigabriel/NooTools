@@ -8,7 +8,7 @@ Note: Some modules depend on [Odin Inspector](https://odininspector.com/)
 
 A way to quickly expose properties, fields and methods in a console for runtime testing.
 
-![DevConsole](/.docs/dev-toolkit-console.png)
+![DevConsole](/.docs/img/dev-toolkit-console.png)
 
 ## Dynamics ([#](/Runtime/Dynamics)) - ([demo](https://github.com/iggigabriel/DynamicsStudy))
 

@@ -4,7 +4,7 @@ Built with Unity UIElements, battle tested in Unity 6+
 
 WebGL Demo: ([https://noopol.com/dev-console-demo/](https://noopol.com/dev-console-demo/))
 
-![DevConsole](../../.docs/img/dev-toolkit-console.png)
+![DevConsole](../img/dev-toolkit-console.png)
 
 ## Usage
 
@@ -14,7 +14,7 @@ WebGL Demo: ([https://noopol.com/dev-console-demo/](https://noopol.com/dev-conso
 
 3. You will need to write your own script to enable/disable that GameObject, for example: 
 
-```c#
+```cs
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Noo.DevToolkit;
@@ -101,7 +101,7 @@ Use it on field or property to draw Slider component.
 
 ### Example Code
 
-```c#
+```cs
 using Noo.DevToolkit;
 
 [assembly: DevAssembly]
@@ -171,7 +171,7 @@ namespace TestNamespace
 
 You can also add new commands and drawers from script, for example:
 
-```c#
+```cs
 [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 static void GenerateTestCommands()
 {
