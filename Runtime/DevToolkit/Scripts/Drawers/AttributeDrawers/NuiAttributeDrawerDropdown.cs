@@ -111,11 +111,18 @@ namespace Noo.DevToolkit
                 return;
             }
 
-            object items;
+            object items = null;
 
             if (dataSourceMember is MethodInfo methodInfo)
             {
-                items = methodInfo.Invoke(null, Array.Empty<object>());
+                try
+                {
+                    items = methodInfo.Invoke(null, Array.Empty<object>());
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             }
             else if (!dataSourceMember.IsMemberReadable())
             {
@@ -124,7 +131,14 @@ namespace Noo.DevToolkit
             }
             else
             {
-                items = dataSourceMember.GetMemberValue(null);
+                try
+                {
+                    items = dataSourceMember.GetMemberValue(null);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             }
 
             if (items is IEnumerable<(object, string)> objectTuples)

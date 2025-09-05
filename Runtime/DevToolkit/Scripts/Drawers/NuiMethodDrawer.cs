@@ -1,4 +1,6 @@
-using Noo.Nui;
+﻿using Noo.Nui;
+using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Noo.DevToolkit
@@ -65,6 +67,8 @@ namespace Noo.DevToolkit
             return methodInfo.Name.ToLowerInvariant().Contains(query);
         }
 
+        static readonly Stopwatch sw = Stopwatch.StartNew();
+
         void OnInvoke()
         {
             for (int i = 0; i < parameters.Length; i++)
@@ -74,7 +78,20 @@ namespace Noo.DevToolkit
 
             if (Property.HasValidTarget(out var target))
             {
-                methodInfo.Invoke(target, parameterValues);
+                var elapsedMs = sw.Elapsed.TotalMilliseconds;
+
+                try
+                {
+                    methodInfo.Invoke(target, parameterValues);
+                    elapsedMs = sw.Elapsed.TotalMilliseconds - elapsedMs;
+                    UnityEngine.Debug.Log($"[DevConsole] {methodInfo.DeclaringType.Name}.{methodInfo.Name}({string.Join(", ", parameterValues)}) \u23F1\uFE0F{elapsedMs:0.00}ms");
+                }
+                catch (Exception e)
+                {
+                    elapsedMs = sw.Elapsed.TotalMilliseconds - elapsedMs;
+                    UnityEngine.Debug.Log($"[DevConsole] {methodInfo.DeclaringType.Name}.{methodInfo.Name}({string.Join(", ", parameterValues)}) ️\u23F1\uFE0F{elapsedMs:0.00}ms");
+                    UnityEngine.Debug.LogException(e);
+                }
             }
             else
             {
