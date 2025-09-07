@@ -308,9 +308,9 @@ namespace Noo.Tools
             if (diffAbs.x <= rectHalfSize.x) return true;
             if (diffAbs.y <= rectHalfSize.y) return true;
 
-            var distanceSqr = (diffAbs.x - rectHalfSize.x) * (diffAbs.x - rectHalfSize.x) + (diffAbs.y - rectHalfSize.y) * (diffAbs.y - rectHalfSize.y);
+            var diffDiff = diffAbs - rectHalfSize;
 
-            return distanceSqr <= (circle.radius * circle.radius);
+            return diffDiff.Magnitude <= circle.radius;
         }
 
         public static Sfloat2 NearestPointOnRect(Sfloat2 origin, SfRect rect)
