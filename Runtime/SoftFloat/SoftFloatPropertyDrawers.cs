@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Noo.Tools
 {
     [CustomPropertyDrawer(typeof(Sfloat))]
-    internal class SfPropertyDrawer : PropertyDrawer
+    public class SfPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -25,11 +25,25 @@ namespace Noo.Tools
             EditorGUI.EndProperty();
         }
 
-        internal static float ToRoundedValue(int rawValue) => Mathf.Round(SfMath.ToFloat(rawValue) * 10000f) / 10000f;
+        public static float ToRoundedValue(int rawValue) => Mathf.Round(SfMath.ToFloat(rawValue) * 10000f) / 10000f;
+
+        public static Sfloat SfloatField(Rect position, GUIContent label, Sfloat value)
+        {
+            var rawValue = ToRoundedValue(value.Raw);
+            rawValue = EditorGUI.FloatField(position, label, rawValue);
+            return Sfloat.FromFloat(rawValue);
+        }
+
+        public static Sfloat SfloatField(Rect position, Sfloat value)
+        {
+            var rawValue = ToRoundedValue(value.Raw);
+            rawValue = EditorGUI.FloatField(position, rawValue);
+            return Sfloat.FromFloat(rawValue);
+        }
     }
 
     [CustomPropertyDrawer(typeof(Sdouble))]
-    internal class SdPropertyDrawer : PropertyDrawer
+    public class SdPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -48,7 +62,7 @@ namespace Noo.Tools
             EditorGUI.EndProperty();
         }
 
-        internal static double ToRoundedValue(long rawValue) => System.Math.Round(SdMath.ToDouble(rawValue) * 100000.0) / 100000.0;
+        public static double ToRoundedValue(long rawValue) => System.Math.Round(SdMath.ToDouble(rawValue) * 100000.0) / 100000.0;
     }
 
     internal abstract class VecPropertyDrawer : PropertyDrawer
