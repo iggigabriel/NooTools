@@ -16,6 +16,7 @@ namespace Noo.DevToolkit
 
         static readonly List<Assembly> devAssemblies;
         static readonly List<Type> devTypes;
+        static readonly List<Type> commandTypes;
         static readonly Dictionary<string, Type> devTypesMap;
 
         static readonly string[] hNotationPrefix = new string[] { "g_", "m_", "s_", "c_" };
@@ -28,6 +29,7 @@ namespace Noo.DevToolkit
 
         public static IReadOnlyList<Assembly> DevAssemblies => devAssemblies;
         public static IReadOnlyList<Type> DevTypes => devTypes;
+        public static IReadOnlyList<Type> CommandTypes => commandTypes;
         public static IReadOnlyDictionary<string, Type> DevTypesMap => devTypesMap;
 
         public static BindingFlags BindFlagAll => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -38,9 +40,10 @@ namespace Noo.DevToolkit
         {
             devAssemblies = FindAssembliesWithAttribute<DevAssemblyAttribute>();
             devTypes = devAssemblies.SelectMany(x => x.GetTypes().Where(x => !x.IsAutoClass && !x.IsSpecialName)).ToList();
+            commandTypes = devTypes.Where(x => x.IsDefined(typeof(DevCommandsAttribute), true)).ToList();
+
             devTypesMap = new Dictionary<string, Type>();
             foreach (var type in devTypes) devTypesMap.TryAdd(type.FullName, type);
-
         }
 
 #if UNITY_EDITOR

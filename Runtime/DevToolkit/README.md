@@ -12,7 +12,7 @@ WebGL Demo: ([https://noopol.com/dev-console-demo/](https://noopol.com/dev-conso
 
 2. Drag `\Packages\com.noo.tools\Runtime\DevToolkit\Assets\DevConsole.prefab` to Scene.
 
-3. You will need to write your own script to enable/disable that GameObject, for example: 
+3. You will need to write your own script to load all commands and to enable/disable DevConsole GameObject, for example: 
 
 ```c#
 using UnityEngine;
@@ -24,8 +24,10 @@ public class DevConsoleManager : MonoBehaviour
     public DevConsole devConsole;
     public InputActionReference toggleAction;
 
-    private void Awake()
+    private async Awaitable Start()
     {
+    	await DevToolkit.DevToolkit.Commands.Load();
+
         if (devConsole && toggleAction != null && toggleAction.action != null)
         {
             toggleAction.action.performed += (e) =>
@@ -37,14 +39,27 @@ public class DevConsoleManager : MonoBehaviour
 }
 ```
 4. Add `[DevAssembly]` attribute to your namespace.
-5. Add `[DevCommand]` on your properties, fields or methods,
+5. Add `[DevCommands]` on your classes to register type as DevCommand container or to auto create commands for each of its properties, fields or methods.
+6. Add `[DevCommand]` on your properties, fields or methods,
 
-   or `[DevCommands]` on your classes to automatically create commands for each of its properties, fields or methods.
 
 ## Attributes
 
 ### `[DevAssembly]`
-This needs to be included once per assembly to let the console know where to search and parse all other attributes
+Must be declared once per assembly to let the console know where to search and parse all other attributes
+
+### `[DevCommands]`
+Must be declared on a class to register it as a DevCommand container and optionally auto-generate commands from all its fields, properties and methods.
+
+#### Properties
+
+|Type|Name|Description|
+|--|--|--|
+|string|PathName|Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.|
+|int|Order|Drawing order for the command.|
+|BindingFlags|GenerateMemberFlags|Auto generate DevCommands from all members matching these binding flags. (example: `BindingFlags.Static | BindingFlags.Public`)|
+|MemberTypes|GenerateMemberTypes|Auto generate DevCommands from all members of this type. (default: `MemberTypes.All`)|
+
 
 ### `[DevCommand]`
 Use it on field, property or method to create drawer in dev console. It can be used on static properties or MonoBehaviour/ScriptableObject properties (if used on Unity objects, target will be identified by utilizing `FindAnyObjectByType(FindObjectsInactive.Exclude)`)
@@ -58,17 +73,24 @@ Use it on field, property or method to create drawer in dev console. It can be u
 |int|Order|Drawing order for the command.|
 |bool|Inline|Only used by Method drawers to draw method inline. (default: true)|
 
-### `[DevCommands]`
-Use it on a class to auto-generate commands from all its fields, properties and methods.
+
+
+### `[DevHotkey]`
+Currently works only on static methods, you can bind any key combination. Hotkeys are optional and are processed only if `DevConsole.ProcessHotkeys();` is called somewhere, or `DevConsoleHotkeys` component is added to some object.
 
 #### Properties
 
 |Type|Name|Description|
 |--|--|--|
-|string|PathName|Override the relative path name like "CustomGroup/ItemName" or an absolute path like "/CustomCategory/CustomGroup/ItemName". Member name by default.|
-|int|Order|Drawing order for the command.|
-|BindingFlags|GenerateMemberFlags|Auto generate DevCommands from all members matching these binding flags. (example: `BindingFlags.Static | BindingFlags.Public`)|
-|MemberTypes|GenerateMemberTypes|Auto generate DevCommands from all members of this type. (default: `MemberTypes.All`)|
+|Key[]|params Key[] keys|Combination of keys, last key is used as main one that needs to be pressed
+|bool|Log|Logs to Unity Console when executed (default: false)|
+
+#### Example Usage
+
+```c#
+[DevHotkey(Key.LeftCtrl, Key.F4, Log = true)]
+public static void ExampleMethod() { ... }
+```
 
 
 ## Special Drawers
@@ -117,6 +139,7 @@ namespace TestNamespace
 		public static bool Bool { get; set; }
 	}
 	
+	[DevCommands]
 	public class TestBehaviour : MonoBehaviour
 	{
 		static IEnumerable ExampleLocalData => Enumerable.Range(0, 10000);
@@ -153,6 +176,7 @@ namespace TestNamespace
 		}
 	}
 
+	[DevCommands]
 	public static class ExampleDataSource
 	{
 		public static IEnumerable ExampleData => Enumerable.Range(0, 10000);

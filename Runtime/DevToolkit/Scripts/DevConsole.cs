@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -57,6 +58,23 @@ namespace Noo.DevToolkit
             Initialize();
             DevToolkit.Commands.rootVisualElement.OnDisable();
             dtkWindow.RemoveFromHierarchy();
+        }
+
+        public static void ProcessHotkeys()
+        {
+            foreach (var (hotkey, command) in DevToolkitCommands.hotkeyInfos)
+            {
+                if (!hotkey.IsPressed) continue;
+
+                try
+                {
+                    hotkey.Execute(command.memberInfo);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 using static Noo.DevToolkit.DevToolkitUtility;
@@ -18,6 +19,7 @@ namespace Noo.DevToolkit
         readonly static Dictionary<MemberInfo, CommandInfo> commandInfos = new();
         readonly static Dictionary<string, CommandPage> commandPages = new();
         readonly static HashSet<MemberInfo> implementedMembers = new();
+        internal readonly static Dictionary<DevHotkeyAttribute, CommandInfo> hotkeyInfos = new();
 
         internal readonly DtkCommandsPage rootVisualElement = new();
         readonly List<NuiDrawer> foundDrawers = new(); // Used for search filtering
@@ -33,6 +35,7 @@ namespace Noo.DevToolkit
             public string displayName;
             public string info;
             public bool inline = true;
+            public DevHotkeyAttribute hotkey;
         }
 
         internal class CommandPage
@@ -58,6 +61,11 @@ namespace Noo.DevToolkit
         {
             rootVisualElement.OnSearchQuery += OnCommandsSearchQuery;
             rootVisualElement.OnMoreClicked += OnShowMoreClicked;
+        }
+
+        public async Awaitable Load()
+        {
+            await Awaitable.NextFrameAsync();
             Initialize();
         }
 
@@ -67,7 +75,7 @@ namespace Noo.DevToolkit
 
             initialized = true;
 
-            foreach (var type in DevTypes)
+            foreach (var type in CommandTypes)
             {
                 GenerateCommands(type);
             }
@@ -77,82 +85,87 @@ namespace Noo.DevToolkit
 
         static void GenerateCommands(Type type)
         {
-            var memberTypes = MemberTypes.All;
-            var memberBindingFlags = default(BindingFlags?);
-
             var typeAttr = type.GetCustomAttribute<DevCommandsAttribute>();
 
-            if (typeAttr != null)
+            if (typeAttr == null) return;
+
+            var autoGenerateMemberBindingFlags = typeAttr.GenerateMemberFlags;
+
+            using var _ = HashSetPool<FieldInfo>.Get(out var autoFields);
+            using var __ = HashSetPool<PropertyInfo>.Get(out var autoProperties);
+            using var ___ = HashSetPool<MethodInfo>.Get(out var autoMethods);
+
+            if (typeAttr.GenerateMemberTypes.HasFlagNonAlloc(DevMemberType.Field))
             {
-                memberTypes = typeAttr.GenerateMemberTypes;
-                memberBindingFlags = typeAttr.GenerateMemberFlags;
+                foreach (var x in type.GetFields(autoGenerateMemberBindingFlags)) autoFields.Add(x);
             }
 
-            if (memberTypes.HasFlagNonAlloc(MemberTypes.Field))
+            if (typeAttr.GenerateMemberTypes.HasFlagNonAlloc(DevMemberType.Property))
             {
-                foreach (var field in type.GetFields(memberBindingFlags ?? BindFlagAll))
+                foreach (var x in type.GetProperties(autoGenerateMemberBindingFlags)) autoProperties.Add(x);
+            }
+
+            if (typeAttr.GenerateMemberTypes.HasFlagNonAlloc(DevMemberType.Method))
+            {
+                foreach (var x in type.GetMethods(autoGenerateMemberBindingFlags)) autoMethods.Add(x);
+            }
+
+            foreach (var field in type.GetFields(BindFlagAll))
+            {
+                if (implementedMembers.Contains(field)) continue;
+                implementedMembers.Add(field);
+
+                if (!NuiProperty.IsValidMemberForProperty(field)) continue;
+
+                var devCommandAttribute = field.GetCustomAttribute<DevCommandAttribute>();
+
+                if (!autoFields.Contains(field) && devCommandAttribute == null) continue;
+
+                var commandInfo = GetCommandInfo(field);
+
+                var page = GetOrCreatePage(commandInfo.path);
+                var drawer = NuiDrawerUtility.CreateDrawer(field);
+                page.drawers.Add(drawer);
+            }
+
+            foreach (var property in type.GetProperties(BindFlagAll))
+            {
+                if (implementedMembers.Contains(property)) continue;
+                implementedMembers.Add(property);
+
+                if (!NuiProperty.IsValidMemberForProperty(property)) continue;
+
+                var devCommandAttribute = property.GetCustomAttribute<DevCommandAttribute>();
+                if (!autoProperties.Contains(property) && devCommandAttribute == null) continue;
+
+                var commandInfo = GetCommandInfo(property);
+
+                var page = GetOrCreatePage(commandInfo.path);
+                var drawer = NuiDrawerUtility.CreateDrawer(property);
+                page.drawers.Add(drawer);
+            }
+
+            foreach (var method in type.GetMethods(BindFlagAll))
+            {
+                if (implementedMembers.Contains(method)) continue;
+                implementedMembers.Add(method);
+
+                if (!NuiProperty.IsValidMemberForProperty(method)) continue;
+
+                var devCommandAttribute = method.GetCustomAttribute<DevCommandAttribute>();
+                if (!autoMethods.Contains(method) && devCommandAttribute == null) continue;
+
+                var commandInfo = GetCommandInfo(method);
+
+                if (commandInfo.inline || method.GetParameters().Length == 0)
                 {
-                    if (implementedMembers.Contains(field)) continue;
-                    implementedMembers.Add(field);
-
-                    if (!NuiProperty.IsValidMemberForProperty(field)) continue;
-
-                    var devCommandAttribute = field.GetCustomAttribute<DevCommandAttribute>();
-                    if (memberBindingFlags == null && devCommandAttribute == null) continue;
-
-                    var commandInfo = GetCommandInfo(field);
-
                     var page = GetOrCreatePage(commandInfo.path);
-                    var drawer = NuiDrawerUtility.CreateDrawer(field);
-                    page.drawers.Add(drawer);
+                    page.drawers.Add(NuiDrawerUtility.CreateDrawer(method));
                 }
-            }
-
-            if (memberTypes.HasFlagNonAlloc(MemberTypes.Property))
-            {
-                foreach (var property in type.GetProperties(memberBindingFlags ?? BindFlagAll))
+                else
                 {
-                    if (implementedMembers.Contains(property)) continue;
-                    implementedMembers.Add(property);
-
-                    if (!NuiProperty.IsValidMemberForProperty(property)) continue;
-
-                    var devCommandAttribute = property.GetCustomAttribute<DevCommandAttribute>();
-                    if (memberBindingFlags == null && devCommandAttribute == null) continue;
-
-                    var commandInfo = GetCommandInfo(property);
-
-                    var page = GetOrCreatePage(commandInfo.path);
-                    var drawer = NuiDrawerUtility.CreateDrawer(property);
-                    page.drawers.Add(drawer);
-                }
-            }
-
-            if (memberTypes.HasFlagNonAlloc(MemberTypes.Method))
-            {
-                foreach (var method in type.GetMethods(memberBindingFlags ?? BindFlagAll))
-                {
-                    if (implementedMembers.Contains(method)) continue;
-                    implementedMembers.Add(method);
-
-                    if (!NuiProperty.IsValidMemberForProperty(method)) continue;
-
-                    var devCommandAttribute = method.GetCustomAttribute<DevCommandAttribute>();
-                    if (memberBindingFlags == null && devCommandAttribute == null) continue;
-
-                    var commandInfo = GetCommandInfo(method);
-
-                    if (commandInfo.inline || method.GetParameters().Length == 0)
-                    {
-                        var page = GetOrCreatePage(commandInfo.path);
-                        page.drawers.Add(NuiDrawerUtility.CreateDrawer(method));
-                    }
-                    else
-                    {
-                        var page = GetOrCreatePage(commandInfo.id, "dtk-drawer__method-page-button");
-                        page.drawers.Add(NuiDrawerUtility.CreateDrawer(method));
-                    }
-
+                    var page = GetOrCreatePage(commandInfo.id, "dtk-drawer__method-page-button");
+                    page.drawers.Add(NuiDrawerUtility.CreateDrawer(method));
                 }
             }
         }
@@ -302,8 +315,11 @@ namespace Noo.DevToolkit
                     memberInfo = memberInfo
                 };
 
-                var customPathName = default(string);
-                var parentPath = memberInfo.DeclaringType == null ? string.Empty : GetCommandInfo(memberInfo.DeclaringType).id;
+                var customPathName = string.Empty;
+                var parentCommand = memberInfo.DeclaringType == null ? null : GetCommandInfo(memberInfo.DeclaringType);
+                var parentPath = memberInfo.DeclaringType == null ? string.Empty : parentCommand.id;
+
+                commandInfo.hotkey = memberInfo.GetCustomAttribute<DevHotkeyAttribute>();
 
                 if (memberInfo is TypeInfo)
                 {
@@ -366,6 +382,11 @@ namespace Noo.DevToolkit
                 commandInfo.id = TrimPath($"{commandInfo.path}/{commandInfo.displayName}").ToLowerInvariant();
 
                 commandInfos[memberInfo] = commandInfo;
+
+                if (commandInfo.hotkey != null && commandInfo.hotkey.IsMemberTypeValid(commandInfo.memberInfo))
+                {
+                    hotkeyInfos[commandInfo.hotkey] = commandInfo;
+                }
             }
 
             return commandInfo;

@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
-
 namespace Noo.DevToolkit
 {
-    [DevCommands("Hidden/Example Properties", GenerateMemberFlags = BindingFlags.Static | BindingFlags.Public)]
+#if DEV_CONSOLE_EXAMPLES
+    [DevCommands("Hidden/Example Properties", GenerateMemberTypes = DevMemberType.All)]
     internal static class ExampleDrawers
     {
         public enum ExampleEnum
@@ -76,7 +72,7 @@ namespace Noo.DevToolkit
         }
     }
 
-    [DevCommands("Hidden/UnityEngine.Time", GenerateMemberFlags = BindingFlags.Static | BindingFlags.Public)]
+    [DevCommands("Hidden/UnityEngine.Time", GenerateMemberTypes = DevMemberType.All)]
     internal class ExampleUnityDrawers
     {
         [DevCommand("Time (String)")]
@@ -94,4 +90,5 @@ namespace Noo.DevToolkit
             set => UnityEngine.Time.timeScale = value;
         }
     }
+#endif
 }
