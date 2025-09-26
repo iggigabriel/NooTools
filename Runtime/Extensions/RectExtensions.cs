@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Noo.Tools
 {
-    public static class RectExtensions 
+    public static class RectExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Overlaps(this Rect rect, Rect other)
@@ -1366,10 +1366,12 @@ namespace Noo.Tools
 
         public static Vector2 ClampPoint(this Rect rectangle, Vector2 point)
         {
-            if (point.x < rectangle.xMin) point.x = rectangle.xMin;
+            if (rectangle.xMin > rectangle.xMax) point.x = rectangle.center.x;
+            else if (point.x < rectangle.xMin) point.x = rectangle.xMin;
             else if (point.x > rectangle.xMax) point.x = rectangle.xMax;
 
-            if (point.y < rectangle.yMin) point.y = rectangle.yMin;
+            if (rectangle.yMin > rectangle.yMax) point.y = rectangle.center.y;
+            else if (point.y < rectangle.yMin) point.y = rectangle.yMin;
             else if (point.y > rectangle.yMax) point.y = rectangle.yMax;
 
             return point;

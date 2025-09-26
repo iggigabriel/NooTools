@@ -3675,6 +3675,7 @@ DtkCommandsPage > NuiToolbar .nui-toolbar__middle NuiToolbarButton {
   align-items: center;
   justify-content: space-between;
   padding: 4px 4px 4px 10px;
+  min-width: 100%;
 }
 .dtk-drawer.dtk-method-drawer > .dtk-property-drawer__label-container > .dtk-property-drawer__label {
   font-size: 12px;

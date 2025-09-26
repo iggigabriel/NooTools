@@ -337,6 +337,7 @@ $dtkInputFieldHeight: 23px;
         align-items: center;
         justify-content: space-between;
         padding: 4px 4px 4px 10px;
+        min-width: 100%;
 
         > .dtk-property-drawer__label {
             font-size: $fontSize ;
