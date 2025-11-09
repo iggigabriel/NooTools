@@ -14,7 +14,7 @@ namespace Noo.Tools
         }
 
         public static T GetOrAddComponent<T>(this GameObject target) where T : Component
-        { 
+        {
             if (!target) throw default;
             return target.TryGetComponent(out T component) ? component : target.AddComponent<T>();
         }
@@ -44,7 +44,7 @@ namespace Noo.Tools
         public static void DestroySafe(this GameObject target)
         {
             if (Application.isPlaying) Object.Destroy(target);
-            else if (target) Object.DestroyImmediate(target);
+            else if (target) Object.DestroyImmediate(target, true);
         }
 
         public static void DestroySafe<T>(this T target) where T : Component

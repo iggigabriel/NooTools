@@ -5,6 +5,13 @@ namespace Noo.Tools
 {
     public static class CollectionExtensions
     {
+        public static bool TryAddOnce<T>(this IList<T> list, T item)
+        {
+            if (list.Contains(item)) return false;
+            list.Add(item);
+            return true;
+        }
+
         public static void AddOnce<T>(this IList<T> list, T item)
         {
             if (list.Contains(item)) return;
