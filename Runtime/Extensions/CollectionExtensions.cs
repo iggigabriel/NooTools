@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Pool;
 
 namespace Noo.Tools
 {
@@ -85,10 +86,51 @@ namespace Noo.Tools
             return false;
         }
 
-        public static void AddRangeNonAlloc<T>(this IList<T> list, IList<T> values)
+        public static void AddRangeNonAlloc<T>(this IList<T> list, IReadOnlyList<T> values)
         {
             if (values == null) return;
             for (int i = 0; i < values.Count; i++) list.Add(values[i]);
+        }
+
+        public static void RemoveWhere<TKey, TValue>(this Dictionary<TKey, TValue> dict, Func<KeyValuePair<TKey, TValue>, bool> predicate)
+        {
+            using (HashSetPool<TKey>.Get(out var toRemove))
+            {
+                foreach (var item in dict)
+                {
+                    if (predicate?.Invoke(item) ?? false) toRemove.Add(item.Key);
+                }
+
+                foreach (var item in toRemove)
+                {
+                    dict.Remove(item);
+                }
+            }
+        }
+
+        public static void RemoveWhere<TKey, TValue, TState>(this Dictionary<TKey, TValue> dict, TState state, Func<KeyValuePair<TKey, TValue>, TState, bool> predicate)
+        {
+            using (HashSetPool<TKey>.Get(out var toRemove))
+            {
+                foreach (var item in dict) if (predicate?.Invoke(item, state) ?? false) toRemove.Add(item.Key);
+                foreach (var item in toRemove) dict.Remove(item);
+            }
+        }
+
+        public static void RemoveWhere<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (predicate?.Invoke(list[i]) ?? false) list.RemoveAt(i--);
+            }
+        }
+
+        public static void RemoveWhere<T, TState>(this IList<T> list, TState state, Func<T, TState, bool> predicate)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (predicate?.Invoke(list[i], state) ?? false) list.RemoveAt(i--);
+            }
         }
     }
 

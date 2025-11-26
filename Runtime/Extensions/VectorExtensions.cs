@@ -44,6 +44,28 @@ namespace Noo.Tools
             return new Vector2(point.x * cos - point.y * sin + pivot.x, point.x * sin + point.y * cos + pivot.y);
         }
 
+        /// <summary>Returns one of the cardinal directions</summary>
+        public static bool TryGetCardinalDirection(this Vector2 value, out Vector2Int direction)
+        {
+            var absValue = value.Abs();
+
+            if (value == Vector2.zero)
+            {
+                direction = default;
+                return false;
+            }
+
+            if (absValue.x >= absValue.y)
+            {
+                direction = new Vector2Int(value.x > 0 ? 1 : -1, 0);
+            }
+            else
+            {
+                direction = new Vector2Int(0, value.y > 0 ? 1 : -1);
+            }
+
+            return true;
+        }
     }
 
     public static class Vector2IntExtensions
@@ -122,6 +144,41 @@ namespace Noo.Tools
         public static Sfloat2 ToSfloat2(this Vector2Int value)
         {
             return Sfloat2.FromInt(value.x, value.y);
+        }
+
+        public static Vector2Int Clamp(this Vector2Int value, int min, int max)
+        {
+            value.x = Mathf.Clamp(value.x, min, max);
+            value.y = Mathf.Clamp(value.y, min, max);
+            return value;
+        }
+
+        public static Vector2Int Normalize(this Vector2Int value)
+        {
+            return value.Clamp(-1, 1);
+        }
+
+        /// <summary>Returns one of the cardinal directions</summary>
+        public static bool TryGetCardinalDirection(this Vector2Int value, out Vector2Int direction)
+        {
+            var absValue = value.Abs();
+
+            if (value == Vector2Int.zero || absValue.x == absValue.y)
+            {
+                direction = default;
+                return false;
+            }
+
+            if (absValue.x > absValue.y)
+            {
+                direction = new Vector2Int(value.x > 0 ? 1 : -1, 0);
+            }
+            else
+            {
+                direction = new Vector2Int(0, value.y > 0 ? 1 : -1);
+            }
+
+            return true;
         }
     }
 
