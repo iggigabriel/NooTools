@@ -132,6 +132,21 @@ namespace Noo.Tools
                 if (predicate?.Invoke(list[i], state) ?? false) list.RemoveAt(i--);
             }
         }
+
+        public static bool ContentEquals<T>(this IReadOnlyList<T> list, IReadOnlyList<T> values)
+        {
+            if (list == null) return values == null || values.Count == 0;
+            if (values == null) return list == null || list.Count == 0;
+
+            if (list.Count != values.Count) return false;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (!list[i].Equals(values[i])) return false;
+            }
+
+            return true;
+        }
     }
 
     public interface IListPredicate<T>

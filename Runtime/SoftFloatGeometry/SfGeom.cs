@@ -128,15 +128,19 @@ namespace Noo.Tools
             );
         }
 
+        /// <summary>Clockwise rotation</summary>
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Rotate90(this Sfloat2 vector) => new(vector.y, -vector.x);
 
+        /// <summary>Clockwise rotation</summary>
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Rotate180(this Sfloat2 vector) => new(-vector.x, -vector.y);
 
+        /// <summary>Clockwise rotation</summary>
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Rotate270(this Sfloat2 vector) => new(-vector.y, vector.x);
 
+        /// <summary>Clockwise rotation</summary>
         [MethodImpl(SfUtil.AggressiveInlining)]
         public static Sfloat2 Rotate90X(this Sfloat2 vector, int rotations)
         {
