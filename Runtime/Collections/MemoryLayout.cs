@@ -6,12 +6,20 @@ using UnityEngine;
 
 namespace Noo.Tools
 {
-    public class MemoryLayout
+    [Serializable]
+    public sealed class MemoryLayout
     {
+        [SerializeField]
         private int totalCapacity;
+
+        [SerializeField]
+        readonly List<Slice> slices = new();
+
+        public IReadOnlyList<Slice> Slices => slices;
 
         public int Capacity => totalCapacity;
 
+        [Serializable]
         public readonly struct Slice : IEquatable<Slice>
         {
             readonly int start;
@@ -82,18 +90,19 @@ namespace Noo.Tools
 
             public override string ToString()
             {
-                return $"NativeMemoryLayoutSlice(Start:{start}, Length:{length})";
+                return $"MemoryLayoutSlice(Start:{start}, Length:{length})";
             }
         }
 
-        readonly List<Slice> slices = new(8);
-
-        public IReadOnlyList<Slice> Slices => slices;
+        public MemoryLayout()
+        {
+            totalCapacity = 8;
+            slices.Add(new(0, 8));
+        }
 
         public MemoryLayout(int capacity)
         {
             totalCapacity = capacity;
-
             slices.Add(new(0, capacity));
         }
 
@@ -109,13 +118,13 @@ namespace Noo.Tools
 
                 if (slice.Length > capacity)
                 {
-                    slices.RemoveAndPushBack(i);
+                    RemoveAtSwapBack(i);
                     slices.Add(new Slice(slice.Start + capacity, slice.Length - capacity));
                     return new Slice(slice.Start, capacity);
                 }
                 else if (slice.Length == capacity)
                 {
-                    slices.RemoveAndPushBack(i);
+                    RemoveAtSwapBack(i);
                     return slice;
                 }
             }
@@ -123,7 +132,7 @@ namespace Noo.Tools
             if (lastSliceIndex.HasValue)
             {
                 var lastSlice = slices[lastSliceIndex.Value];
-                slices.RemoveAndPushBack(lastSliceIndex.Value);
+                RemoveAtSwapBack(lastSliceIndex.Value);
                 totalCapacity += capacity - lastSlice.Length;
                 return new Slice(lastSlice.Start, capacity);
             }
@@ -153,7 +162,7 @@ namespace Noo.Tools
                     if (sliceEnd < current.Start) continue;
                     if (newSlice.Start > currentEnd) continue;
 
-                    slices.RemoveAndPushBack(i);
+                    RemoveAtSwapBack(i);
 
                     var newStart = math.min(newSlice.Start, current.Start);
                     var newEnd = math.max(sliceEnd, currentEnd);
@@ -173,6 +182,18 @@ namespace Noo.Tools
             slices.Add(new Slice(0, totalCapacity));
         }
 
+        private void RemoveAtSwapBack(int index)
+        {
+            if (index < 0 || index >= slices.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            var lastIndex = slices.Count - 1;
+            slices[index] = slices[lastIndex];
+            slices.RemoveAt(lastIndex);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public List<Slice>.Enumerator GetEnumerator() => slices.GetEnumerator();
 
@@ -186,7 +207,7 @@ namespace Noo.Tools
                 freeCount += slices[i].Length;
             }
 
-            return $"NativeMemoryLayout(Capacity: {totalCapacity}, Free: {freeCount}, Partitions: {partitionCount})";
+            return $"MemoryLayout(Capacity: {totalCapacity}, Free: {freeCount}, Partitions: {partitionCount})";
         }
     }
 }
