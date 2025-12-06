@@ -7,7 +7,7 @@ namespace Noo.Tools.Editor
 {
     public static class PackageCreator
     {
-        
+
     }
 
     public class PackageCreatorWizard : ScriptableWizard
@@ -100,7 +100,7 @@ namespace Noo.Tools.Editor
 
             if (obj == null) return DEFAULT_FOLDER;
 
-            var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+            var path = AssetDatabase.GetAssetPath(obj.GetEntityId());
 
             if (string.IsNullOrEmpty(path)) return DEFAULT_FOLDER;
 
