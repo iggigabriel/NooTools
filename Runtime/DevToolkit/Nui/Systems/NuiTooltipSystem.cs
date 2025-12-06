@@ -175,7 +175,7 @@ namespace Noo.Nui
 
             tooltipPos = Vector2Int.RoundToInt(tooltipPos);
 
-            tooltipElement.transform.position = tooltipPos;
+            tooltipElement.style.translate = tooltipPos;
             tooltipPositionDirty = false;
         }
     }
