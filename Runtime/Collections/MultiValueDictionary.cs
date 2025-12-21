@@ -375,7 +375,7 @@ namespace Noo.Tools
             }
         }
 
-        public struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+        public struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>
         {
             readonly MultiValueDictionary<TKey, TValue> map;
             readonly int version;
@@ -451,6 +451,16 @@ namespace Noo.Tools
                 {
                     throw new InvalidOperationException("Collection was modified during enumeration.");
                 }
+            }
+
+            public readonly IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+            {
+                return this;
+            }
+
+            readonly IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this;
             }
         }
     }

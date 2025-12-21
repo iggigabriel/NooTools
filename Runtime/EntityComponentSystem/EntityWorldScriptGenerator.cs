@@ -1371,7 +1371,7 @@ namespace Noo.Tools
             var entitySystemType = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => !a.IsDynamic)
                 .SelectMany(a => a.GetTypes())
-                .FirstOrDefault(t => t.Name.Equals($"{script.typePrefix}EntitySystem"));
+                .FirstOrDefault(t => t.Namespace == script.@namespace && t.Name.Equals($"{script.typePrefix}EntitySystem"));
 
             if (entitySystemType == null) return new List<Type>();
 
