@@ -147,6 +147,24 @@ namespace Noo.Tools
 
             return true;
         }
+
+        /// <summary>Based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle</summary>
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            list.Shuffle((uint)Environment.TickCount);
+        }
+
+        /// <summary>Based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle</summary>
+        public static void Shuffle<T>(this IList<T> list, uint seed)
+        {
+            var rng = new SfRandom(seed);
+
+            for (var i = list.Count - 1; i > 1; i--)
+            {
+                var k = rng.Range(i);
+                (list[i], list[k]) = (list[k], list[i]);
+            }
+        }
     }
 
     public interface IListPredicate<T>

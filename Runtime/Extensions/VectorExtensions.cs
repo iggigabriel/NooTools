@@ -66,6 +66,12 @@ namespace Noo.Tools
 
             return true;
         }
+
+        /// <summary>Inverts a vector by dividing 1 by each component</summary>
+        public static Vector2 Rcp(this Vector2 vec)
+        {
+            return new Vector2(1f / vec.x, 1f / vec.y);
+        }
     }
 
     public static class Vector2IntExtensions
@@ -211,5 +217,11 @@ namespace Noo.Tools
         public static float3 WithX(this float3 value, float x) => new(x, value.y, value.z);
         public static float3 WithY(this float3 value, float y) => new(value.x, y, value.z);
         public static float3 WithZ(this float3 value, float z) => new(value.x, value.y, z);
+
+        /// <summary>Inverts a vector by dividing 1 by each component</summary>
+        public static Vector3 Rcp(this Vector3 vec)
+        {
+            return new Vector3(1f / vec.x, 1f / vec.y, 1f / vec.z);
+        }
     }
 }
