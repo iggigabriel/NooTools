@@ -79,6 +79,7 @@ Shader "NooTools/2D/PixelPerfectRenderer"
             float4 _MainTex_TexelSize;
             float _UIMaskSoftnessX;
             float _UIMaskSoftnessY;
+            float _Zoom;
 
             v2f vert(appdata_t v)
             {
@@ -106,7 +107,7 @@ Shader "NooTools/2D/PixelPerfectRenderer"
 
             fixed4 frag(v2f IN) : SV_Target
             {
-                float tpp = _ScreenParams.y / _MainTex_TexelSize.w;
+                float tpp = (_ScreenParams.y / _MainTex_TexelSize.w) * _Zoom;
 
                 float2 locationWithinTexel = frac(IN.textureCoords);
                 float2 interpolationAmount = clamp(locationWithinTexel * tpp, 0, .5) + clamp((locationWithinTexel - 1) * tpp + .5, 0, .5);

@@ -33,6 +33,9 @@ namespace Noo.Tools
         [SerializeField]
         int cameraTextureDepth = 32;
 
+        [SerializeField, Range(1f, 10f)]
+        float zoom = 1f;
+
         [SerializeField]
         DefaultFormat cameraTextureFormat = DefaultFormat.HDR;
 
@@ -65,6 +68,10 @@ namespace Noo.Tools
 
         [ShowInInspector, ReadOnly]
         public float AspectRatio { get; private set; }
+
+        float currentZoom;
+
+        public float Zoom { get => zoom; set => zoom = Mathf.Max(1f, value); }
 
         public Vector2 ScreenToWorldSpace(Vector2 screenPosition)
         {
@@ -134,7 +141,7 @@ namespace Noo.Tools
                 if (screenRenderer)
                 {
                     screenRenderer.texture = GameRenderTexture;
-                    screenRenderer.rectTransform.sizeDelta = new Vector2(GameRenderSize.x, GameRenderSize.y) / GameRenderScale;
+                    screenRenderer.rectTransform.sizeDelta = new Vector2(GameRenderSize.x, GameRenderSize.y) / GameRenderScale * zoom;
                 }
 
                 if (screenCanvasScaler)
@@ -143,6 +150,18 @@ namespace Noo.Tools
                 }
 
                 OnScreenSizeChanged?.Invoke(this);
+            }
+
+            if (currentZoom != zoom)
+            {
+                currentZoom = zoom;
+
+                if (screenRenderer)
+                {
+                    screenRenderer.materialForRendering.SetFloat("_Zoom", zoom);
+                    screenRenderer.SetMaterialDirty();
+                    screenRenderer.rectTransform.sizeDelta = new Vector2(GameRenderSize.x, GameRenderSize.y) / GameRenderScale * zoom;
+                }
             }
         }
 
