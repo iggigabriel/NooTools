@@ -39,6 +39,9 @@ namespace Noo.Tools
         [SerializeField]
         DefaultFormat cameraTextureFormat = DefaultFormat.HDR;
 
+        [SerializeField, Tooltip("It will fixes scalers and graphics raycasters for these canvases")]
+        Canvas[] affectedCanvases;
+
         [ShowInInspector, ReadOnly, Title("Read-only")]
         public RenderTexture GameRenderTexture { get; private set; }
 
@@ -147,6 +150,14 @@ namespace Noo.Tools
                 if (screenCanvasScaler)
                 {
                     screenCanvasScaler.matchWidthOrHeight = IsLandscape ? 1f : 0f;
+                }
+
+                foreach (var canvas in affectedCanvases)
+                {
+                    if (canvas.TryGetComponent<PixelPerfectGraphicRaycaster>(out var raycaster))
+                    {
+                        raycaster.screenScale = scale;
+                    }
                 }
 
                 OnScreenSizeChanged?.Invoke(this);
