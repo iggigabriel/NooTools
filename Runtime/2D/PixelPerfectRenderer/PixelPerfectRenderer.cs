@@ -28,6 +28,9 @@ namespace Noo.Tools
         int renderSizeInPixels = 256;
 
         [SerializeField]
+        int pixelSizeRounding = 4;
+
+        [SerializeField]
         int pixelsPerUnit = 1;
 
         [SerializeField]
@@ -106,7 +109,7 @@ namespace Noo.Tools
             var screenRenderSize = new Vector2Int(screenCamera.pixelWidth, screenCamera.pixelHeight);
             var screenAspectRatio = (float)screenRenderSize.x / screenRenderSize.y;
 
-            var renderScale = (renderSizeInPixels / 4) * 4;
+            var renderScale = (renderSizeInPixels / pixelSizeRounding) * pixelSizeRounding;
 
             if (ScreenRenderSize != screenRenderSize || GameRenderScale != renderScale) // Screen size changed or game size changed
             {
@@ -118,8 +121,8 @@ namespace Noo.Tools
                 AspectRatio = Mathf.Clamp(screenAspectRatio, 1f / 2.34f, 2.34f); // Max ultrawide screen
 
                 GameRenderSize = IsLandscape ?
-                    new Vector2Int(Mathf.CeilToInt((GameRenderScale * AspectRatio) / 4) * 4, GameRenderScale) :
-                    new Vector2Int(GameRenderScale, Mathf.CeilToInt((GameRenderScale / AspectRatio) / 4) * 4);
+                    new Vector2Int(Mathf.CeilToInt((GameRenderScale * AspectRatio) / pixelSizeRounding) * pixelSizeRounding, GameRenderScale) :
+                    new Vector2Int(GameRenderScale, Mathf.CeilToInt((GameRenderScale / AspectRatio) / pixelSizeRounding) * pixelSizeRounding);
 
                 AspectRatio = (float)GameRenderSize.x / GameRenderSize.y;
 
@@ -178,7 +181,7 @@ namespace Noo.Tools
 
         private void OnValidate()
         {
-            renderSizeInPixels = Mathf.Max(renderSizeInPixels, 4);
+            renderSizeInPixels = Mathf.Max(renderSizeInPixels, pixelSizeRounding);
             pixelsPerUnit = Mathf.Max(pixelsPerUnit, 1);
         }
 
