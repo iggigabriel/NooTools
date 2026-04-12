@@ -234,7 +234,7 @@ namespace Noo.Nui
 
         public void OnDropdownAfterShow()
         {
-            this.GetFirstFocusableChild()?.Focus();
+            //this.GetFirstFocusableChild()?.Focus();
         }
 
         public void OnDropdownBeforeHide()

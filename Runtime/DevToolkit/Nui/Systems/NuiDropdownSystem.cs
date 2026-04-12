@@ -119,7 +119,7 @@ namespace Noo.Nui
                 if (targetPos.y < PANEL_PADDING) targetPos.y = PANEL_PADDING;
             }
 
-            activeDropdown.style.translate = (Vector3)Vector3Int.RoundToInt(targetPos);
+            activeDropdown.style.translate = (Vector2)Vector2Int.RoundToInt(targetPos);
 
             if (activeDropdown is IDropdownElement dropdownElement) dropdownElement.OnDropdownAfterShow();
 

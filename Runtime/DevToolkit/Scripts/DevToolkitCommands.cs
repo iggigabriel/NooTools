@@ -38,14 +38,19 @@ namespace Noo.DevToolkit
             public DevHotkeyAttribute hotkey;
         }
 
-        internal class CommandPage
+        public class CommandPage
         {
+            public Action OnBeforeShow;
+
             public string path;
             public string displayName;
             public string parentPath;
             public List<NuiDrawer> drawers = new();
+            public List<NuiDrawer> tempDrawers = new();
             public bool sorted;
             public NuiDrawer headerDrawer;
+
+            public int ChildCount => drawers.Count + tempDrawers.Count;
 
             public void AssertSorted()
             {
@@ -60,7 +65,6 @@ namespace Noo.DevToolkit
         internal DevToolkitCommands()
         {
             rootVisualElement.OnSearchQuery += OnCommandsSearchQuery;
-            rootVisualElement.OnMoreClicked += OnShowMoreClicked;
         }
 
         public async Awaitable Load()
@@ -170,26 +174,6 @@ namespace Noo.DevToolkit
             }
         }
 
-        readonly string[] moreButtons = new string[] { "Show Hidden Pages" };
-
-        private void OnShowMoreClicked(Button button)
-        {
-            var dropdown = DropdownUtility.CreateSimpleMenu(moreButtons, (x) =>
-            {
-                switch (x)
-                {
-                    case "Show Hidden Pages":
-                        ShowPage("Hidden");
-                        break;
-
-                    default:
-                        break;
-                }
-            });
-
-            dropdown.Show(button);
-        }
-
         public static void AddCommands(string pagePath, IReadOnlyList<NuiDrawer> drawers)
         {
             pagePath = pagePath.Trim('/');
@@ -202,7 +186,14 @@ namespace Noo.DevToolkit
                 {
                     page.drawers.Add(drawers[i]);
                 }
+
+                page.sorted = false;
             }
+        }
+
+        public static void AddToolbarButton(MatIcon icon, Action callback)
+        {
+            DevToolkit.Commands.rootVisualElement.AddToolbarButton(icon, callback);
         }
 
         private void OnCommandsSearchQuery(IReadOnlyList<string> queries)
@@ -250,9 +241,9 @@ namespace Noo.DevToolkit
             return commandPages.TryGetValue(path.ToLowerInvariant(), out page);
         }
 
-        static CommandPage GetOrCreatePage(string path, string buttonClass = "")
+        public static CommandPage GetOrCreatePage(string path, string buttonClass = "")
         {
-            var id = path.ToLowerInvariant();
+            var id = path.Trim('/').ToLowerInvariant();
 
             if (!commandPages.TryGetValue(id, out var page))
             {
@@ -285,7 +276,7 @@ namespace Noo.DevToolkit
             return page;
         }
 
-        internal void ShowPage(string path)
+        public void ShowPage(string path)
         {
             if (TryGetPage(path, out var page))
             {

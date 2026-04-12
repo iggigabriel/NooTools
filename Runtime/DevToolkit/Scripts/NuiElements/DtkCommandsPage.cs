@@ -1,6 +1,7 @@
 using Noo.Nui;
 using System;
 using System.Collections.Generic;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
 namespace Noo.DevToolkit
@@ -13,7 +14,6 @@ namespace Noo.DevToolkit
         readonly NuiToolbar toolbar;
 
         readonly Button toolbarBackBtn;
-        readonly Button toolbarMoreBtn;
         readonly NuiSearchField searchField;
 
         readonly Stack<DevToolkitCommands.CommandPage> activePages = new();
@@ -26,8 +26,9 @@ namespace Noo.DevToolkit
         readonly DtkInspectorView inspectorViewB;
         readonly DtkInspectorView inspectorSearch;
 
+        readonly Dictionary<NuiToolbarButton, Action> toolbarButtons = new();
+
         public event Action<IReadOnlyList<string>> OnSearchQuery;
-        public event Action<Button> OnMoreClicked;
 
         bool searchActive;
 
@@ -36,7 +37,6 @@ namespace Noo.DevToolkit
             toolbar = new NuiToolbar().AppendTo(this);
 
             toolbar.left.Add(toolbarBackBtn = new NuiToolbarButton(MatIcon.ArrowBackIosNew));
-            toolbar.right.Add(toolbarMoreBtn = new NuiToolbarButton(MatIcon.MoreVert));
 
             searchField = new NuiSearchField().WithClass("ml-4", "mr-4").AppendTo(toolbar.middle);
 
@@ -47,9 +47,10 @@ namespace Noo.DevToolkit
             inspectorSearch = new DtkInspectorView().WithName("inspectorSearch").AppendTo(inspectorBase);
         }
 
-        private void ShowMore()
+        internal void AddToolbarButton(MatIcon icon, Action callback)
         {
-            OnMoreClicked?.Invoke(toolbarMoreBtn);
+            var btn = new NuiToolbarButton(icon).AppendTo(toolbar.right);
+            toolbarButtons.Add(btn, callback);
         }
 
         private void OnSearchQueryChanged(ChangeEvent<string> e)
@@ -150,11 +151,18 @@ namespace Noo.DevToolkit
                 SetActiveView(inspectorViewB, showFromRight);
             }
 
-            page.AssertSorted();
-
             activePage = page;
 
-            activeInspectorView.SetDrawers(page.drawers);
+            page.OnBeforeShow?.Invoke();
+
+            page.AssertSorted();
+
+            using var _ = ListPool<NuiDrawer>.Get(out var combinedDrawers);
+
+            combinedDrawers.AddRange(page.drawers);
+            combinedDrawers.AddRange(page.tempDrawers);
+
+            activeInspectorView.SetDrawers(combinedDrawers);
         }
 
         internal override void OnEnable()
@@ -163,7 +171,12 @@ namespace Noo.DevToolkit
             NuiTask.OnInterval(NuiTask.ExecutionOrder.Update, 1f / 12f, false, UpdateDrawers);
 
             toolbarBackBtn.clicked += GoBack;
-            toolbarMoreBtn.clicked += ShowMore;
+
+            foreach (var (btn, callback) in toolbarButtons)
+            {
+                btn.clicked += callback;
+            }
+
             searchField.RegisterValueChangedCallback(OnSearchQueryChanged);
 
             inspectorViewA.Hide();
@@ -181,7 +194,12 @@ namespace Noo.DevToolkit
             previousInspectorView = null;
 
             toolbarBackBtn.clicked -= GoBack;
-            toolbarMoreBtn.clicked -= ShowMore;
+
+            foreach (var (btn, callback) in toolbarButtons)
+            {
+                btn.clicked -= callback;
+            }
+
             searchField.UnregisterValueChangedCallback(OnSearchQueryChanged);
 
             activePage = null;

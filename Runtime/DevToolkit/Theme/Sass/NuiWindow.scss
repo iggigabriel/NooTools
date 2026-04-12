@@ -45,6 +45,12 @@
     flex-grow: 1;
 }
 
+.nui--portrait
+{
+    height: 100%;
+    justify-content: center;
+}
+
 .nui--portrait .nui-window
 {
     position: absolute;

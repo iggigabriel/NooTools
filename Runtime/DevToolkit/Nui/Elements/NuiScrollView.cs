@@ -14,7 +14,7 @@ namespace Noo.Nui
             scrollView.mouseWheelScrollSize = MouseWheenScrollSize;
             scrollView.verticalScroller.highButton.Add(new NuiIconMat(MatIcon.ArrowDropDown).WithClass("nui-scroller-btn-icon"));
             scrollView.verticalScroller.lowButton.Add(new NuiIconMat(MatIcon.ArrowDropUp).WithClass("nui-scroller-btn-icon"));
-            scrollView.touchScrollBehavior = TouchScrollBehavior.Clamped;
+            //scrollView.touchScrollBehavior = TouchScrollBehavior.Clamped;
         }
 
         public NuiScrollView() : this(ScrollViewMode.Vertical)

@@ -553,3 +553,69 @@ $dtkInputFieldHeight: 23px;
     padding: 6px 0px 0px 4px;
     flex-shrink: 0;
 }
+
+.dtk-console-log-text
+{
+    font-size: 11px;
+    flex-grow: 1;
+    align-self: center;
+    height: 100%;
+    -unity-text-align: upper-left;
+    white-space: nowrap;
+    padding: 2px;
+
+    &.dtk-odd
+    {
+        background-color: #85858517;
+    }
+}
+
+.dtk-console-log-list 
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.dtk-console-log-overlay
+{
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.dtk-console-log-overlay-frame
+{
+    background-color: $darkBlack;
+    position: absolute;
+    top: 10px;
+    bottom: 50px;
+    left: 10px;
+    right: 10px;
+    border-radius: 8px;
+}
+
+.dtk-console-log-overlay-text
+{
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 4px;
+}
+
+.dtk-console-log-overlay-btn-close
+{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 30px;
+
+    .nui-btn-text{
+        -unity-text-align: middle-center;
+    }
+}
