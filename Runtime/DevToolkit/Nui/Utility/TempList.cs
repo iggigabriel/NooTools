@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 namespace Noo.Nui
 {
-    public readonly struct TempList<T> : IList<T>, IDisposable
+    internal readonly struct TempList<T> : IList<T>, IDisposable
     {
         private readonly List<T> list;
 
@@ -15,7 +15,7 @@ namespace Noo.Nui
 
             if (list != null)
             {
-                foreach(var item in list) this.list.Add(item);
+                foreach (var item in list) this.list.Add(item);
             }
         }
 
@@ -77,8 +77,8 @@ namespace Noo.Nui
         }
     }
 
-    public static class TempListUtility
+    internal static class TempListUtility
     {
-        public static TempList<T> ToTempList<T>(this IEnumerable<T> list) => new(list);
+        internal static TempList<T> ToTempList<T>(this IEnumerable<T> list) => new(list);
     }
 }
