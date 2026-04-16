@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 
 namespace Noo.Tools
 {
-    public readonly struct DynamicCallback
+    public readonly struct DynamicCallback : IEquatable<DynamicCallback>
     {
         readonly byte stateCount;
         readonly object state0;
@@ -33,6 +34,24 @@ namespace Noo.Tools
             return new DynamicCallback(3, callback, param0, param1);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is DynamicCallback callback && Equals(callback);
+        }
+
+        public bool Equals(DynamicCallback other)
+        {
+            return stateCount == other.stateCount &&
+                   EqualityComparer<object>.Default.Equals(state0, other.state0) &&
+                   EqualityComparer<object>.Default.Equals(state1, other.state1) &&
+                   EqualityComparer<object>.Default.Equals(callback, other.callback);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(stateCount, state0, state1, callback);
+        }
+
         public void Invoke()
         {
             var callback = this.callback;
@@ -54,9 +73,19 @@ namespace Noo.Tools
                     break;
             }
         }
+
+        public static bool operator ==(DynamicCallback left, DynamicCallback right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DynamicCallback left, DynamicCallback right)
+        {
+            return !(left == right);
+        }
     }
 
-    public readonly struct DynamicCallback<T>
+    public readonly struct DynamicCallback<T> : IEquatable<DynamicCallback<T>>
     {
         readonly byte stateCount;
         readonly object state0;
@@ -86,6 +115,24 @@ namespace Noo.Tools
             return new DynamicCallback<T>(3, callback, param0, param1);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is DynamicCallback<T> callback && Equals(callback);
+        }
+
+        public bool Equals(DynamicCallback<T> other)
+        {
+            return stateCount == other.stateCount &&
+                   EqualityComparer<object>.Default.Equals(state0, other.state0) &&
+                   EqualityComparer<object>.Default.Equals(state1, other.state1) &&
+                   EqualityComparer<object>.Default.Equals(callback, other.callback);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(stateCount, state0, state1, callback);
+        }
+
         public void Invoke(T param)
         {
             var callback = this.callback;
@@ -106,6 +153,16 @@ namespace Noo.Tools
                     UnsafeUtility.As<object, Action<T, object, object>>(ref callback)?.Invoke(param, state0, state1);
                     break;
             }
+        }
+
+        public static bool operator ==(DynamicCallback<T> left, DynamicCallback<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DynamicCallback<T> left, DynamicCallback<T> right)
+        {
+            return !(left == right);
         }
     }
 }
