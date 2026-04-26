@@ -79,6 +79,11 @@ namespace Noo.Tools
         public readonly float Float { [MethodImpl(SfUtil.AggressiveInlining)] get { return SfMath.ToFloat(Raw); } }
         public readonly double Double { [MethodImpl(SfUtil.AggressiveInlining)] get { return SfMath.ToDouble(Raw); } }
 
+        /// <summary>Rounded by default</summary>
+        public readonly int Int { [MethodImpl(SfUtil.AggressiveInlining)] get { return SfMath.RoundToInt(Raw); } }
+        public readonly int IntFloor { [MethodImpl(SfUtil.AggressiveInlining)] get { return SfMath.FloorToInt(Raw); } }
+        public readonly int IntCeil { [MethodImpl(SfUtil.AggressiveInlining)] get { return SfMath.CeilToInt(Raw); } }
+
         // Creates the fixed point number that's a divided by b.
         public static Sfloat Ratio(int a, int b) { return Sfloat.FromRaw((int)(((long)a << 16) / b)); }
         // Creates the fixed point number that's a divided by 10.
