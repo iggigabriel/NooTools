@@ -75,8 +75,7 @@ namespace Noo.Tools
             return list;
         }
 
-        public static TempList<T> Empty() => new(default(ReadOnlySpan<T>));
-
+        public static TempSet<T> Empty() => new(default(ReadOnlySpan<T>));
     }
 
     public static class TempSetUtility
