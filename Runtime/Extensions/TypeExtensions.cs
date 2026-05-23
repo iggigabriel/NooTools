@@ -22,18 +22,23 @@ namespace Noo.Tools
 
         public static string GetNameSnakeCase(this Type type)
         {
-            if (!typeNamesSnakeCase.TryGetValue(type, out var name))
+            if (typeNamesSnakeCase.TryGetValue(type, out var cached))
+                return cached;
+
+            var name = type.Name;
+            var sb = new System.Text.StringBuilder(name.Length + 4);
+
+            sb.Append(char.ToLower(name[0]));
+            for (int i = 1; i < name.Length; i++)
             {
-                name = ToSnakeCase(type.Name);
-                typeNamesSnakeCase.Add(type, name);
+                if (char.IsUpper(name[i]))
+                    sb.Append('_');
+                sb.Append(char.ToLower(name[i]));
             }
 
-            return name;
-        }
-
-        private static string ToSnakeCase(string name)
-        {
-            return Regex.Replace(name, @"(?<!^)[A-Z]", "_$0").ToLower();
+            var result = sb.ToString();
+            typeNamesSnakeCase[type] = result;
+            return result;
         }
     }
 }
