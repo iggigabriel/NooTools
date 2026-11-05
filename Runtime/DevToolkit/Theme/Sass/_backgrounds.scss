@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @each $name, $color in $colorsAll 
 {
     .bg-#{$name} 

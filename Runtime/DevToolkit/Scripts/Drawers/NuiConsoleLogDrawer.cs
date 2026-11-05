@@ -1,6 +1,7 @@
 using Noo.Nui;
 using System;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -23,6 +24,8 @@ namespace Noo.DevToolkit
         readonly VisualElement overlay;
         readonly TextElement overlayText;
         readonly NuiButton overlayCloseBtn;
+        readonly NuiButton overlaycopyToClipboardBtn;
+        readonly NuiButton copyToClipboardBtn;
         bool isCreated;
 
         public NuiConsoleLogDrawer()
@@ -45,9 +48,17 @@ namespace Noo.DevToolkit
             overlayText = new TextElement().AppendTo(scrollView);
             overlayText.AddToClassList("dtk-console-log-overlay-text");
 
+            overlaycopyToClipboardBtn = new NuiButton().WithClass("nui-btn-black", "flex-grow").AppendTo(overlay);
+            overlaycopyToClipboardBtn.ButtonText = "Copy to Clipboard";
+            overlaycopyToClipboardBtn.AddToClassList("dtk-console-log-overlay-btn-copytoclipboard");
+
             overlayCloseBtn = new NuiButton().WithClass("nui-btn-black", "flex-grow").AppendTo(overlay);
             overlayCloseBtn.ButtonText = "Close";
             overlayCloseBtn.AddToClassList("dtk-console-log-overlay-btn-close");
+
+            copyToClipboardBtn = new NuiButton().WithClass("nui-btn-light-black", "flex-grow");
+            copyToClipboardBtn.ButtonText = "Copy to Clipboard";
+            copyToClipboardBtn.AddToClassList("dtk-console-log-btn-copytoclipboard");
 
             overlay.style.display = DisplayStyle.None;
         }
@@ -108,12 +119,31 @@ namespace Noo.DevToolkit
             dummy.AppendTo(Root);
             list.AppendTo(Root);
             overlay.AppendTo(Root);
+            copyToClipboardBtn.AppendTo(Root);
 
             list.SetItems(logs);
 
             overlayCloseBtn.clicked += () =>
             {
                 overlay.style.display = DisplayStyle.None;
+                copyToClipboardBtn.style.display = DisplayStyle.Flex;
+            };
+
+            overlaycopyToClipboardBtn.clicked += () =>
+            {
+                GUIUtility.systemCopyBuffer = overlayText.text;
+            };
+
+            copyToClipboardBtn.clicked += () =>
+            {
+                var sb = new StringBuilder();
+
+                foreach (var data in logs)
+                {
+                    sb.AppendLine($"[{data.time:HH:mm:ss}] {data.message}\n{data.stackTrace}\n");
+                }
+
+                GUIUtility.systemCopyBuffer = sb.ToString();
             };
 
             AddDragScroll(list.scrollView);
@@ -125,11 +155,13 @@ namespace Noo.DevToolkit
             dummy.RemoveFromHierarchy();
             list.RemoveFromHierarchy();
             overlay.RemoveFromHierarchy();
+            copyToClipboardBtn.RemoveFromHierarchy();
             isCreated = false;
         }
 
         private void InitializeOverlay(LogMsg data)
         {
+            copyToClipboardBtn.style.display = DisplayStyle.None;
             overlay.style.display = DisplayStyle.Flex;
             overlayText.text = $"[{data.time:HH:mm:ss}] {data.message}\n\nStacktrace:\n{data.stackTrace}";
         }
